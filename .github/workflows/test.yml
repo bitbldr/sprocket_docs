@@ -17,8 +17,8 @@ jobs:
           submodules: recursive
       - uses: erlef/setup-beam@v1.15.4
         with:
-          otp-version: "25.2"
-          gleam-version: "0.30.0"
+          otp-version: "26.2"
+          gleam-version: "0.31.0"
           rebar3-version: "3"
           elixir-version: "1.14.2"
       - run: gleam format --check src test
