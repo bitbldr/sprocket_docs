@@ -19,9 +19,7 @@ COPY . .
 RUN gleam deps download
 
 # # install node deps
-RUN yarn run client:build
-RUN yarn run docs:build
-RUN yarn run tailwind:build
+RUN yarn run build
 
 # # build release
 RUN gleam export erlang-shipment
