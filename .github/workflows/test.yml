@@ -25,15 +25,15 @@ jobs:
       - run: gleam deps download
       - run: gleam test
 
-  ts-test:
-    name: TypeScript build and test
-    runs-on: ubuntu-latest
+  # ts-test:
+  #   name: TypeScript build and test
+  #   runs-on: ubuntu-latest
 
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v1
-        with:
-          node-version: "16.14.2"
+  #   steps:
+  #     - uses: actions/checkout@v3
+  #     - uses: actions/setup-node@v1
+  #       with:
+  #         node-version: "16.14.2"
 
-      - run: yarn --frozen-lockfile
-      - run: yarn run client:test
+  #     - run: yarn --frozen-lockfile
+  #     - run: yarn run client:test

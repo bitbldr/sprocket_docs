@@ -1,6 +1,4 @@
-import { ClientHookSpec } from "../../hooks";
-
-export const doubleclick: ClientHookSpec = {
+export const doubleclick = {
   mounted({ el, pushEvent }) {
     el.addEventListener("dblclick", () => {
       pushEvent("doubleclick", {});
