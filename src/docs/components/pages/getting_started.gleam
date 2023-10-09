@@ -98,10 +98,10 @@ pub fn getting_started_page(ctx: Context, _props: GettingStartedPageProps) {
                         "bash",
                         "
                         # Clone the starter repository from GitHub
-                        git clone https://github.com/bitbldr/sprocket-starter.git
+                        git clone https://github.com/bitbldr/sprocket_starter.git
 
                         # Change into the project directory
-                        cd sprocket-starter
+                        cd sprocket_starter
                         ",
                       ),
                     ],
@@ -124,7 +124,7 @@ pub fn getting_started_page(ctx: Context, _props: GettingStartedPageProps) {
               ),
               a_text(
                 [
-                  href("https://github.com/bitbldr/sprocket-starter.git"),
+                  href("https://github.com/bitbldr/sprocket_starter.git"),
                   target("_blank"),
                 ],
                 "starter repository on GitHub.",
@@ -235,7 +235,7 @@ pub fn getting_started_page(ctx: Context, _props: GettingStartedPageProps) {
                       a_text(
                         [
                           href(
-                            "https://github.com/bitbldr/sprocket-starter.git",
+                            "https://github.com/bitbldr/sprocket_starter.git",
                           ),
                           target("_blank"),
                         ],
