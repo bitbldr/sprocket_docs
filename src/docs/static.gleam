@@ -26,8 +26,6 @@ pub fn middleware(
       |> string.append("/static", _)
       |> string.append(priv_directory(), _)
 
-    io.debug(#("path", path))
-
     let file_contents =
       path
       |> file.read_bits
