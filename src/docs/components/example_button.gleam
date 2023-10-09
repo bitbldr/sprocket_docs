@@ -17,7 +17,7 @@ pub fn example_button(ctx: Context, props: ExampleButtonProps) {
       button(
         [
           class(
-            "p-2 bg-blue-500 hover:bg-blue-600 active:bg-blue-700 text-white rounded",
+            "p-2 bg-blue-500 hover:bg-blue-600 active:bg-blue-700 text-white rounded-lg",
           ),
         ],
         [
