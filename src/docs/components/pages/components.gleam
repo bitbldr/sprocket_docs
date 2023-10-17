@@ -96,7 +96,7 @@ pub fn components_page(ctx: Context, _props: ComponentsPageProps) {
             [],
             [
               text(
-                "Because Gleam is statically typed, our component is guaranteed to receive the required props of the correct type. We can be confident that our component will render as expected without having to worry about a large category of errors occuring during runtime.",
+                "Because Gleam is statically typed, our component is guaranteed to receive the correct props. We can be confident that our component will render as expected without having to worry about a large category of type errors during runtime.",
               ),
             ],
           ),
@@ -133,8 +133,8 @@ pub fn components_page(ctx: Context, _props: ComponentsPageProps) {
                         [],
                         [
                           component(
-                            button,
-                            ButtonProps(label: None),
+                            example_button,
+                            ExampleButtonProps(label: None),
                           ),
                         ],
                       ),
@@ -157,8 +157,8 @@ pub fn components_page(ctx: Context, _props: ComponentsPageProps) {
             "gleam",
             "
                 component(
-                  button,
-                  ButtonProps(label: Some(\"Add to Cart\")),
+                  example_button,
+                  ExampleButtonProps(label: Some(\"Add to Cart\")),
                 ),
                 ",
           ),
@@ -182,14 +182,14 @@ pub fn components_page(ctx: Context, _props: ComponentsPageProps) {
             [],
             [
               text(
-                "We'll cover events, state management and hooks in-depth a bit later. For now, we'll just add a simple state hook
+                "We'll cover events, state management and hooks more in-depth a bit later. For now, we'll just add a simple state hook
                 and callback hook to our button component which will toggle the label when the button is clicked. We'll call our new component ",
               ),
               code_text([], "toggle_button"),
               text(" and instead of rendering a string label, we'll pass in a "),
               code_text([], "render_label"),
               text(
-                " prop as a function that takes the current state of the toggle and renders the content of our button accordingly.",
+                " function prop that takes the current state of the toggle and renders the content of our button accordingly.",
               ),
             ],
           ),
