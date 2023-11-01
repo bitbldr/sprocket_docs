@@ -3,9 +3,9 @@ import gleam/erlang
 import sprocket/context.{Context}
 import sprocket/component.{component, render}
 import sprocket/html.{
-  article, button_text, dangerous_raw_html, div, h1, h2, p, text,
+  a_text, article, button_text, dangerous_raw_html, div, h1, h2, p, p_text, text,
 }
-import sprocket/html/attributes.{classes, on_click}
+import sprocket/html/attributes.{classes, href, on_click}
 import sprocket/internal/identifiable_callback.{CallbackFn}
 import sprocket/hooks.{WithDeps}
 import sprocket/hooks/callback.{callback}
@@ -95,6 +95,17 @@ pub fn misc_page(ctx: Context, _props: MiscPageProps) {
               ),
               component(counter, CounterProps(initial: Some(0))),
               component(hello_button, HelloButtonProps),
+            ],
+          ),
+          h2([], [text("Standalone Components")]),
+          div(
+            [],
+            [
+              p_text(
+                [],
+                "Components can be rendered as standalone into existing HTML pages.",
+              ),
+              p([], [a_text([href("/standalone")], "Standalone Example")]),
             ],
           ),
         ],

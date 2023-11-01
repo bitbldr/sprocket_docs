@@ -10,6 +10,11 @@ window.addEventListener("DOMContentLoaded", () => {
       csrfToken,
       targetEl: document.getElementById("counter") as Element,
     });
+
+    connect("/counter/live", {
+      csrfToken,
+      targetEl: document.getElementById("no-first-paint-counter") as Element,
+    });
   } else {
     console.error("Missing CSRF token");
   }
