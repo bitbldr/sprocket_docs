@@ -33,8 +33,18 @@ pub fn header(ctx: Context, props) {
                 [class("p-2 mx-2")],
                 [
                   div(
-                    [class("italic bold text-2xl")],
-                    [text("⚙️ Sprocket")],
+                    [class("text-2xl")],
+                    [
+                      span(
+                        [
+                          class(
+                            "inline-block animate-spin repeat-1 delay-500 ease-in-out",
+                          ),
+                        ],
+                        [text("⚙️")],
+                      ),
+                      span([class("italic bold")], [text("Sprocket")]),
+                    ],
                   ),
                   div(
                     [class("text-gray-500 text-sm")],
