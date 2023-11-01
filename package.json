@@ -8,6 +8,10 @@
     "client": {
       "distDir": "priv/static",
       "sourceMap": false
+    },
+    "standalone_counter": {
+      "distDir": "priv/static",
+      "sourceMap": false
     }
   },
   "devDependencies": {
@@ -34,7 +38,7 @@
     "tailwind:watch": "npx tailwindcss -i ./app.css -o priv/static/app.css --watch",
     "clean": "rm -rf build .parcel-cache priv/static/**",
     "watch": "gleam build && concurrently --kill-others \"gleam run\" \"yarn run client:watch\" \"yarn run tailwind:watch\"",
-    "build": "gleam build && yarn run client:build && yarn run tailwind:build"
+    "build": "gleam build && yarn run client:build && yarn run standalone_counter:build && yarn run tailwind:build"
   },
   "dependencies": {
     "sprocket-js": "^0.1.6"
