@@ -5,7 +5,7 @@ import gleam/result
 import gleam/erlang/os
 import gleam/erlang/process
 import mist
-import sprocket/cassette
+import sprocket
 import docs/router
 import docs/app_context.{AppContext}
 import docs/utils/logger
@@ -19,7 +19,7 @@ pub fn main() {
   let validate_csrf = fn(_csrf) { Ok(Nil) }
 
   let port = load_port()
-  let ca = cassette.start(validate_csrf, None)
+  let ca = sprocket.start(validate_csrf, None)
 
   router.stack(AppContext(secret_key_base, ca))
   |> mist.new
