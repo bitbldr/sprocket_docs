@@ -3,8 +3,8 @@ import gleam/option.{None, Option, Some}
 import sprocket/context.{Context}
 import sprocket/component.{component, render}
 import sprocket/hooks/reducer.{reducer}
-import sprocket/html.{a, div, keyed, text}
-import sprocket/html/attributes.{class, classes}
+import sprocket_html/elements.{a, div, keyed, text}
+import sprocket_html/attributes.{class, classes}
 import sprocket/internal/utils/ordered_map.{KeyedItem, OrderedMap}
 import docs/utils/common.{maybe}
 import docs/components/search_bar.{SearchBarProps, search_bar}

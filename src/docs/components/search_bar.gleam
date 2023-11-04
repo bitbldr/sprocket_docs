@@ -4,8 +4,8 @@ import sprocket/hooks.{WithDeps, dep}
 import sprocket/hooks/callback.{callback}
 import sprocket/internal/identifiable_callback.{CallbackWithValueFn}
 import sprocket/hooks/reducer.{reducer}
-import sprocket/html.{input}
-import sprocket/html/attributes.{class,
+import sprocket_html/elements.{input}
+import sprocket_html/attributes.{class,
   input_type, on_input, placeholder, value}
 
 type Model {

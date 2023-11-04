@@ -7,9 +7,9 @@ import sprocket/component.{render}
 import sprocket/hooks.{WithDeps, dep}
 import sprocket/hooks/reducer.{reducer}
 import sprocket/hooks/effect.{effect}
-import sprocket/html/attributes.{xmlns, xmlns_xlink}
-import sprocket/html/svg/elements.{circle, g, line, path, svg}
-import sprocket/html/svg/attributes.{
+import sprocket_html/attributes.{xmlns, xmlns_xlink}
+import sprocket_html/svg/elements.{circle, g, line, path, svg}
+import sprocket_html/svg/attributes.{
   class, cx, cy, d, fill, height, id, r, stroke, stroke_miterlimit, stroke_width,
   transform, version, view_box, width, x, x1, x2, xml_space, y, y1, y2,
 } as svg_attributes

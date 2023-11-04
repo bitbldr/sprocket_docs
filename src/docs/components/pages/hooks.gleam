@@ -1,6 +1,6 @@
 import sprocket/context.{Context}
 import sprocket/component.{component, render}
-import sprocket/html.{article, code_text, h1, h2, p, text}
+import sprocket_html/elements.{article, code_text, h1, h2, p, text}
 import docs/components/common.{codeblock, example}
 import docs/components/events_counter.{CounterProps, counter}
 

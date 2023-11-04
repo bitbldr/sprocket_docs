@@ -5,7 +5,7 @@ import gleam/http/response.{Response}
 import mist.{Connection, ResponseData}
 import sprocket/render.{render}
 import sprocket/component.{component}
-import sprocket/html/render as html_render
+import sprocket_html/render as html_render
 import docs/components/counter.{CounterProps, counter}
 import docs/app_context.{AppContext}
 import docs/utils/common.{mist_response}

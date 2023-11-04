@@ -1,7 +1,7 @@
 import sprocket/context.{Context, Element}
 import sprocket/component.{render}
-import sprocket/html.{button}
-import sprocket/html/attributes.{class, on_click}
+import sprocket_html/elements.{button}
+import sprocket_html/attributes.{class, on_click}
 import sprocket/hooks.{WithDeps, dep}
 import sprocket/hooks/callback.{callback}
 import sprocket/internal/identifiable_callback.{CallbackFn}

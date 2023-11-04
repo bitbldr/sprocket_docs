@@ -1,6 +1,6 @@
 import sprocket/context.{Context}
 import sprocket/component.{component, render}
-import sprocket/html.{article, code_text, h1, h2, p, text}
+import sprocket_html/elements.{article, code_text, h1, h2, p, text}
 import docs/components/hello_button.{HelloButtonProps, hello_button}
 import docs/components/common.{codeblock, example}
 
@@ -161,8 +161,8 @@ pub fn state_management_page(ctx: Context, _props: StateManagementPageProps) {
             import sprocket/hooks/reducer.{State, reducer}
             import sprocket/hooks/callback.{callback}
             import sprocket/internal/identifiable_callback.{CallbackFn}
-            import sprocket/html.{button, div, span, text}
-            import sprocket/html/attributes.{class, on_click}
+            import sprocket_html/elements.{button, div, span, text}
+            import sprocket_html/attributes.{class, on_click}
 
             type Model {
               Model(selection: Option(Int), options: List(HelloOption))

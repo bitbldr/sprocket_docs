@@ -1,7 +1,7 @@
 import sprocket/context.{Context}
 import sprocket/component.{render}
-import sprocket/html.{article, div, h1, h2, li, p, span, text, ul}
-import sprocket/html/attributes.{class}
+import sprocket_html/elements.{article, div, h1, h2, li, p, span, text, ul}
+import sprocket_html/attributes.{class}
 
 pub type IntroductionPageProps {
   IntroductionPageProps

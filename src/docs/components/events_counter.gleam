@@ -7,8 +7,8 @@ import sprocket/hooks/reducer.{reducer}
 import sprocket/hooks/callback.{callback}
 import sprocket/hooks/client.{client}
 import sprocket/internal/identifiable_callback.{CallbackFn}
-import sprocket/html.{div, span, text}
-import sprocket/html/attributes.{class, classes}
+import sprocket_html/elements.{button_text, div, span, text}
+import sprocket_html/attributes.{class, classes}
 
 type Model =
   Int
@@ -97,7 +97,7 @@ pub fn button(ctx: Context, props: ButtonProps) {
   render(
     ctx,
     [
-      html.button_text(
+      button_text(
         [
           attributes.on_click(on_click),
           classes([

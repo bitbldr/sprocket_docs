@@ -9,10 +9,10 @@ import sprocket/hooks/reducer.{reducer}
 import sprocket/hooks/state.{state}
 import sprocket/hooks/callback.{callback}
 import sprocket/internal/identifiable_callback.{CallbackFn}
-import sprocket/html.{
+import sprocket_html/elements.{
   button, button_text, div, div_text, h5_text, i, img, keyed, li, text, ul,
 }
-import sprocket/html/attributes.{alt, class, on_click, role, src}
+import sprocket_html/attributes.{alt, class, on_click, role, src}
 
 pub type Product {
   Product(

@@ -6,7 +6,7 @@ import sprocket/component.{render}
 import sprocket/hooks.{WithDeps, dep}
 import sprocket/hooks/reducer.{reducer}
 import sprocket/hooks/effect.{effect}
-import sprocket/html.{span, text}
+import sprocket_html/elements.{span, text}
 import sprocket/internal/utils/timer.{interval}
 
 type Model {

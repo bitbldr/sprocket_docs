@@ -1,7 +1,7 @@
 import sprocket/context.{Context}
 import sprocket/component.{render}
-import sprocket/html.{div, h1, text}
-import sprocket/html/attributes.{class}
+import sprocket_html/elements.{div, h1, text}
+import sprocket_html/attributes.{class}
 
 pub type NotFoundPageProps {
   NotFoundPageProps

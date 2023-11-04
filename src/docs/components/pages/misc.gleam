@@ -2,10 +2,10 @@ import gleam/option.{None, Option, Some}
 import gleam/erlang
 import sprocket/context.{Context}
 import sprocket/component.{component, render}
-import sprocket/html.{
+import sprocket_html/elements.{
   a_text, article, button_text, dangerous_raw_html, div, h1, h2, p, p_text, text,
 }
-import sprocket/html/attributes.{class, classes, href, on_click}
+import sprocket_html/attributes.{class, classes, href, on_click}
 import sprocket/internal/identifiable_callback.{CallbackFn}
 import sprocket/hooks.{WithDeps}
 import sprocket/hooks/callback.{callback}

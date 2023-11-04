@@ -8,8 +8,8 @@ import sprocket/hooks.{WithDeps}
 import sprocket/hooks/reducer.{reducer}
 import sprocket/hooks/callback.{callback}
 import sprocket/internal/identifiable_callback.{CallbackFn}
-import sprocket/html.{button, div, span, text}
-import sprocket/html/attributes.{class, on_click}
+import sprocket_html/elements.{button, div, span, text}
+import sprocket_html/attributes.{class, on_click}
 
 type Model {
   Model(selection: Option(Int), options: List(HelloOption))

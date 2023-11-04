@@ -1,8 +1,9 @@
 import gleam/option.{None, Some}
 import sprocket/context.{Context}
 import sprocket/component.{component, render}
-import sprocket/html/attributes.{class}
-import sprocket/html.{article, code_text, div, h1, h2, i, p, span, text}
+import sprocket_html/attributes.{class}
+import sprocket_html/elements.{article,
+  code_text, div, h1, h2, i, p, span, text}
 import docs/components/common.{codeblock, example}
 import docs/components/example_button.{ExampleButtonProps, example_button}
 import docs/components/toggle_button.{ToggleButtonProps, toggle_button}
@@ -57,8 +58,8 @@ pub fn components_page(ctx: Context, _props: ComponentsPageProps) {
                 import gleam/option.{None, Option, Some}
                 import sprocket/context.{Context}
                 import sprocket/component.{render}
-                import sprocket/html.{button, text}
-                import sprocket/html/attributes.{class}
+                import sprocket_html/elements.{button, text}
+                import sprocket_html/attributes.{class}
 
                 pub type ExampleButtonProps {
                   ExampleButtonProps(label: Option(String))
@@ -198,8 +199,8 @@ pub fn components_page(ctx: Context, _props: ComponentsPageProps) {
             "
             import sprocket/context.{Context, Element}
             import sprocket/component.{render}
-            import sprocket/html.{button}
-            import sprocket/html/attributes.{class, on_click}
+            import sprocket_html/elements.{button}
+            import sprocket_html/attributes.{class, on_click}
             import sprocket/hooks.{WithDeps, dep}
             import sprocket/hooks/callback.{callback}
             import sprocket/internal/identifiable_callback.{CallbackFn}

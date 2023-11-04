@@ -1,7 +1,7 @@
 import sprocket/context.{Context}
 import sprocket/component.{component, render}
-import sprocket/html.{article, code_text, h1, p, span_text, text}
-import sprocket/html/attributes.{class}
+import sprocket_html/elements.{article, code_text, h1, p, span_text, text}
+import sprocket_html/attributes.{class}
 import docs/components/common.{codeblock, example}
 import docs/components/events_counter.{CounterProps, counter}
 
@@ -102,8 +102,8 @@ pub fn props_and_events_page(ctx: Context, _props: PropsAndEventsPageProps) {
             import sprocket/hooks/reducer.{reducer}
             import sprocket/hooks/callback.{callback}
             import sprocket/internal/identifiable_callback.{CallbackFn}
-            import sprocket/html.{div, span, text}
-            import sprocket/html/attributes.{class, classes}
+            import sprocket_html/elements.{div, span, text}
+            import sprocket_html/attributes.{class, classes}
 
             type Model =
               Int
