@@ -5,7 +5,7 @@ import gleam/http/response.{Response}
 import mist.{Connection, ResponseData}
 import sprocket/render.{render}
 import sprocket/component.{component}
-import sprocket/internal/render/html as sprocket_html
+import sprocket/html/render as html_render
 import docs/components/counter.{CounterProps, counter}
 import docs/app_context.{AppContext}
 import docs/utils/common.{mist_response}
@@ -17,7 +17,7 @@ pub fn standalone(
 ) -> Response(ResponseData) {
   let view = component(counter, CounterProps(initial: Some(100)))
 
-  let standalone_counter = render(view, sprocket_html.renderer())
+  let standalone_counter = render(view, html_render.renderer())
 
   let csrf = csrf.generate(app_ctx.secret_key_base)
 

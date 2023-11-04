@@ -90,11 +90,11 @@ pub fn analog_clock(ctx: Context, _props: AnalogClockProps) {
           xmlns_xlink("http://www.w3.org/1999/xlink"),
           x("0px"),
           y("0px"),
-          width("384px"),
-          height("384px"),
+          width("100px"),
+          height("100px"),
           view_box("0 0 384 384"),
           xml_space("preserve"),
-          transform("scale(0.5)"),
+          transform("scale(0.25)"),
         ],
         [
           path(

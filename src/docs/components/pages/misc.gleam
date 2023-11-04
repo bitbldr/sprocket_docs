@@ -5,7 +5,7 @@ import sprocket/component.{component, render}
 import sprocket/html.{
   a_text, article, button_text, dangerous_raw_html, div, h1, h2, p, p_text, text,
 }
-import sprocket/html/attributes.{classes, href, on_click}
+import sprocket/html/attributes.{class, classes, href, on_click}
 import sprocket/internal/identifiable_callback.{CallbackFn}
 import sprocket/hooks.{WithDeps}
 import sprocket/hooks/callback.{callback}
@@ -53,17 +53,7 @@ pub fn misc_page(ctx: Context, _props: MiscPageProps) {
           div(
             [],
             [
-              // // disable millisecond selection for now, it could have a negative impact on bandwidth costs and resources
-              // // consider adding it as an example to try out locally instead
-              // component(
-              //   unit_toggle,
-              //   UnitToggleProps(
-              //     current: time_unit,
-              //     on_select: fn(unit: erlang.TimeUnit) {
-              //       dispatch(SetTimeUnit(unit))
-              //     },
-              //   ),
-              // ),
+              div([class("my-2")], [component(analog_clock, AnalogClockProps)]),
               div(
                 [],
                 [
@@ -76,7 +66,6 @@ pub fn misc_page(ctx: Context, _props: MiscPageProps) {
                   ),
                 ],
               ),
-              div([], [component(analog_clock, AnalogClockProps)]),
               p(
                 [],
                 [
