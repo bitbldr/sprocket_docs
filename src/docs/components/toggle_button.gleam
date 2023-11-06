@@ -16,7 +16,7 @@ pub fn toggle_button(ctx: Context, props: ToggleButtonProps) {
   use ctx, is_active, set_active <- state(ctx, False)
 
   // add a callback hook to toggle the active state
-  use ctx, on_toggle_active <- callback(
+  use ctx, toggle_active <- callback(
     ctx,
     CallbackFn(fn() {
       set_active(!is_active)
@@ -36,7 +36,7 @@ pub fn toggle_button(ctx: Context, props: ToggleButtonProps) {
             False ->
               "rounded-lg text-white px-3 py-2 bg-blue-500 hover:bg-blue-600 active:bg-blue-700"
           }),
-          on_click(on_toggle_active),
+          on_click(toggle_active),
         ],
         [render_label(is_active)],
       ),

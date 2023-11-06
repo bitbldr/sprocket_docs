@@ -150,7 +150,7 @@ pub fn components_page(ctx: Context, _props: ComponentsPageProps) {
             [],
             [
               text(
-                "That's looking pretty good, but let's add a label to our button. We can do that by passing in a label prop to our component.",
+                "That's looking pretty good, now let's customize the label to our button. We can do that by passing in a label prop to our component.",
               ),
             ],
           ),
@@ -187,10 +187,12 @@ pub fn components_page(ctx: Context, _props: ComponentsPageProps) {
                 and callback hook to our button component which will toggle the label when the button is clicked. We'll call our new component ",
               ),
               code_text([], "toggle_button"),
-              text(" and instead of rendering a string label, we'll pass in a "),
+              text(
+                " and instead of just taking a string label prop, we'll give more control to the parent component by introducing in a prop called ",
+              ),
               code_text([], "render_label"),
               text(
-                " function prop that takes the current state of the toggle and renders the content of our button accordingly.",
+                " which we'll define as a function that takes the current state of the toggle and renders the content of the button.",
               ),
             ],
           ),
@@ -215,7 +217,7 @@ pub fn components_page(ctx: Context, _props: ComponentsPageProps) {
               use ctx, is_active, set_active <- state(ctx, False)
 
               // add a callback hook to toggle the active state
-              use ctx, on_toggle_active <- callback(
+              use ctx, toggle_active <- callback(
                 ctx,
                 CallbackFn(fn() {
                   set_active(!is_active)
@@ -235,7 +237,7 @@ pub fn components_page(ctx: Context, _props: ComponentsPageProps) {
                         False ->
                           \"rounded-lg text-white px-3 py-2 bg-blue-500 hover:bg-blue-600 active:bg-blue-700\"
                       }),
-                      on_click(on_toggle_active),
+                      on_click(toggle_active),
                     ],
                     [render_label(is_active)],
                   ),
