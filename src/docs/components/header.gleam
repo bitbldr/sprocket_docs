@@ -2,8 +2,8 @@ import gleam/list
 import gleam/string
 import sprocket/context.{Context}
 import sprocket/component.{component, render}
-import sprocket_html/elements.{a, div, i, span, text}
-import sprocket_html/attributes.{class, href}
+import sprocket/html/elements.{a, div, i, span, text}
+import sprocket/html/attributes.{class, href}
 
 pub type MenuItem {
   MenuItem(label: String, href: String)

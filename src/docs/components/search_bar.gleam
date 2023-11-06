@@ -1,11 +1,9 @@
-import sprocket/context.{Context}
+import sprocket/context.{Context, WithDeps, dep}
 import sprocket/component.{render}
-import sprocket/hooks.{WithDeps, dep}
-import sprocket/hooks/callback.{callback}
+import sprocket/hooks.{callback, reducer}
 import sprocket/internal/identifiable_callback.{CallbackWithValueFn}
-import sprocket/hooks/reducer.{reducer}
-import sprocket_html/elements.{input}
-import sprocket_html/attributes.{class,
+import sprocket/html/elements.{input}
+import sprocket/html/attributes.{class,
   input_type, on_input, placeholder, value}
 
 type Model {

@@ -1,8 +1,8 @@
 import gleam/option.{None, Some}
 import sprocket/context.{Context}
 import sprocket/component.{component, render}
-import sprocket_html/attributes.{class}
-import sprocket_html/elements.{article,
+import sprocket/html/attributes.{class}
+import sprocket/html/elements.{article,
   code_text, div, h1, h2, i, p, span, text}
 import docs/components/common.{codeblock, example}
 import docs/components/example_button.{ExampleButtonProps, example_button}
@@ -58,8 +58,8 @@ pub fn components_page(ctx: Context, _props: ComponentsPageProps) {
                 import gleam/option.{None, Option, Some}
                 import sprocket/context.{Context}
                 import sprocket/component.{render}
-                import sprocket_html/elements.{button, text}
-                import sprocket_html/attributes.{class}
+                import sprocket/html/elements.{button, text}
+                import sprocket/html/attributes.{class}
 
                 pub type ExampleButtonProps {
                   ExampleButtonProps(label: Option(String))
@@ -197,14 +197,12 @@ pub fn components_page(ctx: Context, _props: ComponentsPageProps) {
           codeblock(
             "gleam",
             "
-            import sprocket/context.{Context, Element}
+            import sprocket/context.{Context, Element, WithDeps, dep}
             import sprocket/component.{render}
-            import sprocket_html/elements.{button}
-            import sprocket_html/attributes.{class, on_click}
-            import sprocket/hooks.{WithDeps, dep}
-            import sprocket/hooks/callback.{callback}
+            import sprocket/html/elements.{button}
+            import sprocket/html/attributes.{class, on_click}
+            import sprocket/hooks.{callback, state}
             import sprocket/internal/identifiable_callback.{CallbackFn}
-            import sprocket/hooks/state.{state}
 
             pub type ToggleButtonProps {
               ToggleButtonProps(render_label: fn(Bool) -> Element)

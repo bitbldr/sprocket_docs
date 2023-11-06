@@ -1,7 +1,7 @@
 import gleam/option.{None, Some}
 import sprocket/context.{Context}
 import sprocket/component.{component, render}
-import sprocket_html/elements.{article, h1, p, text}
+import sprocket/html/elements.{article, h1, p, text}
 import docs/components/clock.{ClockProps, clock}
 
 pub type EffectsPageProps {

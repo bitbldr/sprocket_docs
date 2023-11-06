@@ -13,7 +13,7 @@ import sprocket
 import sprocket/cassette.{Cassette}
 import sprocket/render.{render}
 import sprocket/component.{component}
-import sprocket_html/render as html_render
+import sprocket/html/render as html_render
 import sprocket/context.{FunctionalComponent}
 import sprocket/internal/logger
 

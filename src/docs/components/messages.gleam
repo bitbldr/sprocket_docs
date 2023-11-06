@@ -1,5 +1,5 @@
-import sprocket_html/elements.{div, text}
-import sprocket_html/attributes.{class}
+import sprocket/html/elements.{div, text}
+import sprocket/html/attributes.{class}
 
 pub fn unexpected_error() {
   div(

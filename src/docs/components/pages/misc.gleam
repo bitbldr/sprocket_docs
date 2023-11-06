@@ -1,15 +1,13 @@
 import gleam/option.{None, Option, Some}
 import gleam/erlang
-import sprocket/context.{Context}
+import sprocket/context.{Context, WithDeps}
 import sprocket/component.{component, render}
-import sprocket_html/elements.{
+import sprocket/html/elements.{
   a_text, article, button_text, dangerous_raw_html, div, h1, h2, p, p_text, text,
 }
-import sprocket_html/attributes.{class, classes, href, on_click}
+import sprocket/html/attributes.{class, classes, href, on_click}
 import sprocket/internal/identifiable_callback.{CallbackFn}
-import sprocket/hooks.{WithDeps}
-import sprocket/hooks/callback.{callback}
-import sprocket/hooks/reducer.{reducer}
+import sprocket/hooks.{callback, reducer}
 import docs/components/clock.{ClockProps, clock}
 import docs/components/analog_clock.{AnalogClockProps, analog_clock}
 import docs/components/counter.{CounterProps, counter}

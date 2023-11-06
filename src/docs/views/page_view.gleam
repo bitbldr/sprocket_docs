@@ -3,8 +3,8 @@ import gleam/result
 import gleam/option.{None}
 import sprocket/context.{Context}
 import sprocket/component.{component, render}
-import sprocket_html/elements.{body, div, head, html, link, meta, script, title}
-import sprocket_html/attributes.{
+import sprocket/html/elements.{body, div, head, html, link, meta, script, title}
+import sprocket/html/attributes.{
   charset, class, content, crossorigin, href, id, integrity, lang, media, name,
   referrerpolicy, rel, src,
 }

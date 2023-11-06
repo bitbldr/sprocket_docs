@@ -2,8 +2,8 @@ import gleam/string
 import gleam/list
 import gleam/int
 import sprocket/context.{Element}
-import sprocket_html/elements.{code_text, div, ignored, pre}
-import sprocket_html/attributes.{class}
+import sprocket/html/elements.{code_text, div, ignored, pre}
+import sprocket/html/attributes.{class}
 
 pub fn example(children: List(Element)) -> Element {
   div(

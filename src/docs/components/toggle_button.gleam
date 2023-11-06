@@ -1,11 +1,9 @@
-import sprocket/context.{Context, Element}
+import sprocket/context.{Context, Element, WithDeps, dep}
 import sprocket/component.{render}
-import sprocket_html/elements.{button}
-import sprocket_html/attributes.{class, on_click}
-import sprocket/hooks.{WithDeps, dep}
-import sprocket/hooks/callback.{callback}
+import sprocket/html/elements.{button}
+import sprocket/html/attributes.{class, on_click}
+import sprocket/hooks.{callback, state}
 import sprocket/internal/identifiable_callback.{CallbackFn}
-import sprocket/hooks/state.{state}
 
 pub type ToggleButtonProps {
   ToggleButtonProps(render_label: fn(Bool) -> Element)

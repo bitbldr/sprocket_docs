@@ -1,8 +1,8 @@
 import gleam/option.{None, Option, Some}
 import sprocket/context.{Context}
 import sprocket/component.{render}
-import sprocket_html/elements.{button, text}
-import sprocket_html/attributes.{class}
+import sprocket/html/elements.{button, text}
+import sprocket/html/attributes.{class}
 
 pub type ExampleButtonProps {
   ExampleButtonProps(label: Option(String))

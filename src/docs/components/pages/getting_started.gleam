@@ -1,9 +1,9 @@
 import sprocket/context.{Context}
 import sprocket/component.{render}
-import sprocket_html/elements.{
+import sprocket/html/elements.{
   a_text, article, div, h1, h2, h3, li, ol, p, p_text, span_text, text,
 }
-import sprocket_html/attributes.{class, href, target}
+import sprocket/html/attributes.{class, href, target}
 import docs/components/common.{codeblock}
 
 pub type GettingStartedPageProps {

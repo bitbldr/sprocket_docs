@@ -1,6 +1,6 @@
 import sprocket/context.{Context}
 import sprocket/component.{component, render}
-import sprocket_html/elements.{article, code_text, h1, h2, p, text}
+import sprocket/html/elements.{article, code_text, h1, h2, p, text}
 import docs/components/hello_button.{HelloButtonProps, hello_button}
 import docs/components/common.{codeblock, example}
 
@@ -155,14 +155,12 @@ pub fn state_management_page(ctx: Context, _props: StateManagementPageProps) {
             import gleam/list
             import gleam/pair
             import gleam/option.{None, Option, Some}
-            import sprocket/context.{Context}
+            import sprocket/context.{Context, WithDeps}
             import sprocket/component.{render}
-            import sprocket/hooks.{WithDeps}
-            import sprocket/hooks/reducer.{State, reducer}
-            import sprocket/hooks/callback.{callback}
+            import sprocket/hooks.{State, reducer, callback}
             import sprocket/internal/identifiable_callback.{CallbackFn}
-            import sprocket_html/elements.{button, div, span, text}
-            import sprocket_html/attributes.{class, on_click}
+            import sprocket/html/elements.{button, div, span, text}
+            import sprocket/html/attributes.{class, on_click}
 
             type Model {
               Model(selection: Option(Int), options: List(HelloOption))

@@ -1,6 +1,6 @@
 import sprocket/context.{Context}
 import sprocket/component.{render}
-import sprocket_html/elements.{article, h1, p, text}
+import sprocket/html/elements.{article, h1, p, text}
 
 pub type UnderTheHoodProps {
   UnderTheHoodProps

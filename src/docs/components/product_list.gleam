@@ -2,17 +2,14 @@ import gleam/int
 import gleam/list
 import gleam/float
 import gleam/option.{None, Option, Some}
-import sprocket/context.{Context, Element}
+import sprocket/context.{Context, Element, OnMount, WithDeps, dep}
 import sprocket/component.{component, render}
-import sprocket/hooks.{OnMount, WithDeps, dep}
-import sprocket/hooks/reducer.{reducer}
-import sprocket/hooks/state.{state}
-import sprocket/hooks/callback.{callback}
+import sprocket/hooks.{callback, reducer, state}
 import sprocket/internal/identifiable_callback.{CallbackFn}
-import sprocket_html/elements.{
+import sprocket/html/elements.{
   button, button_text, div, div_text, h5_text, i, img, keyed, li, text, ul,
 }
-import sprocket_html/attributes.{alt, class, on_click, role, src}
+import sprocket/html/attributes.{alt, class, on_click, role, src}
 
 pub type Product {
   Product(
