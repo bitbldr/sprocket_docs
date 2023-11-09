@@ -77,10 +77,13 @@ pub fn hooks_page(ctx: Context, _props: HooksPageProps) {
 
               use ctx, on_reset <- callback(
                 ctx,
-                CallbackFn(option.unwrap(on_reset, fn() { Nil })),
+                fn(_) {
+                  option.map(on_reset, fn(on_reset) { on_reset() })
+                  Nil
+                },
                 WithDeps([]),
               )
-
+              
               render(
                 ctx,
                 [

@@ -2,7 +2,6 @@ import gleam/option.{Some}
 import sprocket/context.{Context, Element, OnMount}
 import sprocket/component.{render}
 import sprocket/hooks.{callback, reducer}
-import sprocket/internal/identifiable_callback.{CallbackFn}
 import sprocket/html/elements.{aside, button, div, i}
 import sprocket/html/attributes.{class, classes, on_click}
 
@@ -39,17 +38,9 @@ pub fn responsive_drawer(ctx: Context, props) {
 
   use ctx, Model(show: show), dispatch <- reducer(ctx, initial(), update)
 
-  use ctx, toggle_drawer <- callback(
-    ctx,
-    CallbackFn(fn() { dispatch(Toggle) }),
-    OnMount,
-  )
+  use ctx, toggle_drawer <- callback(ctx, fn(_) { dispatch(Toggle) }, OnMount)
 
-  use ctx, hide_drawer <- callback(
-    ctx,
-    CallbackFn(fn() { dispatch(Hide) }),
-    OnMount,
-  )
+  use ctx, hide_drawer <- callback(ctx, fn(_) { dispatch(Hide) }, OnMount)
 
   let backdrop =
     div(

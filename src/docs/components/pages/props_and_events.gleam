@@ -99,7 +99,6 @@ pub fn props_and_events_page(ctx: Context, _props: PropsAndEventsPageProps) {
             import sprocket/context.{Context, WithDeps, dep}
             import sprocket/hooks.{reducer, callback}
             import sprocket/component.{component, render}
-            import sprocket/internal/identifiable_callback.{CallbackFn}
             import sprocket/html/elements.{div, span, text}
             import sprocket/html/attributes.{class, classes}
 
@@ -183,7 +182,7 @@ pub fn props_and_events_page(ctx: Context, _props: PropsAndEventsPageProps) {
 
               use ctx, on_click <- callback(
                 ctx,
-                CallbackFn(props.on_click),
+                fn(_) { props.on_click() },
                 WithDeps([dep(props.on_click)]),
               )
 

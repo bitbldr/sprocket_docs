@@ -134,7 +134,7 @@ pub fn state_management_page(ctx: Context, _props: StateManagementPageProps) {
             "
             use ctx, on_hello_button <- callback(
               ctx,
-              CallbackFn(fn() { dispatch(SayHello) }),
+              fn(_) { dispatch(SayHello) },
               WithDeps([]),
             )
             ",
@@ -158,7 +158,6 @@ pub fn state_management_page(ctx: Context, _props: StateManagementPageProps) {
             import sprocket/context.{Context, WithDeps}
             import sprocket/component.{render}
             import sprocket/hooks.{State, reducer, callback}
-            import sprocket/internal/identifiable_callback.{CallbackFn}
             import sprocket/html/elements.{button, div, span, text}
             import sprocket/html/attributes.{class, on_click}
 
@@ -196,7 +195,7 @@ pub fn state_management_page(ctx: Context, _props: StateManagementPageProps) {
 
               use ctx, on_hello_button <- callback(
                 ctx,
-                CallbackFn(fn() { dispatch(SayHello) }),
+                fn(_) { dispatch(SayHello) },
                 WithDeps([]),
               )
 

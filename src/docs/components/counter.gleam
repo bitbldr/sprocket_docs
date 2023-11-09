@@ -5,7 +5,6 @@ import gleam/option.{None, Option}
 import sprocket/context.{Context, WithDeps, dep}
 import sprocket/component.{render}
 import sprocket/hooks.{callback, effect, reducer}
-import sprocket/internal/identifiable_callback.{CallbackFn}
 import sprocket/html/elements.{button, div, span, text}
 import sprocket/html/attributes.{class, on_click}
 
@@ -47,12 +46,12 @@ pub fn counter(ctx: Context, props: CounterProps) {
   // Define event handlers
   use ctx, on_increment <- callback(
     ctx,
-    CallbackFn(fn() { dispatch(UpdateCounter(count + 1)) }),
+    fn(_) { dispatch(UpdateCounter(count + 1)) },
     WithDeps([dep(count)]),
   )
   use ctx, on_decrement <- callback(
     ctx,
-    CallbackFn(fn() { dispatch(UpdateCounter(count - 1)) }),
+    fn(_) { dispatch(UpdateCounter(count - 1)) },
     WithDeps([dep(count)]),
   )
 

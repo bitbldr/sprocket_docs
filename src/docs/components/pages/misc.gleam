@@ -6,7 +6,6 @@ import sprocket/html/elements.{
   a_text, article, button_text, dangerous_raw_html, div, h1, h2, p, p_text, text,
 }
 import sprocket/html/attributes.{class, classes, href, on_click}
-import sprocket/internal/identifiable_callback.{CallbackFn}
 import sprocket/hooks.{callback, reducer}
 import docs/components/clock.{ClockProps, clock}
 import docs/components/analog_clock.{AnalogClockProps, analog_clock}
@@ -113,14 +112,16 @@ fn unit_toggle(ctx: Context, props: UnitToggleProps) {
 
   use ctx, on_select_millisecond <- callback(
     ctx,
-    CallbackFn(fn() { on_select(erlang.Millisecond) }),
+    fn(_) { on_select(erlang.Millisecond) },
     WithDeps([]),
   )
+
   use ctx, on_select_second <- callback(
     ctx,
-    CallbackFn(fn() { on_select(erlang.Second) }),
+    fn(_) { on_select(erlang.Second) },
     WithDeps([]),
   )
+
   render(
     ctx,
     [

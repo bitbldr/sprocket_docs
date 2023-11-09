@@ -204,7 +204,6 @@ pub fn components_page(ctx: Context, _props: ComponentsPageProps) {
             import sprocket/html/elements.{button}
             import sprocket/html/attributes.{class, on_click}
             import sprocket/hooks.{callback, state}
-            import sprocket/internal/identifiable_callback.{CallbackFn}
 
             pub type ToggleButtonProps {
               ToggleButtonProps(render_label: fn(Bool) -> Element)
@@ -219,10 +218,10 @@ pub fn components_page(ctx: Context, _props: ComponentsPageProps) {
               // add a callback hook to toggle the active state
               use ctx, toggle_active <- callback(
                 ctx,
-                CallbackFn(fn() {
+                fn(_) {
                   set_active(!is_active)
                   Nil
-                }),
+                },
                 WithDeps([dep(is_active)]),
               )
 

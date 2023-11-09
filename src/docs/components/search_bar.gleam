@@ -1,10 +1,11 @@
+import gleam/option.{Some}
 import sprocket/context.{Context, WithDeps, dep}
 import sprocket/component.{render}
 import sprocket/hooks.{callback, reducer}
-import sprocket/internal/identifiable_callback.{CallbackWithValueFn}
 import sprocket/html/elements.{input}
-import sprocket/html/attributes.{class,
-  input_type, on_input, placeholder, value}
+import sprocket/html/attributes.{
+  CallbackString, class, input_type, on_input, placeholder, value,
+}
 
 type Model {
   Model(query: String)
@@ -38,10 +39,12 @@ pub fn search_bar(ctx: Context, props) {
 
   use ctx, on_input_query <- callback(
     ctx,
-    CallbackWithValueFn(fn(value: String) {
+    fn(value) {
+      let assert Some(CallbackString(value)) = value
+
       on_search(value)
       dispatch(SetQuery(value))
-    }),
+    },
     WithDeps([dep(on_search)]),
   )
 
