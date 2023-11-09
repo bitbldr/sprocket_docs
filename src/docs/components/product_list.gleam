@@ -37,15 +37,19 @@ pub fn product_card(product: Product, actions: Option(List(Element))) {
   div(
     [
       class(
-        "flex flex-row bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700",
+        "flex flex-col lg:flex-row bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700",
       ),
     ],
     [
       div(
-        [class("w-1/3 rounded-l-lg overflow-hidden")],
+        [
+          class(
+            "h-64 lg:w-1/3 overflow-hidden rounded-t-lg lg:rounded-tr-none lg:rounded-l-lg",
+          ),
+        ],
         [
           img([
-            class("object-cover h-56 w-full"),
+            class("object-cover w-full h-full"),
             src(img_url),
             alt("product image"),
           ]),
