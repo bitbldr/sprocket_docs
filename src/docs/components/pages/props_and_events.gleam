@@ -86,7 +86,7 @@ pub fn props_and_events_page(ctx: Context, _props: PropsAndEventsPageProps) {
               ),
               code_text([], "count"),
               text(
-                " prop has changed. We're using Tailwind CSS to style the components here, but you can use any classes or style framework you prefer.
+                " prop has changed.
                 ",
               ),
             ],

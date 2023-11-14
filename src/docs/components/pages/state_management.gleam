@@ -19,9 +19,15 @@ pub fn state_management_page(ctx: Context, _props: StateManagementPageProps) {
           p(
             [],
             [
-              text("State is managed using reducer fuctions and the "),
+              text(
+                "State is managed using stateful components and hooks. We previously saw how to create a simple state variable using the ",
+              ),
+              code_text([], "state"),
+              text(" hook. Here we will take a look at using the "),
               code_text([], "reducer"),
-              text(" hook. We'll also utilize the "),
+              text(
+                " hook to model more complex state and transformations. We'll also utilize the ",
+              ),
               code_text([], "callback"),
               text(" hook to help us dispatch events to the reducer."),
             ],
@@ -74,13 +80,23 @@ pub fn state_management_page(ctx: Context, _props: StateManagementPageProps) {
             }
             ",
           ),
+          p(
+            [],
+            [
+              text(
+                "An update function takes the current state and a message and returns a new state.",
+              ),
+            ],
+          ),
           h2([], [text("Introducing the Reducer Hook")]),
           p(
             [],
             [
               text("Let's declare a "),
               code_text([], "reducer"),
-              text(" hook in our component that uses our update function:"),
+              text(
+                " hook in our component that initializes the state model and uses our update function:",
+              ),
             ],
           ),
           codeblock(
@@ -97,9 +113,9 @@ pub fn state_management_page(ctx: Context, _props: StateManagementPageProps) {
             [],
             [
               text(
-                "You can see here we got back the current state of the reducer, which we can use in our component. ",
+                "You can see here we are provided with the current state of the reducer, which we can use in our component. ",
               ),
-              text("Notice, we also got back a "),
+              text("Notice, we also are provided with a "),
               code_text([], "dispatch"),
               text(
                 " function from the reducer. The dispatch function is used to send messages to the reducer which will update the state and trigger a re-render.",
@@ -109,14 +125,17 @@ pub fn state_management_page(ctx: Context, _props: StateManagementPageProps) {
           p(
             [],
             [
-              text("The use of the "),
+              text("The function call to "),
               code_text([], "initial"),
+              text(" here returns an initial "),
+              code_text([], "Model"),
+              text(" using the predefined set options from "),
+              code_text([], "hello_options"),
               text(
-                " function is used to intiialize the state of the reducer. This will only be applied when the component is first rendered.",
+                " which is used to intiialize the state of the reducer when the component is mounted.",
               ),
             ],
           ),
-          h2([], [text("Introducing the Callback Hook")]),
           p(
             [],
             [
@@ -144,7 +163,7 @@ pub fn state_management_page(ctx: Context, _props: StateManagementPageProps) {
             [],
             [
               text(
-                "We now have all the pieces we need to create a more interesting button that updates whenever it is clicked. Again, we are using Tailwind CSS to style our button but you can use whichever style framework you prefer.",
+                "We now have all the pieces we need to create a more interesting button that updates whenever it is clicked. Let's put it all together:",
               ),
             ],
           ),
@@ -189,7 +208,7 @@ pub fn state_management_page(ctx: Context, _props: StateManagementPageProps) {
             pub fn hello_button(ctx: Context, _props: HelloButtonProps) {
               use ctx, Model(selection: selection, options: options), dispatch <- reducer(
                 ctx,
-                initial(hello_options()),
+                initial(hello_strings()),
                 update,
               )
 
@@ -279,7 +298,7 @@ pub fn state_management_page(ctx: Context, _props: StateManagementPageProps) {
             [],
             [
               text(
-                "Remember, all of these state changes are happening on the server. Events are being passed from the client to the server, the latest view is rendered and a minimal diff update is sent back to the client a which is then patched into the DOM. Pretty neat!",
+                "Remember, all of these state changes are happening on the server. Events are being passed from the client to the server, the latest view is rendered and a minimal diff update is sent back to the client a which is then patched into the DOM!",
               ),
             ],
           ),

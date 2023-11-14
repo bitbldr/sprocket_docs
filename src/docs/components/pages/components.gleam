@@ -521,7 +521,7 @@ pub fn components_page(ctx: Context, _props: ComponentsPageProps) {
             [],
             [
               text(
-                "Components are the fundamental building blocks of Sprocket applications. They can be composed together to create rich user interfaces. Let's take a look at an example of a view that uses the ",
+                "Components can be composed together to create rich user interfaces. Let's take a look at an example of a view that uses the ",
               ),
               code_text([], "toggle_button"),
               text(" and the "),
