@@ -23,7 +23,7 @@ pub fn hooks_page(ctx: Context, _props: HooksPageProps) {
             [],
             [
               text(
-                "Hooks are an essential mechanism that enable components to implement stateful logic, produce and consume side-effects,
+                "Hooks are the essential mechanism that enable components to implement stateful logic, produce and consume side-effects,
                 and couple a component to it's hierarchical context within the UI tree. They also make it easy to abstract and reuse
                 stateful logic across different components.",
               ),
@@ -33,7 +33,7 @@ pub fn hooks_page(ctx: Context, _props: HooksPageProps) {
             [],
             [
               text(
-                "At their core, hooks are higher order functions that are called within a stateful component that take the current context (and possibly other values) and provide a list of arguments that can be used within the component. For example, the ",
+                "At their core, hooks are higher order functions that are called from a stateful component which take the current context (and possibly other values) and provide a list of values that can be used within the component. For example, the ",
               ),
               code_text([], "state"),
               text(" hook provides the current state and a setter function."),
@@ -64,7 +64,7 @@ pub fn hooks_page(ctx: Context, _props: HooksPageProps) {
               text("Understanding how the"),
               code_text([], "use"),
               text(
-                " keyword and higher order functions work in Gleam is necessary to fully understand and make use of hooks. Check out the ",
+                " keyword and higher order functions work in Gleam is necessary to fully understand hooks. Check out the ",
               ),
               a_text(
                 [href("https://gleam.run/book/tour/use.html"), target("_blank")],
@@ -77,7 +77,7 @@ pub fn hooks_page(ctx: Context, _props: HooksPageProps) {
             [],
             [
               text(
-                "Sprocket provides a common set of native hooks that can be used from the ",
+                "Sprocket provides a common set of native hooks that can be imported from the ",
               ),
               code_text([], "sprocket/hooks"),
               text(" module."),
@@ -91,7 +91,7 @@ pub fn hooks_page(ctx: Context, _props: HooksPageProps) {
           ),
           p_text(
             [],
-            "In this page we'll go over each of the native hooks and how to use them.",
+            "We'll go over each of the native hooks and how to use them and also cover how to create custom hooks.",
           ),
           h2([], [text("State Hooks")]),
           p(
@@ -113,7 +113,7 @@ pub fn hooks_page(ctx: Context, _props: HooksPageProps) {
             [],
             [
               text(
-                "Reducer hooks are used to manage more complex state, which can be referred to as a model. Similar to the State hook, a reducer will maintain the state across renders. However, a reducer is better for when state changes require complex transforms to a model state tree or if an Elm or Redux architecture are prefferred.",
+                "Reducer hooks are used to manage more complex state, which can be referred to as a model. Similar to the State hook, a reducer will maintain the state across renders and be reinitialized when a component is mounted. However, a reducer is better for when state changes require complex transforms to a state model or if an Elm or Redux architecture are preferred.",
               ),
             ],
           ),
