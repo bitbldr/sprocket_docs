@@ -75,10 +75,9 @@ pub fn introduction_page(ctx: Context, _props: IntroductionPageProps) {
             [
               text(
                 "
-                  Sprocket attempts to bridge the gap between existing functional component libraries, type-safety, and real-time server rendered views.
-                  The main goal is to enable developers to quickly construct server-side views without compromising on type guarantees while requiring
-                  less code so you can focus on your business logic and ship faster. By leveraging the Erlang Beam VM, Sprocket enables performant,
-                  high-throughput, and fault-tolerant server rendered applications.
+                  The main goal of this library is to bridge the gap between existing functional component libraries, type-safety, and real-time server rendered
+                  views so that developers can quickly construct applications without compromising on type guarantees. By leveraging the Erlang Beam VM,
+                  Sprocket is built on a solid foundation that enables performant, scalable, and fault-tolerant applications.
                 ",
               ),
             ],
