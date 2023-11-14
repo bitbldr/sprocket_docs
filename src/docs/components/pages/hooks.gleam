@@ -393,14 +393,14 @@ pub fn hooks_page(ctx: Context, _props: HooksPageProps) {
             pub fn display(ctx: Context, props: DisplayProps) {
               let DisplayProps(count: count, on_reset: on_reset) = props
 
-              use ctx, client_doubleclick <- double_click(ctx, fn() { dispatch(Reset) }})
+              use ctx, handle_doubleclick <- double_click(ctx, fn() { dispatch(Reset) }})
 
               render(
                 ctx,
                 [
                   span(
                     [
-                      client_doubleclick(),
+                      handle_doubleclick(),
                       class(
                         \"p-1 px-2 w-10 bg-white dark:bg-gray-900 border-t border-b dark:border-gray-500 align-center text-center\",
                       ),
