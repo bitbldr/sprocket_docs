@@ -1,6 +1,6 @@
 import gleam/list
 import gleam/result
-import gleam/option.{None}
+import gleam/option.{None, Some}
 import sprocket/context.{Context}
 import sprocket/component.{component, render}
 import sprocket/html/elements.{body, div, head, html, link, meta, script, title}
@@ -124,7 +124,7 @@ pub fn page_view(ctx: Context, props: PageViewProps) {
               script(
                 [
                   src(
-                    "//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.0.1/highlight.min.js",
+                    "https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@latest/build/highlight.min.js",
                   ),
                 ],
                 None,
@@ -197,6 +197,7 @@ pub fn page_view(ctx: Context, props: PageViewProps) {
                 ),
               ),
               script([src("/app.js")], None),
+              script([], Some("hljs.highlightAll();")),
             ],
           ),
         ],

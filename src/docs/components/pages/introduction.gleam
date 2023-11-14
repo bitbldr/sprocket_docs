@@ -63,9 +63,9 @@ pub fn introduction_page(ctx: Context, _props: IntroductionPageProps) {
             [
               text(
                 "
-                  Based on a collection of proven functional patterns that empower developers to build real-time applications with ease,
-                  Sprocket embraces the strengths of the Erlang Beam virtual machine's concurrency and fault-tolerance capabilities. It
-                  offers an expressive and intuitive syntax, making it easier to reason about complex systems and craft maintainable code.
+                  Sprocket is designed around a collection of proven functional patterns that empower developers to build scalable applications with ease.
+                  Embracing the strengths of the Erlang Beam virtual machine's concurrency and fault-tolerance capabilities enables developers to build
+                  highly scalable and fault-tolerant applications that are easy to reason about and maintain.
                 ",
               ),
             ],
@@ -75,10 +75,10 @@ pub fn introduction_page(ctx: Context, _props: IntroductionPageProps) {
             [
               text(
                 "
-                  Sprocket attempts to bridge the gap between existing functional component libraries, type-safety, and real-time server renderd views.
-                  The main goal is to enable developers to quickly construct server-side views without compromising on correctness guarantees or maintainability.
-                  By leveraging the Erlang Beam VM, Sprocket enables high-throughput, fault-tolerant, and real-time server renderd applications that 
-                  reduce the amount of code required to build web applications so you can focus on your business logic and ship faster.
+                  Sprocket attempts to bridge the gap between existing functional component libraries, type-safety, and real-time server rendered views.
+                  The main goal is to enable developers to quickly construct server-side views without compromising on type guarantees while requiring
+                  less code so you can focus on your business logic and ship faster. By leveraging the Erlang Beam VM, Sprocket enables performant,
+                  high-throughput, and fault-tolerant server rendered applications.
                 ",
               ),
             ],
@@ -98,8 +98,7 @@ pub fn introduction_page(ctx: Context, _props: IntroductionPageProps) {
                         [text("Real-time Components: ")],
                       ),
                       text(
-                        "Build reactive and real-time applications effortlessly by designing modular and reusable components with Sprocket's
-                      declarative approach.",
+                        "Build scalable real-time server-rendered applications by designing modular and reusable components with Sprocket's declarative approach.",
                       ),
                     ],
                   ),
@@ -108,7 +107,7 @@ pub fn introduction_page(ctx: Context, _props: IntroductionPageProps) {
                     [
                       span([class("font-bold")], [text("Type-Safety: ")]),
                       text(
-                        "Gleam's static typing guarantees that your code is free of runtime errors, making it easier to reason about complex systems and
+                        "Gleam's static typing guarantees that your code is free of runtime errors while making it easier to reason about complex systems and
                         build maintainable codebases.",
                       ),
                     ],
@@ -128,7 +127,7 @@ pub fn introduction_page(ctx: Context, _props: IntroductionPageProps) {
                     [
                       span([class("font-bold")], [text("Fault-Tolerance: ")]),
                       text(
-                        "Battle-tested fault-tolerance mechanisms ensure that your applications stay resilient even under adverse conditions.",
+                        "Battle-tested fault-tolerance mechanisms ensure that your applications are resilient even under adverse conditions.",
                       ),
                     ],
                   ),
@@ -137,7 +136,7 @@ pub fn introduction_page(ctx: Context, _props: IntroductionPageProps) {
                     [
                       span([class("font-bold")], [text("Interoperability: ")]),
                       text(
-                        "Seamlessly plug-in existing Erlang/Elixir libraries with Gleam's first class FFI.",
+                        "Seamlessly plug-in to Erlang/Elixir's exisitng libraries with Gleam's first class FFI.",
                       ),
                     ],
                   ),
@@ -146,7 +145,7 @@ pub fn introduction_page(ctx: Context, _props: IntroductionPageProps) {
                     [
                       span([class("font-bold")], [text("Scalability: ")]),
                       text(
-                        "Scaling your application is a breeze thanks to the Erlang Beam VM's distributed nature.",
+                        "Easily scale your application thanks to the Erlang Beam VM's distributed nature.",
                       ),
                     ],
                   ),
