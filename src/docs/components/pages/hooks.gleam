@@ -1,8 +1,6 @@
-import sprocket/context.{Context}
+import sprocket/context.{type Context}
 import sprocket/component.{component, render}
-import sprocket/html/elements.{
-  a_text, article, code_text, h1, h2, p, p_text, text,
-}
+import sprocket/html/elements.{a, article, code_text, h1, h2, p, p_text, text}
 import sprocket/html/attributes.{href, target}
 import docs/components/common.{codeblock, example}
 import docs/components/events_counter.{CounterProps, counter}
@@ -33,7 +31,10 @@ pub fn hooks_page(ctx: Context, _props: HooksPageProps) {
             [],
             [
               text(
-                "At their core, hooks are higher order functions that are called from a stateful component which take the current context (and possibly other values) and provide a list of values that can be used within the component. For example, the ",
+                "Fundamentally, hooks are just higher order functions that are called from a stateful component which take the current
+                context (and possibly other values) and provide a list of variables that can be used within the component. Internally,
+                these function's can 'hook' into the component's lifecycle using this context and create the basis for stateful logic.
+                For example, the ",
               ),
               code_text([], "state"),
               text(" hook provides the current state and a setter function."),
@@ -61,14 +62,18 @@ pub fn hooks_page(ctx: Context, _props: HooksPageProps) {
           p(
             [],
             [
-              text("Understanding how the"),
+              text("Understanding the"),
               code_text([], "use"),
               text(
-                " keyword and higher order functions work in Gleam is necessary to fully understand hooks. Check out the ",
+                " keyword and how higher order functions work in Gleam is necessary to fully understand the hook syntax. Check out the ",
               ),
-              a_text(
+              a(
                 [href("https://gleam.run/book/tour/use.html"), target("_blank")],
-                "official Gleam documentation on Use expressions",
+                [
+                  text("official Gleam documentation on "),
+                  code_text([], "use"),
+                  text(" expressions"),
+                ],
               ),
               text(" for more information."),
             ],
@@ -91,7 +96,7 @@ pub fn hooks_page(ctx: Context, _props: HooksPageProps) {
           ),
           p_text(
             [],
-            "We'll go over each of the native hooks and how to use them and also cover how to create custom hooks.",
+            "We'll go over each of the native hooks and how to use them and also cover how to compose them to create custom hooks.",
           ),
           h2([], [text("State Hooks")]),
           p(
@@ -359,7 +364,7 @@ pub fn hooks_page(ctx: Context, _props: HooksPageProps) {
             "gleam",
             "
             pub fn double_click(ctx: Context, on_double_click: fn() -> Nil, cb) {
-              use ctx, client_doubleclick, _client_doubleclick_dispatch <- client(
+              use ctx, handle_doubleclick, _client_doubleclick_dispatch <- client(
                 ctx,
                 \"DoubleClick\",
                 Some(fn(msg, _payload, _dispatch) {
@@ -372,7 +377,7 @@ pub fn hooks_page(ctx: Context, _props: HooksPageProps) {
                 }),
               )
 
-              cb(ctx, client_doubleclick)
+              cb(ctx, handle_doubleclick)
             }
 
             ",

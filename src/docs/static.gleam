@@ -1,8 +1,8 @@
-import gleam/http/response.{Response}
-import gleam/http/request.{Request}
-import gleam/http/service.{Service}
+import gleam/http/response.{type Response, Response}
+import gleam/http/request.{type Request}
+import gleam/http/service.{type Service}
 import gleam/bit_builder
-import mist.{ResponseData}
+import mist.{type ResponseData}
 import gleam/erlang/file
 import gleam/result
 import gleam/string

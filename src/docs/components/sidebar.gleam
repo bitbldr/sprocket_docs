@@ -1,14 +1,14 @@
 import gleam/int
-import gleam/option.{None, Option, Some}
-import sprocket/context.{Context}
+import gleam/option.{type Option, None, Some}
+import sprocket/context.{type Context}
 import sprocket/component.{component, render}
 import sprocket/hooks.{reducer}
 import sprocket/html/elements.{a, div, keyed, text}
 import sprocket/html/attributes.{class, classes}
-import sprocket/internal/utils/ordered_map.{KeyedItem, OrderedMap}
+import sprocket/internal/utils/ordered_map.{type OrderedMap, KeyedItem}
 import docs/utils/common.{maybe}
 import docs/components/search_bar.{SearchBarProps, search_bar}
-import docs/page_route.{Page, PageRoute}
+import docs/page_route.{type Page, type PageRoute}
 
 type Model {
   Model(search_filter: Option(String))

@@ -1,5 +1,5 @@
 import gleam/option.{None, Some}
-import sprocket/context.{Context}
+import sprocket/context.{type Context}
 import sprocket/component.{component, render}
 import sprocket/html/elements.{article, h1, p, text}
 import docs/components/clock.{ClockProps, clock}

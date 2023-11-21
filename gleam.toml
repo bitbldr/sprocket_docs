@@ -8,6 +8,7 @@ description = "Documentation for Sprocket, a library for building live views and
 licenses = ["MIT"]
 repository = { type = "github", user = "bitbldr", repo = "sprocket_docs" }
 links = [{ title = "Website", href = "https://sprocket.live" }]
+gleam = ">= 0.32.0"
 
 # Modules that should be considered "internal" and will not be included in
 # generated documentation. Note this currently only affects documentation;
@@ -20,10 +21,10 @@ links = [{ title = "Website", href = "https://sprocket.live" }]
 #]
 
 [dependencies]
-gleam_stdlib = "~> 0.31"
+gleam_stdlib = "~> 0.32"
 gleam_http = "~> 3.5"
 mist = "~> 0.14.0"
-sprocket = "~> 0.1.8"
+sprocket = "~> 0.1.9"
 #sprocket = { path = "../sprocket" }
 gleam_erlang = "~> 0.22"
 gleam_json = "~> 0.6"

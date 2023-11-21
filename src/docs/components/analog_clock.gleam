@@ -2,7 +2,7 @@ import gleam/int
 import gleam/float
 import gleam/erlang
 import gleam/option.{Some}
-import sprocket/context.{Context, WithDeps, dep}
+import sprocket/context.{type Context, WithDeps, dep}
 import sprocket/component.{render}
 import sprocket/hooks.{effect, reducer}
 import sprocket/html/attributes.{xmlns, xmlns_xlink}

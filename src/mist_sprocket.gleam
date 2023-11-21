@@ -1,20 +1,20 @@
 import gleam/io
 import gleam/option.{None}
 import gleam/list
-import gleam/bit_string
-import gleam/bit_builder.{BitBuilder}
+import gleam/bit_array
+import gleam/bit_builder.{type BitBuilder}
 import gleam/otp/actor
 import gleam/erlang/process
-import gleam/http/request.{Request}
-import gleam/http/response.{Response}
+import gleam/http/request.{type Request}
+import gleam/http/response.{type Response}
 import ids/uuid
-import mist.{Connection, ResponseData}
+import mist.{type Connection, type ResponseData}
 import sprocket
-import sprocket/cassette.{Cassette}
+import sprocket/cassette.{type Cassette}
 import sprocket/render.{render}
 import sprocket/component.{component}
 import sprocket/html/render as html_render
-import sprocket/context.{FunctionalComponent}
+import sprocket/context.{type FunctionalComponent}
 import sprocket/internal/logger
 
 pub fn live(
@@ -36,7 +36,7 @@ pub fn live(
           handle_ws_message(id, state, conn, message, ca, view)
         },
         fn() { #(Nil, None) },
-        fn() { sprocket.cleanup(ca, id) },
+        fn(_) { sprocket.cleanup(ca, id) },
       )
     }
 
@@ -59,7 +59,7 @@ fn mist_response(response: Response(BitBuilder)) -> Response(ResponseData) {
 
 fn handle_ws_message(id: String, state: Nil, conn, message, ca, view) {
   let ws_send = fn(msg) {
-    case mist.send_text_frame(conn, bit_string.from_string(msg)) {
+    case mist.send_text_frame(conn, bit_array.from_string(msg)) {
       Ok(_) -> Ok(Nil)
       Error(_) -> {
         logger.error("failed to send websocket message: " <> msg)
@@ -70,7 +70,7 @@ fn handle_ws_message(id: String, state: Nil, conn, message, ca, view) {
 
   case message {
     mist.Text(msg) -> {
-      let assert Ok(msg) = bit_string.to_string(msg)
+      let assert Ok(msg) = bit_array.to_string(msg)
 
       let _ = sprocket.handle_client(id, ca, view, msg, ws_send)
 

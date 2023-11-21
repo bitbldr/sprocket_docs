@@ -1,6 +1,6 @@
 import gleam/list
 import gleam/string
-import sprocket/context.{Context}
+import sprocket/context.{type Context}
 import sprocket/component.{component, render}
 import sprocket/html/elements.{a, div, i, span, text}
 import sprocket/html/attributes.{class, href}

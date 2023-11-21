@@ -1,6 +1,6 @@
-import gleam/option.{None, Option, Some}
+import gleam/option.{type Option, None, Some}
 import gleam/erlang
-import sprocket/context.{Context, WithDeps}
+import sprocket/context.{type Context, WithDeps}
 import sprocket/component.{component, render}
 import sprocket/html/elements.{
   a_text, article, button_text, dangerous_raw_html, div, h1, h2, p, p_text, text,

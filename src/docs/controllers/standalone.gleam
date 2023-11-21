@@ -1,13 +1,13 @@
 import gleam/bit_builder
 import gleam/option.{Some}
-import gleam/http/request.{Request}
-import gleam/http/response.{Response}
-import mist.{Connection, ResponseData}
+import gleam/http/request.{type Request}
+import gleam/http/response.{type Response}
+import mist.{type Connection, type ResponseData}
 import sprocket/render.{render}
 import sprocket/component.{component}
 import sprocket/html/render as html_render
 import docs/components/counter.{CounterProps, counter}
-import docs/app_context.{AppContext}
+import docs/app_context.{type AppContext}
 import docs/utils/common.{mist_response}
 import docs/utils/csrf
 

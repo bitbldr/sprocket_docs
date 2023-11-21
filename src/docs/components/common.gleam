@@ -1,7 +1,7 @@
 import gleam/string
 import gleam/list
 import gleam/int
-import sprocket/context.{Element}
+import sprocket/context.{type Element}
 import sprocket/html/elements.{code_text, div, ignored, pre}
 import sprocket/html/attributes.{class}
 

@@ -1,4 +1,4 @@
-import sprocket/context.{Context, Element, WithDeps, dep}
+import sprocket/context.{type Context, type Element, WithDeps, dep}
 import sprocket/component.{render}
 import sprocket/html/elements.{button}
 import sprocket/html/attributes.{class, on_click}

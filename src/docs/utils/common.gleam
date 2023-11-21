@@ -1,10 +1,10 @@
-import gleam/option.{None, Option, Some}
-import gleam/bit_builder.{BitBuilder}
-import gleam/http/response.{Response}
+import gleam/option.{type Option, None, Some}
+import gleam/bit_builder.{type BitBuilder}
+import gleam/http/response.{type Response}
 import gleam/crypto
 import gleam/base
 import gleam/string
-import mist.{ResponseData}
+import mist.{type ResponseData}
 
 /// Maybe return Some element if the condition is true
 /// otherwise return None

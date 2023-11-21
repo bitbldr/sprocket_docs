@@ -1,7 +1,7 @@
 import gleam/list
 import gleam/result
 import gleam/option.{None, Some}
-import sprocket/context.{Context}
+import sprocket/context.{type Context}
 import sprocket/component.{component, render}
 import sprocket/html/elements.{body, div, head, html, link, meta, script, title}
 import sprocket/html/attributes.{
@@ -36,8 +36,8 @@ import docs/components/pages/under_the_hood.{
   UnderTheHoodProps, under_the_hood_page,
 }
 import docs/page_route.{
-  Components, Effects, Events, GettingStarted, Hooks, Introduction, Misc, Page,
-  PageRoute, StateManagement, UnderTheHood, Unknown,
+  type PageRoute, Components, Effects, Events, GettingStarted, Hooks,
+  Introduction, Misc, Page, StateManagement, UnderTheHood, Unknown,
 }
 
 pub type PageViewProps {

@@ -1,4 +1,4 @@
-import sprocket/context.{Context}
+import sprocket/context.{type Context}
 import sprocket/component.{component, render}
 import sprocket/html/elements.{article, code_text, h1, h2, p, text}
 import docs/components/hello_button.{HelloButtonProps, hello_button}

@@ -1,8 +1,8 @@
 import gleam/int
 import gleam/list
 import gleam/pair
-import gleam/option.{None, Option, Some}
-import sprocket/context.{Context, WithDeps}
+import gleam/option.{type Option, None, Some}
+import sprocket/context.{type Context, WithDeps}
 import sprocket/component.{render}
 import sprocket/hooks.{callback, reducer}
 import sprocket/html/elements.{button, div, span, text}

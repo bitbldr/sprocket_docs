@@ -1,20 +1,20 @@
-import gleam/bit_builder.{BitBuilder}
+import gleam/bit_builder.{type BitBuilder}
 import gleam/string
 import gleam/option.{Some}
 import gleam/bit_string
 import gleam/result
 import gleam/erlang
 import gleam/http.{Get}
-import gleam/http/request.{Request}
-import gleam/http/response.{Response}
-import mist.{Connection, ResponseData}
-import gleam/http/service.{Service}
+import gleam/http/request.{type Request}
+import gleam/http/response.{type Response}
+import mist.{type Connection, type ResponseData}
+import gleam/http/service.{type Service}
 import docs/log_requests
 import docs/static
 import docs/utils/csrf
 import docs/utils/logger
 import docs/utils/common.{mist_response}
-import docs/app_context.{AppContext}
+import docs/app_context.{type AppContext}
 import docs/views/page_view.{PageViewProps, page_view}
 import docs/page_route
 import docs/controllers/standalone.{standalone}
@@ -64,8 +64,8 @@ pub fn stack(ctx: AppContext) -> Service(Connection, ResponseData) {
 
 pub fn string_body_middleware(
   service: Service(String, String),
-) -> Service(BitString, BitBuilder) {
-  fn(request: Request(BitString)) {
+) -> Service(BitArray, BitBuilder) {
+  fn(request: Request(BitArray)) {
     case bit_string.to_string(request.body) {
       Ok(body) -> service(request.set_body(request, body))
       Error(_) -> bad_request()
@@ -100,11 +100,11 @@ pub fn internal_server_error() -> Response(String) {
 
 pub fn http_service(
   req: Request(Connection),
-  service: Service(BitString, BitBuilder),
+  service: Service(BitArray, BitBuilder),
 ) -> Response(ResponseData) {
   req
   |> mist.read_body(1024 * 1024 * 10)
-  |> result.map(fn(http_req: Request(BitString)) {
+  |> result.map(fn(http_req: Request(BitArray)) {
     http_req
     |> service()
     |> mist_response()
