@@ -108,7 +108,7 @@ pub fn page_view(ctx: Context, props: PageViewProps) {
                 rel("stylesheet"),
                 media("(prefers-color-scheme: dark)"),
                 href(
-                  "https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.8.0/build/styles/atom-one-dark.min.css",
+                  "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css",
                 ),
               ]),
               link([
@@ -118,13 +118,13 @@ pub fn page_view(ctx: Context, props: PageViewProps) {
                   "(prefers-color-scheme: light), (prefers-color-scheme: no-preference)",
                 ),
                 href(
-                  "https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.8.0/build/styles/atom-one-light.min.css",
+                  "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-light.min.css",
                 ),
               ]),
               script(
                 [
                   src(
-                    "https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@latest/build/highlight.min.js",
+                    "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js",
                   ),
                 ],
                 None,

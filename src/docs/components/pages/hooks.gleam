@@ -1,8 +1,10 @@
 import sprocket/context.{type Context}
 import sprocket/component.{component, render}
-import sprocket/html/elements.{a, article, code_text, h1, h2, p, p_text, text}
-import sprocket/html/attributes.{href, target}
-import docs/components/common.{codeblock, example}
+import sprocket/html/elements.{
+  a, article, code_text, div, h1, h2, p, p_text, span_text, text,
+}
+import sprocket/html/attributes.{class, href, target}
+import docs/components/common.{alert, codeblock, example}
 import docs/components/events_counter.{CounterProps, counter}
 
 pub type HooksPageProps {
@@ -37,14 +39,13 @@ pub fn hooks_page(ctx: Context, _props: HooksPageProps) {
                 For example, the ",
               ),
               code_text([], "state"),
-              text(" hook provides the current state and a setter function."),
+              text(" hook provides a state variable and a setter function."),
             ],
           ),
           codeblock(
             "gleam",
             "
-            pub fn example(ctx: Context, props: ExampleProps) {
-              let ExampleProps(...) = props
+            pub fn example(ctx: Context, _props: ExampleProps) {
 
               use ctx, count, set_count <- state(ctx, 0)
 
@@ -78,6 +79,20 @@ pub fn hooks_page(ctx: Context, _props: HooksPageProps) {
               text(" for more information."),
             ],
           ),
+          alert(
+            common.Info,
+            [
+              div(
+                [],
+                [
+                  span_text([class("font-bold")], "Note:"),
+                  text(
+                    " Hooks must be called in exactly the same order on every render and should be defined at the top level of a component. This means hooks cannot be called conditionally or within loops or nested functions.",
+                  ),
+                ],
+              ),
+            ],
+          ),
           p(
             [],
             [
@@ -91,19 +106,19 @@ pub fn hooks_page(ctx: Context, _props: HooksPageProps) {
           codeblock(
             "gleam",
             "
-            import sprocket/hooks.{state, reducer, callback, effect, memo, channel, context, params, portal, client}
+            import sprocket/hooks.{state, reducer, callback, effect, memo, channel, context, portal, client}
             ",
           ),
           p_text(
             [],
-            "We'll go over each of the native hooks and how to use them and also cover how to compose them to create custom hooks.",
+            "We'll go over each of the native hooks and how to use them and also cover how to create custom hooks.",
           ),
           h2([], [text("State Hooks")]),
           p(
             [],
             [
               text(
-                "State hooks are used to manage state within a component. The current state along with a setter function are provided to the component. State is initialized to the value provided and can be updated by calling the setter function with the new value. State is maintained across renders but is reinitialized when a component is unmounted and remounted.",
+                "State hooks are used to manage a piece of state within a component. The current state along with a setter function are provided to the component. State is initialized to the value provided and can be updated by calling the setter function with the new value. State is maintained across renders but is reinitialized when a component is unmounted and remounted.",
               ),
             ],
           ),
@@ -118,7 +133,7 @@ pub fn hooks_page(ctx: Context, _props: HooksPageProps) {
             [],
             [
               text(
-                "Reducer hooks are used to manage more complex state, which can be referred to as a model. Similar to the State hook, a reducer will maintain the state across renders and be reinitialized when a component is mounted. However, a reducer is better for when state changes require complex transforms to a state model or if an Elm or Redux architecture are preferred.",
+                "Reducer hooks are used to manage more complex state, which can be referred to as a model. Similar to a state hook, a reducer will maintain the state across renders and be reinitialized when a component is mounted. However, a reducer is better for when state changes require complex transforms to a state model or when state logic needs to be abstracted out of a component module. For when an Elm or Redux architecture is preferred, a reducer hook should be used.",
               ),
             ],
           ),
@@ -209,7 +224,7 @@ pub fn hooks_page(ctx: Context, _props: HooksPageProps) {
             [],
             [
               text(
-                "Effect hooks are used to perform side-effects. They take a function that is called on mount and when the trigger value changes and can specify an optional cleanup function as a return value.",
+                "Effect hooks are used to perform side-effects. They take a function that is called on mount and when the trigger value changes. They can also specify an optional cleanup function as a return value.",
               ),
             ],
           ),
@@ -245,8 +260,6 @@ pub fn hooks_page(ctx: Context, _props: HooksPageProps) {
           h2([], [text("Channel Hooks")]),
           p([], [text("COMING SOON")]),
           h2([], [text("Context Hooks")]),
-          p([], [text("COMING SOON")]),
-          h2([], [text("Params Hooks")]),
           p([], [text("COMING SOON")]),
           h2([], [text("Portal Hooks")]),
           p([], [text("COMING SOON")]),

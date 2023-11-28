@@ -1,7 +1,7 @@
-import gleam/bit_builder.{type BitBuilder}
+import gleam/bytes_builder.{type BytesBuilder}
 import gleam/string
 import gleam/option.{Some}
-import gleam/bit_string
+import gleam/bit_array
 import gleam/result
 import gleam/erlang
 import gleam/http.{Get}
@@ -48,7 +48,7 @@ pub fn router(app_ctx: AppContext) {
 
       _, _ ->
         not_found()
-        |> response.map(bit_builder.from_string)
+        |> response.map(bytes_builder.from_string)
         |> mist_response()
     }
   }
@@ -64,13 +64,13 @@ pub fn stack(ctx: AppContext) -> Service(Connection, ResponseData) {
 
 pub fn string_body_middleware(
   service: Service(String, String),
-) -> Service(BitArray, BitBuilder) {
+) -> Service(BitArray, BytesBuilder) {
   fn(request: Request(BitArray)) {
-    case bit_string.to_string(request.body) {
+    case bit_array.to_string(request.body) {
       Ok(body) -> service(request.set_body(request, body))
       Error(_) -> bad_request()
     }
-    |> response.map(bit_builder.from_string)
+    |> response.map(bytes_builder.from_string)
   }
 }
 
@@ -100,7 +100,7 @@ pub fn internal_server_error() -> Response(String) {
 
 pub fn http_service(
   req: Request(Connection),
-  service: Service(BitArray, BitBuilder),
+  service: Service(BitArray, BytesBuilder),
 ) -> Response(ResponseData) {
   req
   |> mist.read_body(1024 * 1024 * 10)
@@ -111,7 +111,7 @@ pub fn http_service(
   })
   |> result.unwrap(
     response.new(500)
-    |> response.set_body(mist.Bytes(bit_builder.new())),
+    |> response.set_body(mist.Bytes(bytes_builder.new())),
   )
 }
 
@@ -124,7 +124,7 @@ pub fn rescue_crashes(
       logger.error(string.inspect(error))
 
       internal_server_error()
-      |> response.map(bit_builder.from_string)
+      |> response.map(bytes_builder.from_string)
       |> mist_response()
     }
   }

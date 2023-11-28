@@ -337,12 +337,12 @@ pub fn components_page(ctx: Context, _props: ComponentsPageProps) {
             [],
             [
               text(
-                "Not every component will require state management or hooks. In these cases a stateless functional component can be used. Stateless functional components are simply regular 
-                functions that encapsulate markup and functionality into independent and composable pieces. The function is called directly from the render function (opposed to wrapping it in ",
+                "Not every component will require state management or hooks. In these cases a stateless functional component can be used. Stateless functional components are just regular 
+                functions that encapsulate markup and functionality into independent and composable pieces. The function is called directly from the render function (opposed to using a ",
               ),
               code_text([], "component"),
               text(
-                " as seen previously with stateful components). Let's look at an example of a stateless functional component that renders a product card.",
+                " wrapper as seen previously with stateful components). Let's look at an example of a stateless functional component that renders a product card.",
               ),
             ],
           ),

@@ -2,6 +2,7 @@ import sprocket/context.{type Context}
 import sprocket/component.{render}
 import sprocket/html/elements.{article, div, h1, h2, li, p, span, text, ul}
 import sprocket/html/attributes.{class}
+import docs/components/common.{alert}
 
 pub type IntroductionPageProps {
   IntroductionPageProps
@@ -37,12 +38,8 @@ pub fn introduction_page(ctx: Context, _props: IntroductionPageProps) {
               ),
             ],
           ),
-          div(
-            [
-              class(
-                "flex flex-row p-4 mb-4 text-sm text-yellow-800 rounded-lg bg-yellow-50 dark:bg-gray-800 dark:text-yellow-300",
-              ),
-            ],
+          alert(
+            common.Warning,
             [
               div([class("mr-2")], [span([class("text-xl")], [text("🚧")])]),
               div(
