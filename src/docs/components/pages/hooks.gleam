@@ -219,6 +219,41 @@ pub fn hooks_page(ctx: Context, _props: HooksPageProps) {
               )
             ",
           ),
+          p(
+            [],
+            [
+              alert(
+                common.Info,
+                [
+                  div(
+                    [],
+                    [
+                      span_text([class("font-bold")], "Note:"),
+                      text(
+                        " Callback hooks serve a different purpose in Sprocket than useCallback in React. In React, useCallback is used to prevent unnecessary re-renders of child components similar to useMemo. In Sprocket, callback hooks are used to create identifiable callbacks for event handler attributes.",
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              text(
+                "
+                    If you are familiar with React, you may be wondering why callback hooks are different in Sprocket. In React, ",
+              ),
+              code_text([], "useCallback(fn, deps)"),
+              text(" is equivalent to "),
+              code_text([], "useMemo(() => fn, deps)"),
+              text(". So sprocket uses the "),
+              code_text([], "memo"),
+              text(
+                "hook to handle both of these cases regardless of whether the value is a function or not. Since Sprocket needs to track id's across renders and event handler attributes require an ",
+              ),
+              code_text([], "IdentifiableCallback"),
+              text(
+                " type to do so, we instead use the callback hook for this purpose which creates an identifiable callback which can be attached to an event handler attribute.",
+              ),
+            ],
+          ),
           h2([], [text("Effect Hooks")]),
           p(
             [],
