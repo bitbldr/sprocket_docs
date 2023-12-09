@@ -270,7 +270,13 @@ pub fn hooks_page(ctx: Context, _props: HooksPageProps) {
             [],
             "Context hooks are used to access and subscribe to some data from a current component context.",
           ),
-          p([], [text("COMING SOON")]),
+          codeblock(
+            "gleam",
+            "
+            use ctx, current_user <- context(ctx, CurrentUser)
+            ",
+          ),
+          p_text([], "COMING SOON"),
           h2([], [text("Client Hooks")]),
           p(
             [],
