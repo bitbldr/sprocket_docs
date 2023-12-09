@@ -268,7 +268,7 @@ pub fn hooks_page(ctx: Context, _props: HooksPageProps) {
           h2([], [text("Context Hooks")]),
           p_text(
             [],
-            "Context hooks are used to access and subscribe to some data from a current component context.",
+            "Context hooks are used to dynamically access and subscribe to some data from a current component context.",
           ),
           codeblock(
             "gleam",
