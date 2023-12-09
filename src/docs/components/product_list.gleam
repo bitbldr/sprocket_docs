@@ -2,9 +2,9 @@ import gleam/int
 import gleam/list
 import gleam/float
 import gleam/option.{type Option, None, Some}
-import sprocket/context.{type Context, type Element, OnMount, WithDeps, dep}
+import sprocket/context.{type Context, type Element}
 import sprocket/component.{component, render}
-import sprocket/hooks.{callback, reducer, state}
+import sprocket/hooks.{handler, reducer, state}
 import sprocket/html/elements.{
   button, button_text, div, div_text, h5_text, i, img, keyed, li, text, ul,
 }
@@ -112,22 +112,20 @@ pub fn product(ctx: Context, props: ProductProps) {
 
   use ctx, in_cart, set_in_cart <- state(ctx, False)
 
-  use ctx, toggle_in_cart <- callback(
+  use ctx, toggle_in_cart <- handler(
     ctx,
     fn(_) {
       set_in_cart(!in_cart)
       Nil
     },
-    WithDeps([dep(in_cart)]),
   )
 
-  use ctx, on_hide <- callback(
+  use ctx, on_hide <- handler(
     ctx,
     fn(_) {
       on_hide(product.id)
       Nil
     },
-    OnMount,
   )
 
   render(
@@ -212,7 +210,7 @@ pub fn product_list(ctx: Context, props: ProductListProps) {
 
   use ctx, Model(hidden), dispatch <- reducer(ctx, initial(), update)
 
-  use ctx, reset <- callback(ctx, fn(_) { dispatch(Reset) }, OnMount)
+  use ctx, reset <- handler(ctx, fn(_) { dispatch(Reset) })
 
   render(
     ctx,

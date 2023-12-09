@@ -184,7 +184,7 @@ pub fn components_page(ctx: Context, _props: ComponentsPageProps) {
             [
               text(
                 "We'll cover events, state management and hooks more in-depth a bit later. For now, we'll just add a simple state hook
-                and callback hook to our button component which will toggle the label when the button is clicked. We'll call our new component ",
+                and handler hook to our button component which will toggle the label when the button is clicked. We'll call our new component ",
               ),
               code_text([], "toggle_button"),
               text(
@@ -203,7 +203,7 @@ pub fn components_page(ctx: Context, _props: ComponentsPageProps) {
             import sprocket/component.{render}
             import sprocket/html/elements.{button}
             import sprocket/html/attributes.{class, on_click}
-            import sprocket/hooks.{callback, state}
+            import sprocket/hooks.{handler, state}
 
             pub type ToggleButtonProps {
               ToggleButtonProps(render_label: fn(Bool) -> Element)
@@ -215,14 +215,13 @@ pub fn components_page(ctx: Context, _props: ComponentsPageProps) {
               // add a state hook to track the active state, we'll cover hooks in more detail later
               use ctx, is_active, set_active <- state(ctx, False)
 
-              // add a callback hook to toggle the active state
-              use ctx, toggle_active <- callback(
+              // add a handler hook to toggle the active state
+              use ctx, toggle_active <- handler(
                 ctx,
                 fn(_) {
                   set_active(!is_active)
                   Nil
                 },
-                WithDeps([dep(is_active)]),
               )
 
               render(
@@ -251,7 +250,7 @@ pub fn components_page(ctx: Context, _props: ComponentsPageProps) {
               text("We've added a "),
               code_text([], "state"),
               text(" hook to track the active state of our button and a "),
-              code_text([], "callback"),
+              code_text([], "handler"),
               text(
                 " hook to toggle the active state when the button is clicked. We've also added a ",
               ),

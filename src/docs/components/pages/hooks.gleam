@@ -106,7 +106,7 @@ pub fn hooks_page(ctx: Context, _props: HooksPageProps) {
           codeblock(
             "gleam",
             "
-            import sprocket/hooks.{state, reducer, callback, effect, memo, channel, context, portal, client}
+            import sprocket/hooks.{state, reducer, handler, effect, memo, callback, channel, context, portal, client}
             ",
           ),
           p_text(
@@ -182,77 +182,22 @@ pub fn hooks_page(ctx: Context, _props: HooksPageProps) {
             [],
             "Reducer hooks allow state management to be refactored out of the component file and into a separate module. This can be useful for complex state management logic or message types that are shared across multiple components.",
           ),
-          h2([], [text("Callback Hooks")]),
+          h2([], [text("Handler Hooks")]),
           p(
             [],
             [
               text(
-                "Callback hooks are used to create identifiable callbacks which remain consistent across renders, minimizing unnecessary id changes in diff patches. Most event handler attributes require an ",
+                "Handler hooks are used to create event handlers, They take a function and return an IdentifiableCallback. The IdentifiableCallback can be passed to an event handler attribute and ensures that event id's do not change across renders resulting in unecessary diff patching. The callback will be called when the event is triggered and provide an optional CallbackParam depedning on the event type.",
               ),
-              code_text([], "IdentifiableCallback"),
-              text(" and therefore must use a callback hook."),
             ],
           ),
           codeblock(
             "gleam",
             "
-              use ctx, increment <- callback(
-                ctx,
-                fn(_) { dispatch(SetCount(count + 1)) },
-                WithDeps([dep(count)]),
-              )
-
-              use ctx, reset <- callback(
-                ctx,
-                fn(_) { dispatch(Reset) },
-                WithDeps([]),
-              )
-
-              render(
-                ctx,
-                [
-                  span([], [text(int.to_string(count))]),
-                  button([on_click(increment)], [text(\"+\")]),
-                  button([on_click(reset)], [text(\"Reset\")]),
-                ],
-              )
-              )
+            use ctx, increment <- handler(ctx, fn(_) {
+              dispatch(Increment)
+            })
             ",
-          ),
-          p(
-            [],
-            [
-              alert(
-                common.Info,
-                [
-                  div(
-                    [],
-                    [
-                      span_text([class("font-bold")], "Note:"),
-                      text(
-                        " Callback hooks serve a different purpose in Sprocket than useCallback in React. In React, useCallback is used to prevent unnecessary re-renders of child components similar to useMemo. In Sprocket, callback hooks are used to create identifiable callbacks for event handler attributes.",
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-              text(
-                "
-                    If you are familiar with React, you may be wondering why callback hooks are different in Sprocket. In React, ",
-              ),
-              code_text([], "useCallback(fn, deps)"),
-              text(" is equivalent to "),
-              code_text([], "useMemo(() => fn, deps)"),
-              text(". So sprocket uses the "),
-              code_text([], "memo"),
-              text(
-                "hook to handle both of these cases regardless of whether the value is a function or not. Since Sprocket needs to track id's across renders and event handler attributes require an ",
-              ),
-              code_text([], "IdentifiableCallback"),
-              text(
-                " type to do so, we instead use the callback hook for this purpose which creates an identifiable callback which can be attached to an event handler attribute.",
-              ),
-            ],
           ),
           h2([], [text("Effect Hooks")]),
           p(
@@ -291,7 +236,35 @@ pub fn hooks_page(ctx: Context, _props: HooksPageProps) {
             ],
           ),
           h2([], [text("Memo Hooks")]),
-          p([], [text("COMING SOON")]),
+          p(
+            [],
+            [
+              text(
+                "Memo hooks are used to memoize a computed value. They take a function and a list of dependencies and return a memoized value. The memoized value will only be re-evaluated when the dependencies change.",
+              ),
+            ],
+          ),
+          codeblock(
+            "gleam",
+            "
+            use ctx, memoized_value <- memo(ctx, fn() { expensive_fn() }, WithDeps([dep(some_value)]))
+            ",
+          ),
+          h2([], [text("Callback Hooks")]),
+          p(
+            [],
+            [
+              text(
+                "Callback hooks are used to memoize a function. They take a function and a list of dependencies and return a memoized function. The memoized function will only be re-evaluated when the dependencies change.",
+              ),
+            ],
+          ),
+          codeblock(
+            "gleam",
+            "
+            use ctx, memoized_fn <- callback(ctx, some_fn, WithDeps([dep(some_value)]))
+            ",
+          ),
           h2([], [text("Channel Hooks")]),
           p([], [text("COMING SOON")]),
           h2([], [text("Context Hooks")]),

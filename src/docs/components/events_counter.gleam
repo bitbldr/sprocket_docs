@@ -1,8 +1,8 @@
 import gleam/int
 import gleam/option.{type Option, None, Some}
-import sprocket/context.{type Context, WithDeps, dep}
+import sprocket/context.{type Context}
 import sprocket/component.{component, render}
-import sprocket/hooks.{callback, client, reducer}
+import sprocket/hooks.{client, handler, reducer}
 import sprocket/html/elements.{button_text, div, span, text}
 import sprocket/html/attributes.{class, classes}
 
@@ -84,11 +84,7 @@ pub fn button(ctx: Context, props: ButtonProps) {
     StyledButtonProps(class, label, on_click) -> #(Some(class), label, on_click)
   }
 
-  use ctx, on_click <- callback(
-    ctx,
-    fn(_) { on_click() },
-    WithDeps([dep(on_click)]),
-  )
+  use ctx, on_click <- handler(ctx, fn(_) { on_click() })
 
   render(
     ctx,

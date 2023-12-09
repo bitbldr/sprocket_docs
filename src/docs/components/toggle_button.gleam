@@ -1,8 +1,8 @@
-import sprocket/context.{type Context, type Element, WithDeps, dep}
+import sprocket/context.{type Context, type Element}
 import sprocket/component.{render}
 import sprocket/html/elements.{button}
 import sprocket/html/attributes.{class, on_click}
-import sprocket/hooks.{callback, state}
+import sprocket/hooks.{handler, state}
 
 pub type ToggleButtonProps {
   ToggleButtonProps(render_label: fn(Bool) -> Element)
@@ -14,14 +14,13 @@ pub fn toggle_button(ctx: Context, props: ToggleButtonProps) {
   // add a state hook to track the active state, we'll cover hooks in more detail later
   use ctx, is_active, set_active <- state(ctx, False)
 
-  // add a callback hook to toggle the active state
-  use ctx, toggle_active <- callback(
+  // add a handler hook to toggle the active state
+  use ctx, toggle_active <- handler(
     ctx,
     fn(_) {
       set_active(!is_active)
       Nil
     },
-    WithDeps([dep(is_active)]),
   )
 
   render(

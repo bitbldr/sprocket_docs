@@ -1,12 +1,12 @@
 import gleam/option.{type Option, None, Some}
 import gleam/erlang
-import sprocket/context.{type Context, WithDeps}
+import sprocket/context.{type Context}
 import sprocket/component.{component, render}
 import sprocket/html/elements.{
   a_text, article, button_text, dangerous_raw_html, div, h1, h2, p, p_text, text,
 }
 import sprocket/html/attributes.{class, classes, href, on_click}
-import sprocket/hooks.{callback, reducer}
+import sprocket/hooks.{handler, reducer}
 import docs/components/clock.{ClockProps, clock}
 import docs/components/analog_clock.{AnalogClockProps, analog_clock}
 import docs/components/counter.{CounterProps, counter}
@@ -110,17 +110,12 @@ type UnitToggleProps {
 fn unit_toggle(ctx: Context, props: UnitToggleProps) {
   let UnitToggleProps(current, on_select) = props
 
-  use ctx, on_select_millisecond <- callback(
+  use ctx, on_select_millisecond <- handler(
     ctx,
     fn(_) { on_select(erlang.Millisecond) },
-    WithDeps([]),
   )
 
-  use ctx, on_select_second <- callback(
-    ctx,
-    fn(_) { on_select(erlang.Second) },
-    WithDeps([]),
-  )
+  use ctx, on_select_second <- handler(ctx, fn(_) { on_select(erlang.Second) })
 
   render(
     ctx,

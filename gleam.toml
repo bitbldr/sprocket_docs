@@ -24,7 +24,7 @@ gleam = ">= 0.32.0"
 gleam_stdlib = "~> 0.32"
 gleam_http = "~> 3.5"
 mist = "~> 0.14.0"
-sprocket = "~> 0.1.9"
+sprocket = "~> 0.1.10"
 #sprocket = { path = "../sprocket" }
 gleam_erlang = "~> 0.22"
 gleam_json = "~> 0.6"

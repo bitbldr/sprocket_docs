@@ -4,7 +4,7 @@ import gleam/string
 import gleam/option.{type Option, None}
 import sprocket/context.{type Context, WithDeps, dep}
 import sprocket/component.{render}
-import sprocket/hooks.{callback, effect, reducer}
+import sprocket/hooks.{effect, handler, reducer}
 import sprocket/html/elements.{button, div, span, text}
 import sprocket/html/attributes.{class, on_click}
 
@@ -44,15 +44,13 @@ pub fn counter(ctx: Context, props: CounterProps) {
   )
 
   // Define event handlers
-  use ctx, on_increment <- callback(
+  use ctx, increment <- handler(
     ctx,
     fn(_) { dispatch(UpdateCounter(count + 1)) },
-    WithDeps([dep(count)]),
   )
-  use ctx, on_decrement <- callback(
+  use ctx, decrement <- handler(
     ctx,
     fn(_) { dispatch(UpdateCounter(count - 1)) },
-    WithDeps([dep(count)]),
   )
 
   render(
@@ -66,7 +64,7 @@ pub fn counter(ctx: Context, props: CounterProps) {
               class(
                 "p-1 px-2 border dark:border-gray-500 rounded-l bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 active:bg-gray-300 dark:active:bg-gray-600",
               ),
-              on_click(on_decrement),
+              on_click(decrement),
             ],
             [text("-")],
           ),
@@ -83,7 +81,7 @@ pub fn counter(ctx: Context, props: CounterProps) {
               class(
                 "p-1 px-2 border dark:border-gray-500 rounded-r bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 active:bg-gray-300 dark:active:bg-gray-600",
               ),
-              on_click(on_increment),
+              on_click(increment),
             ],
             [text("+")],
           ),

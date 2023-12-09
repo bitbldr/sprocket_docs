@@ -28,7 +28,7 @@ pub fn state_management_page(ctx: Context, _props: StateManagementPageProps) {
               text(
                 " hook to model more complex state and transformations. We'll also utilize the ",
               ),
-              code_text([], "callback"),
+              code_text([], "handler"),
               text(" hook to help us dispatch events to the reducer."),
             ],
           ),
@@ -140,21 +140,20 @@ pub fn state_management_page(ctx: Context, _props: StateManagementPageProps) {
             [],
             [
               text(
-                "We need one more thing to complete our component. We need to define a function that will be called when the button is clicked. It's important that we define this as a callback function using the ",
+                "We need one more thing to complete our component. We need to define a function that will be called when the button is clicked. It's important that we create an IdentifiableHandler using the ",
               ),
-              code_text([], "callback"),
+              code_text([], "handler"),
               text(
-                " hook so that we can ensure the id of the callback function is maintained between renders, preventing a new id being created and sent to the client on every update.",
+                " hook so that we can ensure the id of the handler function is consistent across renders, preventing a new id being created and sent to the client on every update.",
               ),
             ],
           ),
           codeblock(
             "gleam",
             "
-            use ctx, on_hello_button <- callback(
+            use ctx, on_hello_button <- handler(
               ctx,
               fn(_) { dispatch(SayHello) },
-              WithDeps([]),
             )
             ",
           ),
@@ -176,7 +175,7 @@ pub fn state_management_page(ctx: Context, _props: StateManagementPageProps) {
             import gleam/option.{None, Option, Some}
             import sprocket/context.{Context, WithDeps}
             import sprocket/component.{render}
-            import sprocket/hooks.{State, reducer, callback}
+            import sprocket/hooks.{State, reducer, handler}
             import sprocket/html/elements.{button, div, span, text}
             import sprocket/html/attributes.{class, on_click}
 
@@ -212,10 +211,9 @@ pub fn state_management_page(ctx: Context, _props: StateManagementPageProps) {
                 update,
               )
 
-              use ctx, on_hello_button <- callback(
+              use ctx, on_hello_button <- handler(
                 ctx,
                 fn(_) { dispatch(SayHello) },
-                WithDeps([]),
               )
 
               // find the selected option using the selection index and list of options

@@ -2,9 +2,9 @@ import gleam/int
 import gleam/list
 import gleam/pair
 import gleam/option.{type Option, None, Some}
-import sprocket/context.{type Context, WithDeps}
+import sprocket/context.{type Context}
 import sprocket/component.{render}
-import sprocket/hooks.{callback, reducer}
+import sprocket/hooks.{handler, reducer}
 import sprocket/html/elements.{button, div, span, text}
 import sprocket/html/attributes.{class, on_click}
 
@@ -40,11 +40,7 @@ pub fn hello_button(ctx: Context, _props: HelloButtonProps) {
     update,
   )
 
-  use ctx, on_say_hello <- callback(
-    ctx,
-    fn(_) { dispatch(SayHello) },
-    WithDeps([]),
-  )
+  use ctx, on_say_hello <- handler(ctx, fn(_) { dispatch(SayHello) })
 
   let hello =
     selection

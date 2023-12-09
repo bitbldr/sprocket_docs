@@ -1,11 +1,10 @@
 import gleam/option.{Some}
-import sprocket/context.{type Context, WithDeps, dep}
+import sprocket/context.{type Context, CallbackString}
 import sprocket/component.{render}
-import sprocket/hooks.{callback, reducer}
+import sprocket/hooks.{handler, reducer}
 import sprocket/html/elements.{input}
-import sprocket/html/attributes.{
-  CallbackString, class, input_type, on_input, placeholder, value,
-}
+import sprocket/html/attributes.{class,
+  input_type, on_input, placeholder, value}
 
 type Model {
   Model(query: String)
@@ -37,7 +36,7 @@ pub fn search_bar(ctx: Context, props) {
   // Define a reducer to handle events and update the state
   use ctx, Model(query: query), dispatch <- reducer(ctx, initial(), update)
 
-  use ctx, on_input_query <- callback(
+  use ctx, on_input_query <- handler(
     ctx,
     fn(value) {
       let assert Some(CallbackString(value)) = value
@@ -45,7 +44,6 @@ pub fn search_bar(ctx: Context, props) {
       on_search(value)
       dispatch(SetQuery(value))
     },
-    WithDeps([dep(on_search)]),
   )
 
   render(

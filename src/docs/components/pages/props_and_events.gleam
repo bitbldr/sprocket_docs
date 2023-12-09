@@ -97,7 +97,7 @@ pub fn props_and_events_page(ctx: Context, _props: PropsAndEventsPageProps) {
             import gleam/int
             import gleam/option.{None, Option, Some}
             import sprocket/context.{Context, WithDeps, dep}
-            import sprocket/hooks.{reducer, callback}
+            import sprocket/hooks.{reducer, handler}
             import sprocket/component.{component, render}
             import sprocket/html/elements.{div, span, text}
             import sprocket/html/attributes.{class, classes}
@@ -180,10 +180,9 @@ pub fn props_and_events_page(ctx: Context, _props: PropsAndEventsPageProps) {
                 StyledButtonProps(class, label, on_click) -> #(Some(class), label, on_click)
               }
 
-              use ctx, on_click <- callback(
+              use ctx, on_click <- handler(
                 ctx,
                 fn(_) { props.on_click() },
-                WithDeps([dep(props.on_click)]),
               )
 
               render(
