@@ -2,7 +2,7 @@ import gleam/io
 import gleam/option.{None}
 import gleam/list
 import gleam/bit_array
-import gleam/bit_builder.{type BitBuilder}
+import gleam/bytes_builder.{type BytesBuilder}
 import gleam/otp/actor
 import gleam/erlang/process
 import gleam/http/request.{type Request}
@@ -46,13 +46,13 @@ pub fn live(
       response.new(200)
       |> response.set_body(body)
       |> response.prepend_header("content-type", "text/html")
-      |> response.map(bit_builder.from_string)
+      |> response.map(bytes_builder.from_string)
       |> mist_response()
     }
   }
 }
 
-fn mist_response(response: Response(BitBuilder)) -> Response(ResponseData) {
+fn mist_response(response: Response(BytesBuilder)) -> Response(ResponseData) {
   response.new(response.status)
   |> response.set_body(mist.Bytes(response.body))
 }

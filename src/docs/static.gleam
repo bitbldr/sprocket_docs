@@ -1,9 +1,9 @@
 import gleam/http/response.{type Response, Response}
 import gleam/http/request.{type Request}
 import gleam/http/service.{type Service}
-import gleam/bit_builder
+import gleam/bytes_builder
 import mist.{type ResponseData}
-import gleam/erlang/file
+import simplifile
 import gleam/result
 import gleam/string
 import gleam/list
@@ -27,9 +27,9 @@ pub fn middleware(
 
     let file_contents =
       path
-      |> file.read_bits
+      |> simplifile.read_bits
       |> result.nil_error
-      |> result.map(bit_builder.from_bit_string)
+      |> result.map(bytes_builder.from_bit_array)
 
     let extension =
       path

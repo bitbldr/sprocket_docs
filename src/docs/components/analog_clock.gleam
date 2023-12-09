@@ -10,7 +10,7 @@ import sprocket/html/svg/elements.{circle, g, line, path, svg}
 import sprocket/html/svg/attributes.{
   class, cx, cy, d, fill, height, id, r, stroke, stroke_miterlimit, stroke_width,
   transform, version, view_box, width, x, x1, x2, xml_space, y, y1, y2,
-} as svg_attributes
+} as _svg_attributes
 import sprocket/internal/utils/timer.{interval}
 
 type Model {

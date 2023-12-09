@@ -1,4 +1,4 @@
-import gleam/bit_builder
+import gleam/bytes_builder
 import gleam/option.{Some}
 import gleam/http/request.{type Request}
 import gleam/http/response.{type Response}
@@ -86,6 +86,6 @@ window.addEventListener('DOMContentLoaded', () => {
   response.new(200)
   |> response.set_body(body)
   |> response.prepend_header("content-type", "text/html")
-  |> response.map(bit_builder.from_string)
+  |> response.map(bytes_builder.from_string)
   |> mist_response()
 }

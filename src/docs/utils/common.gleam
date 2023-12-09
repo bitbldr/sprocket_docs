@@ -1,9 +1,9 @@
 import gleam/option.{type Option, None, Some}
-import gleam/bit_builder.{type BitBuilder}
+import gleam/bytes_builder.{type BytesBuilder}
 import gleam/http/response.{type Response}
 import gleam/crypto
-import gleam/base
 import gleam/string
+import gleam/bit_array
 import mist.{type ResponseData}
 
 /// Maybe return Some element if the condition is true
@@ -15,7 +15,7 @@ pub fn maybe(condition: Bool, element: a) -> Option(a) {
   }
 }
 
-pub fn mist_response(response: Response(BitBuilder)) -> Response(ResponseData) {
+pub fn mist_response(response: Response(BytesBuilder)) -> Response(ResponseData) {
   response.new(response.status)
   |> response.set_body(mist.Bytes(response.body))
 }
@@ -23,6 +23,6 @@ pub fn mist_response(response: Response(BitBuilder)) -> Response(ResponseData) {
 /// Generate a random string of the given length
 pub fn random_string(length: Int) -> String {
   crypto.strong_random_bytes(length)
-  |> base.url_encode64(False)
+  |> bit_array.base64_url_encode(False)
   |> string.slice(0, length)
 }

@@ -3,7 +3,7 @@ import gleam/list
 import gleam/regex
 import gleam/string
 import gleam/erlang.{start_arguments}
-import gleam/erlang/file
+import simplifile
 import glint.{type CommandInput}
 import glint/flag
 
@@ -40,7 +40,7 @@ fn transform(input: CommandInput) {
   let assert Ok(flag.S(template)) = flag.get(from: input.flags, for: "template")
   let assert Ok(filepath) = list.at(input.args, 0)
 
-  let assert Ok(contents) = file.read(filepath)
+  let assert Ok(contents) = simplifile.read(filepath)
 
   let lines = string.split(contents, "\n")
 
@@ -77,7 +77,7 @@ fn transform(input: CommandInput) {
     })
     |> string.join("\n\n")
 
-  let assert Ok(_) = file.write(result, filepath <> ".gleam")
+  let assert Ok(_) = simplifile.write(result, filepath <> ".gleam")
 }
 
 fn template_for(original: String, tag: String, template: String) {

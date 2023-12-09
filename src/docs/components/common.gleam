@@ -3,7 +3,7 @@ import gleam/list
 import gleam/int
 import gleam/option.{Some}
 import sprocket/context.{type Element}
-import sprocket/html/elements.{code_text, div, ignored, pre, span, text}
+import sprocket/html/elements.{code_text, div, ignored, pre}
 import sprocket/html/attributes.{class, classes}
 
 pub fn example(children: List(Element)) -> Element {
