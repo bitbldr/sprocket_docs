@@ -187,7 +187,7 @@ pub fn hooks_page(ctx: Context, _props: HooksPageProps) {
             [],
             [
               text(
-                "Handler hooks are used to create event handlers, They take a function and return an IdentifiableCallback. The IdentifiableCallback can be passed to an event handler attribute and ensures that event id's do not change across renders resulting in unecessary diff patching. The callback will be called when the event is triggered and provide an optional CallbackParam depedning on the event type.",
+                "Handler hooks are used to create event handlers, They take a function and return an IdentifiableCallback. The IdentifiableCallback can be passed to an event handler attribute and ensures that event id's do not change across renders resulting in unnecessary diff patching. The callback will be called when the event is triggered and provide an optional CallbackParam depedning on the event type.",
               ),
             ],
           ),
@@ -265,11 +265,11 @@ pub fn hooks_page(ctx: Context, _props: HooksPageProps) {
             use ctx, memoized_fn <- callback(ctx, some_fn, WithDeps([dep(some_value)]))
             ",
           ),
-          h2([], [text("Channel Hooks")]),
-          p([], [text("COMING SOON")]),
           h2([], [text("Context Hooks")]),
-          p([], [text("COMING SOON")]),
-          h2([], [text("Portal Hooks")]),
+          p_text(
+            [],
+            "Context hooks are used to access and subscribe to some data from a current component context.",
+          ),
           p([], [text("COMING SOON")]),
           h2([], [text("Client Hooks")]),
           p(
