@@ -1,8 +1,11 @@
-import { doubleclick } from "./hooks/doubleclick";
-import { connect } from "sprocket-js";
+import { Doubleclick } from "./hooks/doubleclick";
+import { DarkMode } from "./hooks/dark_mode";
+// import { connect } from "sprocket-js";
+import { connect } from "../../../sprocket/client/src/sprocket";
 
 const hooks = {
-  DoubleClick: doubleclick,
+  Doubleclick,
+  DarkMode,
 };
 
 window.addEventListener("DOMContentLoaded", () => {

@@ -1,13 +1,16 @@
 import gleam/list
 import gleam/result
 import gleam/option.{None, Some}
-import sprocket/context.{type Context}
+import sprocket/context.{type Context, provider}
 import sprocket/component.{component, render}
-import sprocket/html/elements.{body, div, head, html, link, meta, script, title}
+import sprocket/html/elements.{
+  body, div, head, html, link, meta, script, text, title,
+}
 import sprocket/html/attributes.{
   charset, class, content, crossorigin, href, id, integrity, lang, media, name,
   referrerpolicy, rel, src,
 }
+import sprocket/hooks.{memo, reducer} as _
 import sprocket/internal/utils/ordered_map.{KeyedItem}
 import docs/components/header.{HeaderProps, MenuItem, header}
 import docs/components/responsive_drawer.{
@@ -39,6 +42,25 @@ import docs/page_route.{
   type PageRoute, Components, Effects, Events, GettingStarted, Hooks,
   Introduction, Misc, Page, StateManagement, UnderTheHood, Unknown,
 }
+import docs/theme.{type DarkMode, type Theme, Auto, Dark, Theme}
+
+type Model {
+  Model(mode: DarkMode)
+}
+
+type Msg {
+  SetMode(mode: DarkMode)
+}
+
+fn update(_model: Model, msg: Msg) -> Model {
+  case msg {
+    SetMode(mode) -> Model(mode: mode)
+  }
+}
+
+fn initial() -> Model {
+  Model(Auto)
+}
 
 pub type PageViewProps {
   PageViewProps(route: PageRoute, csrf: String)
@@ -47,32 +69,44 @@ pub type PageViewProps {
 pub fn page_view(ctx: Context, props: PageViewProps) {
   let PageViewProps(route: route, csrf: csrf) = props
 
-  // TODO: use memoization hook to avoid re-computing this on every render
-  let pages =
-    [
-      Page("Introduction", Introduction),
-      Page("Getting Started", GettingStarted),
-      Page("Components", Components),
-      Page("Props and Events", Events),
-      Page("State Management", StateManagement),
-      Page("Hooks", Hooks),
-      Page("Effects", Effects),
-      Page("Under the Hood", UnderTheHood),
-      Page("Misc.", Misc),
-    ]
-    |> list.map(fn(page) { KeyedItem(page.route, page) })
-    |> ordered_map.from_list()
+  use ctx, Model(mode), dispatch <- reducer(ctx, initial(), update)
 
-  let page_title =
-    pages
-    |> ordered_map.get(route)
-    |> result.map(fn(page) { page.title <> " - Sprocket" })
-    |> result.unwrap("Sprocket")
+  use ctx, pages <- memo(
+    ctx,
+    fn() {
+      [
+        Page("Introduction", Introduction),
+        Page("Getting Started", GettingStarted),
+        Page("Components", Components),
+        Page("Props and Events", Events),
+        Page("State Management", StateManagement),
+        Page("Hooks", Hooks),
+        Page("Effects", Effects),
+        Page("Under the Hood", UnderTheHood),
+        Page("Misc.", Misc),
+      ]
+      |> list.map(fn(page) { KeyedItem(page.route, page) })
+      |> ordered_map.from_list()
+    },
+    context.OnMount,
+  )
+
+  use ctx, page_title <- memo(
+    ctx,
+    fn() {
+      pages
+      |> ordered_map.get(route)
+      |> result.map(fn(page) { page.title <> " - Sprocket" })
+      |> result.unwrap("Sprocket")
+    },
+    context.OnMount,
+  )
 
   render(
     ctx,
     [
       html(
+        // [lang("en"), class(theme_class(mode))],
         [lang("en")],
         [
           head(
@@ -91,6 +125,14 @@ pub fn page_view(ctx: Context, props: PageViewProps) {
                   "Sprocket is a library for building real-time server components in Gleam.",
                 ),
               ]),
+              meta([
+                name("keywords"),
+                content(
+                  "gleam, sprocket, web, server, real-time, components, html, css, javascript",
+                ),
+              ]),
+              // Set the <meta name="theme-color"> tag for mobile browsers to render correct colors
+              meta([name("theme-color"), content(meta_theme_color(mode))]),
               link([rel("stylesheet"), href("/app.css")]),
               link([
                 rel("stylesheet"),
@@ -145,11 +187,26 @@ pub fn page_view(ctx: Context, props: PageViewProps) {
               div(
                 [],
                 [
-                  component(
-                    header,
-                    HeaderProps(menu_items: [
-                      MenuItem("Github", "https://github.com/bitbldr/sprocket"),
-                    ]),
+                  provider(
+                    "theme",
+                    Theme(
+                      mode: mode,
+                      set_mode: fn(mode) { dispatch(SetMode(mode)) },
+                    ),
+                    div(
+                      [],
+                      [
+                        component(
+                          header,
+                          HeaderProps(menu_items: [
+                            MenuItem(
+                              "Github",
+                              "https://github.com/bitbldr/sprocket",
+                            ),
+                          ]),
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),
@@ -204,4 +261,18 @@ pub fn page_view(ctx: Context, props: PageViewProps) {
       ),
     ],
   )
+}
+
+fn theme_class(mode: DarkMode) -> String {
+  case mode {
+    Dark -> "dark"
+    _ -> "light"
+  }
+}
+
+fn meta_theme_color(mode: DarkMode) -> String {
+  case mode {
+    Dark -> "#111827"
+    _ -> "#ffffff"
+  }
 }

@@ -4,6 +4,7 @@ import sprocket/context.{type Context}
 import sprocket/component.{component, render}
 import sprocket/html/elements.{a, div, i, span, text}
 import sprocket/html/attributes.{class, href}
+import docs/components/dark_mode_toggle.{DarkModeToggleProps, dark_mode_toggle}
 
 pub type MenuItem {
   MenuItem(label: String, href: String)
@@ -22,7 +23,7 @@ pub fn header(ctx: Context, props) {
       div(
         [
           class(
-            "flex flex-row justify-between border-b border-gray-200 dark:border-gray-600 min-h-[60px]",
+            "flex flex-row border-b border-gray-200 dark:border-gray-600 min-h-[60px]",
           ),
         ],
         [
@@ -54,6 +55,8 @@ pub fn header(ctx: Context, props) {
               ),
             ],
           ),
+          div([class("flex-1")], []),
+          div([], [component(dark_mode_toggle, DarkModeToggleProps)]),
           div(
             [],
             list.map(

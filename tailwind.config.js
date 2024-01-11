@@ -3,6 +3,7 @@ const tailwindColors = require("tailwindcss/colors");
 
 module.exports = {
   content: ["./src/**/*.{html,js,gleam}"],
+  darkMode: "class",
   theme: {
     extend: {
       colors: {

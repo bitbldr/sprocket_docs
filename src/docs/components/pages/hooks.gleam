@@ -87,7 +87,7 @@ pub fn hooks_page(ctx: Context, _props: HooksPageProps) {
                 [
                   span_text([class("font-bold")], "Note:"),
                   text(
-                    " Hooks must be called in exactly the same order on every render and should be defined at the top level of a component. This means hooks cannot be called conditionally or within loops or nested functions.",
+                    " Hooks must be called in exactly the same order on every render and should be defined at the top of a component body. This means hooks cannot be called conditionally or within loops or nested functions.",
                   ),
                 ],
               ),
@@ -187,7 +187,7 @@ pub fn hooks_page(ctx: Context, _props: HooksPageProps) {
             [],
             [
               text(
-                "Handler hooks are used to create event handlers, They take a function and return an IdentifiableCallback. The IdentifiableCallback can be passed to an event handler attribute and ensures that event id's do not change across renders resulting in unnecessary diff patching. The callback will be called when the event is triggered and provide an optional CallbackParam depedning on the event type.",
+                "Handler hooks are used to create event handlers, They take a function and return an IdentifiableCallback. The IdentifiableCallback can be passed to an event handler attribute and ensures that event id's do not change across renders resulting in unnecessary diff patching. The callback will be called when the event is triggered and provide an optional CallbackParam depending on the event type.",
               ),
             ],
           ),
