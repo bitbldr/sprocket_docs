@@ -106,8 +106,7 @@ pub fn page_view(ctx: Context, props: PageViewProps) {
     ctx,
     [
       html(
-        // [lang("en"), class(theme_class(mode))],
-        [lang("en")],
+        [lang("en"), class(theme_class(mode))],
         [
           head(
             [],

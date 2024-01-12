@@ -21,7 +21,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
     connect(livePath, {
       csrfToken,
-      // targetEl: document.querySelector("#app") as Element,
+      targetEl: document.querySelector("#app") as Element,
       hooks,
     });
   } else {

@@ -15,11 +15,12 @@ import docs/utils/csrf
 import docs/utils/logger
 import docs/utils/common.{mist_response}
 import docs/app_context.{type AppContext}
-import docs/views/page_view.{PageViewProps, page_view}
 import docs/page_route
 import docs/controllers/standalone.{standalone}
+import docs/layouts/page_layout.{page_layout}
 import docs/components/counter.{CounterProps, counter}
-import mist_sprocket
+import docs/components/page.{PageProps, page}
+import mist_sprocket.{component, view}
 
 pub fn router(app_ctx: AppContext) {
   fn(request: Request(Connection)) -> Response(ResponseData) {
@@ -28,7 +29,7 @@ pub fn router(app_ctx: AppContext) {
     case request.method, request.path_segments(request) {
       Get, ["standalone"] -> standalone(request, app_ctx)
       Get, ["counter", "live"] ->
-        mist_sprocket.live(
+        component(
           request,
           app_ctx.ca,
           counter,
@@ -36,14 +37,12 @@ pub fn router(app_ctx: AppContext) {
         )
 
       Get, _ ->
-        mist_sprocket.live(
+        view(
           request,
           app_ctx.ca,
-          page_view,
-          PageViewProps(
-            route: page_route.from_string(request.path),
-            csrf: csrf.generate(app_ctx.secret_key_base),
-          ),
+          page_layout("Sprocket Docs", csrf.generate(app_ctx.secret_key_base)),
+          page,
+          PageProps(route: page_route.from_string(request.path)),
         )
 
       _, _ ->

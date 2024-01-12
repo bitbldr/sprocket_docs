@@ -1,5 +1,5 @@
 import gleam/io
-import gleam/option.{None}
+import gleam/option.{type Option, None}
 import gleam/list
 import gleam/bit_array
 import gleam/bytes_builder.{type BytesBuilder}
@@ -12,18 +12,18 @@ import mist.{type Connection, type ResponseData}
 import sprocket
 import sprocket/cassette.{type Cassette}
 import sprocket/render.{render}
-import sprocket/component.{component}
+import sprocket/component as sprocket_component
 import sprocket/html/render as html_render
-import sprocket/context.{type FunctionalComponent}
+import sprocket/context.{type Element, type FunctionalComponent}
 import sprocket/internal/logger
 
-pub fn live(
+pub fn component(
   req: Request(Connection),
   ca: Cassette,
   view: FunctionalComponent(p),
   props: p,
 ) -> Response(ResponseData) {
-  let view = component(view, props)
+  let view = sprocket_component.component(view, props)
 
   // if the request path ends with "live", then start a websocket connection
   case list.last(request.path_segments(req)) {
@@ -42,6 +42,42 @@ pub fn live(
 
     _ -> {
       let body = render(view, html_render.renderer())
+
+      response.new(200)
+      |> response.set_body(body)
+      |> response.prepend_header("content-type", "text/html")
+      |> response.map(bytes_builder.from_string)
+      |> mist_response()
+    }
+  }
+}
+
+pub fn view(
+  req: Request(Connection),
+  ca: Cassette,
+  layout: fn(Element) -> Element,
+  view: FunctionalComponent(p),
+  props: p,
+) -> Response(ResponseData) {
+  let view = sprocket_component.component(view, props)
+
+  // if the request path ends with "live", then start a websocket connection
+  case list.last(request.path_segments(req)) {
+    Ok("live") -> {
+      let assert Ok(id) = uuid.generate_v4()
+
+      req
+      |> mist.websocket(
+        fn(state, conn, message) {
+          handle_ws_message(id, state, conn, message, ca, view)
+        },
+        fn() { #(Nil, None) },
+        fn(_) { sprocket.cleanup(ca, id) },
+      )
+    }
+
+    _ -> {
+      let body = render(layout(view), html_render.renderer())
 
       response.new(200)
       |> response.set_body(body)
