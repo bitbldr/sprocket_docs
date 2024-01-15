@@ -2,10 +2,10 @@ import gleam/string
 import gleam/list
 import gleam/int
 import gleam/option.{None}
-import sprocket/context.{Context}
+import sprocket/context.{type Context}
 import sprocket/component.{render}
 import sprocket/html/elements.{code_text, div, ignored, pre}
-import sprocket/html/attributes.{class, classes}
+import sprocket/html/attributes.{class}
 import sprocket/hooks.{client}
 
 pub type CodeBlockProps {

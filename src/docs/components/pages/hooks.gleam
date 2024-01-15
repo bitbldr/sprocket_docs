@@ -4,7 +4,8 @@ import sprocket/html/elements.{
   a, article, code_text, div, h1, h2, p, p_text, span_text, text,
 }
 import sprocket/html/attributes.{class, href, target}
-import docs/components/common.{alert, codeblock, example}
+import docs/components/common.{alert, example}
+import docs/components/codeblock.{CodeBlockProps, codeblock}
 import docs/components/events_counter.{CounterProps, counter}
 
 pub type HooksPageProps {
@@ -41,23 +42,26 @@ pub fn hooks_page(ctx: Context, _props: HooksPageProps) {
             text(" hook provides a state variable and a setter function."),
           ],
         ),
-        codeblock(
-          "gleam",
-          "
-            pub fn example(ctx: Context, _props: ExampleProps) {
+        component(
+          codeblock,
+          CodeBlockProps(
+            language: "gleam",
+            body: "
+              pub fn example(ctx: Context, _props: ExampleProps) {
 
-              use ctx, count, set_count <- state(ctx, 0)
+                use ctx, count, set_count <- state(ctx, 0)
 
-              render(
-                ctx,
-                [
-                  div([], [
-                    text(\"The current state is \" <> int.to_string(count)),
-                  ])
-                ],
-              )
-            }
+                render(
+                  ctx,
+                  [
+                    div([], [
+                      text(\"The current state is \" <> int.to_string(count)),
+                    ])
+                  ],
+                )
+              }
             ",
+          ),
         ),
         p(
           [],
@@ -102,11 +106,14 @@ pub fn hooks_page(ctx: Context, _props: HooksPageProps) {
             text(" module."),
           ],
         ),
-        codeblock(
-          "gleam",
-          "
-            import sprocket/hooks.{state, reducer, handler, effect, memo, callback, channel, context, portal, client}
+        component(
+          codeblock,
+          CodeBlockProps(
+            language: "gleam",
+            body: "
+              import sprocket/hooks.{state, reducer, handler, effect, memo, callback, channel, context, portal, client}
             ",
+          ),
         ),
         p_text(
           [],
@@ -121,11 +128,14 @@ pub fn hooks_page(ctx: Context, _props: HooksPageProps) {
             ),
           ],
         ),
-        codeblock(
-          "gleam",
-          "
-            use ctx, count, set_count <- state(ctx, 0)
+        component(
+          codeblock,
+          CodeBlockProps(
+            language: "gleam",
+            body: "
+              use ctx, count, set_count <- state(ctx, 0)
             ",
+          ),
         ),
         h2([], [text("Reducer Hooks")]),
         p(
@@ -136,32 +146,35 @@ pub fn hooks_page(ctx: Context, _props: HooksPageProps) {
             ),
           ],
         ),
-        codeblock(
-          "gleam",
-          "
-                type Model =
-                  Int
+        component(
+          codeblock,
+          CodeBlockProps(
+            language: "gleam",
+            body: "
+              type Model =
+                Int
 
-                type Msg {
-                  Increment
-                  Decrement
-                  SetCount(Int)
-                  Reset
-                }
+              type Msg {
+                Increment
+                Decrement
+                SetCount(Int)
+                Reset
+              }
 
-                fn update(_model: Model, msg: Msg) -> Model {
-                  case msg {
-                    Increment -> {
-                      model + 1
-                    }
-                    Decrement -> {
-                      model - 1
-                    }
-                    SetCount(count) -> count
-                    Reset -> 0
+              fn update(_model: Model, msg: Msg) -> Model {
+                case msg {
+                  Increment -> {
+                    model + 1
                   }
+                  Decrement -> {
+                    model - 1
+                  }
+                  SetCount(count) -> count
+                  Reset -> 0
                 }
-                ",
+              }
+            ",
+          ),
         ),
         p(
           [],
@@ -171,11 +184,14 @@ pub fn hooks_page(ctx: Context, _props: HooksPageProps) {
             ),
           ],
         ),
-        codeblock(
-          "gleam",
-          "
-                use ctx, count, dispatch <- reducer(ctx, 0, update)
-                ",
+        component(
+          codeblock,
+          CodeBlockProps(
+            language: "gleam",
+            body: "
+              use ctx, count, dispatch <- reducer(ctx, 0, update)
+            ",
+          ),
         ),
         p_text(
           [],
@@ -190,13 +206,16 @@ pub fn hooks_page(ctx: Context, _props: HooksPageProps) {
             ),
           ],
         ),
-        codeblock(
-          "gleam",
-          "
-            use ctx, increment <- handler(ctx, fn(_) {
-              dispatch(Increment)
-            })
+        component(
+          codeblock,
+          CodeBlockProps(
+            language: "gleam",
+            body: "
+              use ctx, increment <- handler(ctx, fn(_) {
+                dispatch(Increment)
+              })
             ",
+          ),
         ),
         h2([], [text("Effect Hooks")]),
         p(
@@ -207,22 +226,25 @@ pub fn hooks_page(ctx: Context, _props: HooksPageProps) {
             ),
           ],
         ),
-        codeblock(
-          "gleam",
-          "
-            use ctx <- effect(
-              ctx,
-              fn(_) {
-                // Perform side-effects here
+        component(
+          codeblock,
+          CodeBlockProps(
+            language: "gleam",
+            body: "
+              use ctx <- effect(
+                ctx,
+                fn(_) {
+                  // Perform side-effects here
 
-                // Return a cleanup function if necessary
-                Some(fn(_) {
-                  // Cleanup side-effects here
-                })
-              },
-              WithDeps([dep(some_value)]),
-            )
+                  // Return a cleanup function if necessary
+                  Some(fn(_) {
+                    // Cleanup side-effects here
+                  })
+                },
+                WithDeps([dep(some_value)]),
+              )
             ",
+          ),
         ),
         p(
           [],
@@ -243,11 +265,14 @@ pub fn hooks_page(ctx: Context, _props: HooksPageProps) {
             ),
           ],
         ),
-        codeblock(
-          "gleam",
-          "
-            use ctx, memoized_value <- memo(ctx, fn() { expensive_fn() }, WithDeps([dep(some_value)]))
+        component(
+          codeblock,
+          CodeBlockProps(
+            language: "gleam",
+            body: "
+              use ctx, memoized_value <- memo(ctx, fn() { expensive_fn() }, WithDeps([dep(some_value)]))
             ",
+          ),
         ),
         h2([], [text("Callback Hooks")]),
         p(
@@ -258,22 +283,28 @@ pub fn hooks_page(ctx: Context, _props: HooksPageProps) {
             ),
           ],
         ),
-        codeblock(
-          "gleam",
-          "
-            use ctx, memoized_fn <- callback(ctx, some_fn, WithDeps([dep(some_value)]))
+        component(
+          codeblock,
+          CodeBlockProps(
+            language: "gleam",
+            body: "
+              use ctx, memoized_fn <- callback(ctx, some_fn, WithDeps([dep(some_value)]))
             ",
+          ),
         ),
         h2([], [text("Context Hooks")]),
         p_text(
           [],
           "Context hooks are used to dynamically access and subscribe to some data from a current component context.",
         ),
-        codeblock(
-          "gleam",
-          "
-            use ctx, current_user <- context(ctx, CurrentUser)
+        component(
+          codeblock,
+          CodeBlockProps(
+            language: "gleam",
+            body: "
+              use ctx, current_user <- context(ctx, CurrentUser)
             ",
+          ),
         ),
         p_text([], "COMING SOON"),
         h2([], [text("Client Hooks")]),
@@ -302,48 +333,51 @@ pub fn hooks_page(ctx: Context, _props: HooksPageProps) {
             text(" component is double-clicked."),
           ],
         ),
-        codeblock(
-          "gleam",
-          "
-            pub type DisplayProps {
-              DisplayProps(count: Int, on_reset: Option(fn() -> Nil))
-            }
+        component(
+          codeblock,
+          CodeBlockProps(
+            language: "gleam",
+            body: "
+              pub type DisplayProps {
+                DisplayProps(count: Int, on_reset: Option(fn() -> Nil))
+              }
 
-            pub fn display(ctx: Context, props: DisplayProps) {
-              let DisplayProps(count: count, on_reset: on_reset) = props
+              pub fn display(ctx: Context, props: DisplayProps) {
+                let DisplayProps(count: count, on_reset: on_reset) = props
 
-              use ctx, client_doubleclick, _client_doubleclick_dispatch <- client(
-                ctx,
-                \"DoubleClick\",
-                Some(fn(msg, _payload, _dispatch) {
-                  case msg {
-                    \"doubleclick\" -> {
-                      case on_reset {
-                        Some(on_reset) -> on_reset()
-                        None -> Nil
+                use ctx, client_doubleclick, _client_doubleclick_dispatch <- client(
+                  ctx,
+                  \"DoubleClick\",
+                  Some(fn(msg, _payload, _dispatch) {
+                    case msg {
+                      \"doubleclick\" -> {
+                        case on_reset {
+                          Some(on_reset) -> on_reset()
+                          None -> Nil
+                        }
                       }
+                      _ -> Nil
                     }
-                    _ -> Nil
-                  }
-                }),
-              )
+                  }),
+                )
 
-              render(
-                ctx,
-                [
-                  span(
-                    [
-                      client_doubleclick(),
-                      class(
-                        \"p-1 px-2 w-10 bg-white dark:bg-gray-900 border-t border-b dark:border-gray-500 align-center text-center\",
-                      ),
-                    ],
-                    [text(int.to_string(count))],
-                  ),
-                ],
-              )
-            }
+                render(
+                  ctx,
+                  [
+                    span(
+                      [
+                        client_doubleclick(),
+                        class(
+                          \"p-1 px-2 w-10 bg-white dark:bg-gray-900 border-t border-b dark:border-gray-500 align-center text-center\",
+                        ),
+                      ],
+                      [text(int.to_string(count))],
+                    ),
+                  ],
+                )
+              }
             ",
+          ),
         ),
         p(
           [],
@@ -353,28 +387,31 @@ pub fn hooks_page(ctx: Context, _props: HooksPageProps) {
             ),
           ],
         ),
-        codeblock(
-          "javascript",
-          "
-            import { connect } from 'sprocket-js';
+        component(
+          codeblock,
+          CodeBlockProps(
+            language: "typescript",
+            body: "
+              import { connect } from 'sprocket-js';
 
-            const hooks = {
-              DoubleClick: {
-                mounted({ el, pushEvent }) {
-                  el.addEventListener('dblclick', () => {
-                    pushEvent('doubleclick', {});
-                  });
+              const hooks = {
+                DoubleClick: {
+                  mounted({ el, pushEvent }) {
+                    el.addEventListener('dblclick', () => {
+                      pushEvent('doubleclick', {});
+                    });
+                  },
                 },
-              },
-            };
+              };
 
-            ...
+              ...
 
-            connect(livePath, {
-              csrfToken,
-              hooks,
-            });
-          ",
+              connect(livePath, {
+                csrfToken,
+                hooks,
+              });
+            ",
+          ),
         ),
         example([component(counter, CounterProps(enable_reset: True))]),
         h2([], [text("Custom Hooks")]),
@@ -386,27 +423,29 @@ pub fn hooks_page(ctx: Context, _props: HooksPageProps) {
             ),
           ],
         ),
-        codeblock(
-          "gleam",
-          "
-            pub fn double_click(ctx: Context, on_double_click: fn() -> Nil, cb) {
-              use ctx, handle_doubleclick, _client_doubleclick_dispatch <- client(
-                ctx,
-                \"DoubleClick\",
-                Some(fn(msg, _payload, _dispatch) {
-                  case msg {
-                    \"doubleclick\" -> {
-                      on_double_click()
+        component(
+          codeblock,
+          CodeBlockProps(
+            language: "gleam",
+            body: "
+              pub fn double_click(ctx: Context, on_double_click: fn() -> Nil, cb) {
+                use ctx, handle_doubleclick, _client_doubleclick_dispatch <- client(
+                  ctx,
+                  \"DoubleClick\",
+                  Some(fn(msg, _payload, _dispatch) {
+                    case msg {
+                      \"doubleclick\" -> {
+                        on_double_click()
+                      }
+                      _ -> Nil
                     }
-                    _ -> Nil
-                  }
-                }),
-              )
+                  }),
+                )
 
-              cb(ctx, handle_doubleclick)
-            }
-
+                cb(ctx, handle_doubleclick)
+              }
             ",
+          ),
         ),
         p(
           [],
@@ -418,30 +457,33 @@ pub fn hooks_page(ctx: Context, _props: HooksPageProps) {
             ),
           ],
         ),
-        codeblock(
-          "gleam",
-          "
-            pub fn display(ctx: Context, props: DisplayProps) {
-              let DisplayProps(count: count, on_reset: on_reset) = props
+        component(
+          codeblock,
+          CodeBlockProps(
+            language: "gleam",
+            body: "
+              pub fn display(ctx: Context, props: DisplayProps) {
+                let DisplayProps(count: count, on_reset: on_reset) = props
 
-              use ctx, handle_doubleclick <- double_click(ctx, fn() { dispatch(Reset) }})
+                use ctx, handle_doubleclick <- double_click(ctx, fn() { dispatch(Reset) }})
 
-              render(
-                ctx,
-                [
-                  span(
-                    [
-                      handle_doubleclick(),
-                      class(
-                        \"p-1 px-2 w-10 bg-white dark:bg-gray-900 border-t border-b dark:border-gray-500 align-center text-center\",
-                      ),
-                    ],
-                    [text(int.to_string(count))],
-                  ),
-                ],
-              )
-            }
+                render(
+                  ctx,
+                  [
+                    span(
+                      [
+                        handle_doubleclick(),
+                        class(
+                          \"p-1 px-2 w-10 bg-white dark:bg-gray-900 border-t border-b dark:border-gray-500 align-center text-center\",
+                        ),
+                      ],
+                      [text(int.to_string(count))],
+                    ),
+                  ],
+                )
+              }
             ",
+          ),
         ),
       ],
     ),

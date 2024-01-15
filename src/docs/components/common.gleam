@@ -1,9 +1,6 @@
-import gleam/string
-import gleam/list
-import gleam/int
 import gleam/option.{Some}
 import sprocket/context.{type Element}
-import sprocket/html/elements.{code_text, div, ignored, pre}
+import sprocket/html/elements.{div}
 import sprocket/html/attributes.{class, classes}
 
 pub fn example(children: List(Element)) -> Element {
@@ -15,70 +12,6 @@ pub fn example(children: List(Element)) -> Element {
     ],
     children,
   )
-}
-
-pub fn codeblock(language: String, body: String) {
-  div(
-    [class("not-prose overflow-x-auto text-sm")],
-    [
-      ignored(pre(
-        [],
-        [
-          code_text(
-            [class("language-" <> language <> " rounded-lg")],
-            process_code(body),
-          ),
-        ],
-      )),
-    ],
-  )
-}
-
-pub fn process_code(code: String) {
-  // trim leading and trailing whitespace
-  let code =
-    code
-    |> string.trim()
-
-  // normalize leading whitespace to the minimum amount found on any single line
-  let min_leading_spaces =
-    code
-    |> string.split("\n")
-    |> list.fold(
-      0,
-      fn(acc, line) {
-        case acc, count_leading_spaces(line, 0) {
-          0, count -> count
-          _, 0 -> acc
-          _, count -> int.min(acc, count)
-        }
-      },
-    )
-
-  code
-  |> string.split("\n")
-  |> list.map(fn(line) {
-    case string.pop_grapheme(line) {
-      // check if the line has leading whitespace. if so, trim it to the minimum
-      // amount found on any single line. otherwise, return the line as-is.
-      Ok(#(" ", _)) -> {
-        string.slice(
-          line,
-          min_leading_spaces,
-          string.length(line) - min_leading_spaces,
-        )
-      }
-      _ -> line
-    }
-  })
-  |> string.join("\n")
-}
-
-fn count_leading_spaces(line: String, count: Int) {
-  case string.pop_grapheme(line) {
-    Ok(#(" ", rest)) -> count_leading_spaces(rest, count + 1)
-    _ -> count
-  }
 }
 
 pub type AlertKind {

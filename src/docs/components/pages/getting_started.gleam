@@ -1,10 +1,10 @@
 import sprocket/context.{type Context}
-import sprocket/component.{render}
+import sprocket/component.{component, render}
 import sprocket/html/elements.{
   a_text, article, div, h1, h2, h3, li, ol, p, p_text, span_text, text,
 }
 import sprocket/html/attributes.{class, href, target}
-import docs/components/common.{codeblock}
+import docs/components/codeblock.{CodeBlockProps, codeblock}
 
 pub type GettingStartedPageProps {
   GettingStartedPageProps
@@ -93,22 +93,43 @@ pub fn getting_started_page(ctx: Context, _props: GettingStartedPageProps) {
                   [],
                   [
                     text("Clone the starter repository from GitHub"),
-                    codeblock(
-                      "bash",
-                      "
+                    component(
+                      codeblock,
+                      CodeBlockProps(
+                        language: "bash",
+                        body: "
                         # Clone the starter repository from GitHub
                         git clone https://github.com/bitbldr/sprocket_starter.git
 
                         # Change into the project directory
                         cd sprocket_starter
                         ",
+                      ),
                     ),
                   ],
                 ),
               ],
             ),
-            li([], [text("Install dependencies"), codeblock("bash", "yarn")]),
-            li([], [text("Start the server"), codeblock("bash", "yarn watch")]),
+            li(
+              [],
+              [
+                text("Install dependencies"),
+                component(
+                  codeblock,
+                  CodeBlockProps(language: "bash", body: "yarn"),
+                ),
+              ],
+            ),
+            li(
+              [],
+              [
+                text("Start the server"),
+                component(
+                  codeblock,
+                  CodeBlockProps(language: "bash", body: "yarn watch"),
+                ),
+              ],
+            ),
           ],
         ),
         h3([], [text("Method 2: Add to existing project")]),
@@ -137,12 +158,15 @@ pub fn getting_started_page(ctx: Context, _props: GettingStartedPageProps) {
                   [],
                   [
                     text("Add Sprocket dependency"),
-                    codeblock(
-                      "bash",
-                      "
+                    component(
+                      codeblock,
+                      CodeBlockProps(
+                        language: "bash",
+                        body: "
                         # Add Sprocket as a dependency in your gleam.toml
                         gleam add sprocket
                         ",
+                      ),
                     ),
                   ],
                 ),
@@ -157,15 +181,18 @@ pub fn getting_started_page(ctx: Context, _props: GettingStartedPageProps) {
                     text(
                       "Add client-side dependencies with the following commands",
                     ),
-                    codeblock(
-                      "bash",
-                      "
+                    component(
+                      codeblock,
+                      CodeBlockProps(
+                        language: "bash",
+                        body: "
                         # Initialize a new NodeJS project, if you don't already have one
                         npm init -y
 
                         # Add sprocket-js as a client dependency
                         npm install sprocket-js
                         ",
+                      ),
                     ),
                   ],
                 ),
@@ -180,9 +207,11 @@ pub fn getting_started_page(ctx: Context, _props: GettingStartedPageProps) {
                     text(
                       "Sprocket needs to be initialized by the client in order to establish a persistent connection to the server. Add the following contents to your client entrypoint file (e.g. app.js)",
                     ),
-                    codeblock(
-                      "javascript",
-                      "
+                    component(
+                      codeblock,
+                      CodeBlockProps(
+                        language: "typescript",
+                        body: "
                         import { connect } from \"sprocket-js\";
 
                         const hooks = {};
@@ -209,6 +238,7 @@ pub fn getting_started_page(ctx: Context, _props: GettingStartedPageProps) {
                           }
                         });
                         ",
+                      ),
                     ),
                   ],
                 ),

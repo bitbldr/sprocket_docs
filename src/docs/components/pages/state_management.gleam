@@ -2,7 +2,8 @@ import sprocket/context.{type Context}
 import sprocket/component.{component, render}
 import sprocket/html/elements.{article, code_text, h1, h2, p, text}
 import docs/components/hello_button.{HelloButtonProps, hello_button}
-import docs/components/common.{codeblock, example}
+import docs/components/common.{example}
+import docs/components/codeblock.{CodeBlockProps, codeblock}
 
 pub type StateManagementPageProps {
   StateManagementPageProps
@@ -45,18 +46,21 @@ pub fn state_management_page(ctx: Context, _props: StateManagementPageProps) {
           ],
         ),
         p([], [text("First we define our state struct and message types:")]),
-        codeblock(
-          "gleam",
-          "
-            type Model {
-              Model(selection: Option(Int), options: List(HelloOption))
-            }
+        component(
+          codeblock,
+          CodeBlockProps(
+            language: "gleam",
+            body: "
+              type Model {
+                Model(selection: Option(Int), options: List(HelloOption))
+              }
 
-            type Msg {
-              NoOp
-              SayHello
-            }
-          ",
+              type Msg {
+                NoOp
+                SayHello
+              }
+            ",
+          ),
         ),
         p(
           [],
@@ -67,17 +71,20 @@ pub fn state_management_page(ctx: Context, _props: StateManagementPageProps) {
           ],
         ),
         p([], [text("Next we define our update function:")]),
-        codeblock(
-          "gleam",
-          "
-            fn update(model: Model, msg: Msg) -> Model {
-              case msg {
-                NoOp -> model
-                SayHello ->
-                  Model(..model, selection: Some(int.random(0, list.length(model.options))))
+        component(
+          codeblock,
+          CodeBlockProps(
+            language: "gleam",
+            body: "
+              fn update(model: Model, msg: Msg) -> Model {
+                case msg {
+                  NoOp -> model
+                  SayHello ->
+                    Model(..model, selection: Some(int.random(0, list.length(model.options))))
+                }
               }
-            }
             ",
+          ),
         ),
         p(
           [],
@@ -98,15 +105,18 @@ pub fn state_management_page(ctx: Context, _props: StateManagementPageProps) {
             ),
           ],
         ),
-        codeblock(
-          "gleam",
-          "
-            use ctx, Model(selection: selection, options: options), dispatch <- reducer(
-              ctx,
-              initial(hello_options()),
-              update,
-            )
+        component(
+          codeblock,
+          CodeBlockProps(
+            language: "gleam",
+            body: "
+              use ctx, Model(selection: selection, options: options), dispatch <- reducer(
+                ctx,
+                initial(hello_options()),
+                update,
+              )
             ",
+          ),
         ),
         p(
           [],
@@ -147,14 +157,17 @@ pub fn state_management_page(ctx: Context, _props: StateManagementPageProps) {
             ),
           ],
         ),
-        codeblock(
-          "gleam",
-          "
-            use ctx, on_hello_button <- handler(
-              ctx,
-              fn(_) { dispatch(SayHello) },
-            )
+        component(
+          codeblock,
+          CodeBlockProps(
+            language: "gleam",
+            body: "
+              use ctx, on_hello_button <- handler(
+                ctx,
+                fn(_) { dispatch(SayHello) },
+              )
             ",
+          ),
         ),
         h2([], [text("Putting it all together")]),
         p(
@@ -165,122 +178,125 @@ pub fn state_management_page(ctx: Context, _props: StateManagementPageProps) {
             ),
           ],
         ),
-        codeblock(
-          "gleam",
-          "
-            import gleam/int
-            import gleam/list
-            import gleam/pair
-            import gleam/option.{None, Option, Some}
-            import sprocket/context.{Context, WithDeps}
-            import sprocket/component.{render}
-            import sprocket/hooks.{State, reducer, handler}
-            import sprocket/html/elements.{button, div, span, text}
-            import sprocket/html/attributes.{class, on_click}
+        component(
+          codeblock,
+          CodeBlockProps(
+            language: "gleam",
+            body: "
+              import gleam/int
+              import gleam/list
+              import gleam/pair
+              import gleam/option.{None, Option, Some}
+              import sprocket/context.{Context, WithDeps}
+              import sprocket/component.{render}
+              import sprocket/hooks.{State, reducer, handler}
+              import sprocket/html/elements.{button, div, span, text}
+              import sprocket/html/attributes.{class, on_click}
 
-            type Model {
-              Model(selection: Option(Int), options: List(HelloOption))
-            }
-
-            type Msg {
-              NoOp
-              SayHello
-            }
-
-            fn update(model: Model, msg: Msg) -> Model {
-              case msg {
-                NoOp -> model
-                SayHello ->
-                  Model(..model, selection: Some(int.random(0, list.length(model.options))))
+              type Model {
+                Model(selection: Option(Int), options: List(HelloOption))
               }
-            }
 
-            fn initial(options: List(HelloOption)) -> Model {
-              Model(selection: None, options: options)
-            }
+              type Msg {
+                NoOp
+                SayHello
+              }
 
-            pub type HelloButtonProps {
-              HelloButtonProps
-            }
+              fn update(model: Model, msg: Msg) -> Model {
+                case msg {
+                  NoOp -> model
+                  SayHello ->
+                    Model(..model, selection: Some(int.random(0, list.length(model.options))))
+                }
+              }
 
-            pub fn hello_button(ctx: Context, _props: HelloButtonProps) {
-              use ctx, Model(selection: selection, options: options), dispatch <- reducer(
-                ctx,
-                initial(hello_strings()),
-                update,
-              )
+              fn initial(options: List(HelloOption)) -> Model {
+                Model(selection: None, options: options)
+              }
 
-              use ctx, on_hello_button <- handler(
-                ctx,
-                fn(_) { dispatch(SayHello) },
-              )
+              pub type HelloButtonProps {
+                HelloButtonProps
+              }
 
-              // find the selected option using the selection index and list of options
-              let hello =
-                selection
-                |> option.map(fn(i) {
-                  list.at(options, i)
-                  |> option.from_result()
-                })
-                |> option.flatten()
+              pub fn hello_button(ctx: Context, _props: HelloButtonProps) {
+                use ctx, Model(selection: selection, options: options), dispatch <- reducer(
+                  ctx,
+                  initial(hello_strings()),
+                  update,
+                )
 
-              render(
-                ctx,
+                use ctx, on_hello_button <- handler(
+                  ctx,
+                  fn(_) { dispatch(SayHello) },
+                )
+
+                // find the selected option using the selection index and list of options
+                let hello =
+                  selection
+                  |> option.map(fn(i) {
+                    list.at(options, i)
+                    |> option.from_result()
+                  })
+                  |> option.flatten()
+
+                render(
+                  ctx,
+                  [
+                    div(
+                      [],
+                      [
+                        button(
+                          [
+                            class(\"p-2 bg-blue-500 hover:bg-blue-600 active:bg-blue-700 text-white rounded\"),
+                            on_click(on_hello_button),
+                          ],
+                          [text(\"Say Hello!\")],
+                        ),
+                        ..case hello {
+                          None -> []
+                          Some(hello) -> [
+                            span([class(\"ml-2\")], [text(pair.second(hello))]),
+                            span(
+                              [class(\"ml-2 text-gray-400 bold\")],
+                              [text(pair.first(hello))],
+                            ),
+                          ]
+                        }
+                      ],
+                    ),
+                  ],
+                )
+              }
+
+              type HelloOption =
+                #(String, String)
+
+              fn hello_options() -> List(HelloOption) {
                 [
-                  div(
-                    [],
-                    [
-                      button(
-                        [
-                          class(\"p-2 bg-blue-500 hover:bg-blue-600 active:bg-blue-700 text-white rounded\"),
-                          on_click(on_hello_button),
-                        ],
-                        [text(\"Say Hello!\")],
-                      ),
-                      ..case hello {
-                        None -> []
-                        Some(hello) -> [
-                          span([class(\"ml-2\")], [text(pair.second(hello))]),
-                          span(
-                            [class(\"ml-2 text-gray-400 bold\")],
-                            [text(pair.first(hello))],
-                          ),
-                        ]
-                      }
-                    ],
-                  ),
-                ],
-              )
-            }
-
-            type HelloOption =
-              #(String, String)
-
-            fn hello_options() -> List(HelloOption) {
-              [
-                #(\"English\", \"Hello\"),
-                #(\"Spanish\", \"Hola\"),
-                #(\"French\", \"Bonjour\"),
-                #(\"German\", \"Hallo\"),
-                #(\"Italian\", \"Ciao\"),
-                #(\"Portuguese\", \"Olá\"),
-                #(\"Hawaiian\", \"Aloha\"),
-                #(\"Chinese (Mandarin)\", \"你好,(Nǐ hǎo)\"),
-                #(\"Japanese\", \"こんにち, (Konnichiwa)\"),
-                #(\"Korean\", \"안녕하세, (Annyeonghaseyo)\"),
-                #(\"Arabic\", \"مرحب, (Marhaba)\"),
-                #(\"Hindi\", \"नमस्त, (Namaste)\"),
-                #(\"Turkish\", \"Merhaba\"),
-                #(\"Dutch\", \"Hallo\"),
-                #(\"Swedish\", \"Hej\"),
-                #(\"Norwegian\", \"Hei\"),
-                #(\"Danish\", \"Hej\"),
-                #(\"Greek\", \"Γεια σας,(Yia sas)\"),
-                #(\"Polish\", \"Cześć\"),
-                #(\"Swahili\", \"Hujambo\"),
-              ]
-            }
+                  #(\"English\", \"Hello\"),
+                  #(\"Spanish\", \"Hola\"),
+                  #(\"French\", \"Bonjour\"),
+                  #(\"German\", \"Hallo\"),
+                  #(\"Italian\", \"Ciao\"),
+                  #(\"Portuguese\", \"Olá\"),
+                  #(\"Hawaiian\", \"Aloha\"),
+                  #(\"Chinese (Mandarin)\", \"你好,(Nǐ hǎo)\"),
+                  #(\"Japanese\", \"こんにち, (Konnichiwa)\"),
+                  #(\"Korean\", \"안녕하세, (Annyeonghaseyo)\"),
+                  #(\"Arabic\", \"مرحب, (Marhaba)\"),
+                  #(\"Hindi\", \"नमस्त, (Namaste)\"),
+                  #(\"Turkish\", \"Merhaba\"),
+                  #(\"Dutch\", \"Hallo\"),
+                  #(\"Swedish\", \"Hej\"),
+                  #(\"Norwegian\", \"Hei\"),
+                  #(\"Danish\", \"Hej\"),
+                  #(\"Greek\", \"Γεια σας,(Yia sas)\"),
+                  #(\"Polish\", \"Cześć\"),
+                  #(\"Swahili\", \"Hujambo\"),
+                ]
+              }
             ",
+          ),
         ),
         example([component(hello_button, HelloButtonProps)]),
         p(

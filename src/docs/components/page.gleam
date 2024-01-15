@@ -37,7 +37,6 @@ import docs/page_route.{
   Introduction, Misc, Page, StateManagement, UnderTheHood, Unknown,
 }
 import docs/theme.{type DarkMode, type Theme, Auto, Theme}
-import docs/components/test_counter.{CounterProps, counter}
 
 type Model {
   Model(mode: DarkMode)
@@ -91,7 +90,6 @@ pub fn page(ctx: Context, props: PageProps) {
     div(
       [id("app")],
       [
-        component(counter, CounterProps(initial: option.Some(0))),
         div(
           [],
           [
