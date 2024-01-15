@@ -18,23 +18,33 @@ const removeSystemDarkModeListener = () =>
     .matchMedia("(prefers-color-scheme: dark)")
     .removeEventListener("change", systemDarkModeListener);
 
+const applyMode = (mode: "auto" | "light" | "dark") => {
+  if (mode === "auto") {
+    if (isDarkMode()) {
+      document.documentElement.classList.add("dark");
+    }
+  } else if (mode === "dark") {
+    document.documentElement.classList.add("dark");
+  } else {
+    document.documentElement.classList.remove("dark");
+  }
+};
+
+const mode = localStorage.theme || "auto";
+
+document.addEventListener("DOMContentLoaded", () => applyMode(mode));
+
 export const DarkMode = {
   create({ el, pushEvent, handleEvent }) {
-    const mode = localStorage.theme
-      ? localStorage.theme
-      : isDarkMode()
-      ? "auto-dark"
-      : "auto-light";
     pushEvent("set_mode", mode);
 
     handleEvent("set_mode", (mode) => {
       localStorage.theme = mode;
+
+      applyMode(mode);
     });
 
-    addSystemDarkModeListener((mode) => {
-      if (!("theme" in localStorage)) {
-      }
-    });
+    addSystemDarkModeListener((mode) => applyMode(mode));
   },
   destroy() {
     removeSystemDarkModeListener();
