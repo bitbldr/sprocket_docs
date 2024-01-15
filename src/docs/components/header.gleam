@@ -19,54 +19,52 @@ pub fn header(ctx: Context, props) {
 
   render(
     ctx,
-    [
-      div(
-        [
-          class(
-            "flex flex-row border-b border-gray-200 dark:border-gray-600 min-h-[60px]",
-          ),
-        ],
-        [
-          a(
-            [href("/")],
-            [
-              div(
-                [class("p-2 mx-2")],
-                [
-                  div(
-                    [class("text-2xl")],
-                    [
-                      span(
-                        [
-                          class(
-                            "inline-block animate-spin repeat-1 delay-500 ease-in-out",
-                          ),
-                        ],
-                        [text("⚙️")],
-                      ),
-                      span([class("italic bold")], [text("Sprocket")]),
-                    ],
-                  ),
-                  div(
-                    [class("text-gray-500 text-sm")],
-                    [text("Real-time server components in Gleam ✨")],
-                  ),
-                ],
-              ),
-            ],
-          ),
-          div([class("flex-1")], []),
-          div([], [component(dark_mode_toggle, DarkModeToggleProps)]),
-          div(
-            [],
-            list.map(
-              menu_items,
-              fn(item) { component(menu_item, MenuItemProps(item)) },
+    div(
+      [
+        class(
+          "flex flex-row border-b border-gray-200 dark:border-gray-600 min-h-[60px]",
+        ),
+      ],
+      [
+        a(
+          [href("/")],
+          [
+            div(
+              [class("p-2 mx-2")],
+              [
+                div(
+                  [class("text-2xl")],
+                  [
+                    span(
+                      [
+                        class(
+                          "inline-block animate-spin repeat-1 delay-500 ease-in-out",
+                        ),
+                      ],
+                      [text("⚙️")],
+                    ),
+                    span([class("italic bold")], [text("Sprocket")]),
+                  ],
+                ),
+                div(
+                  [class("text-gray-500 text-sm")],
+                  [text("Real-time server components in Gleam ✨")],
+                ),
+              ],
             ),
+          ],
+        ),
+        div([class("flex-1")], []),
+        div([], [component(dark_mode_toggle, DarkModeToggleProps)]),
+        div(
+          [],
+          list.map(
+            menu_items,
+            fn(item) { component(menu_item, MenuItemProps(item)) },
           ),
-        ],
-      ),
-    ],
+        ),
+      ],
+    ),
   )
 }
 
@@ -81,30 +79,28 @@ fn menu_item(ctx: Context, props: MenuItemProps) {
 
   render(
     ctx,
-    [
-      a(
-        [
-          class("block p-5 border-b-2 border-transparent hover:border-blue-500"),
-          attributes.href(href),
-          ..case is_external {
-            True -> [attributes.target("_blank")]
-            False -> []
-          }
-        ],
-        [
-          text(label),
-          ..case is_external {
-            True -> [
-              span(
-                [class("text-gray-500 text-sm ml-2")],
-                [i([class("fa-solid fa-arrow-up-right-from-square")], [])],
-              ),
-            ]
-            False -> []
-          }
-        ],
-      ),
-    ],
+    a(
+      [
+        class("block p-5 border-b-2 border-transparent hover:border-blue-500"),
+        attributes.href(href),
+        ..case is_external {
+          True -> [attributes.target("_blank")]
+          False -> []
+        }
+      ],
+      [
+        text(label),
+        ..case is_external {
+          True -> [
+            span(
+              [class("text-gray-500 text-sm ml-2")],
+              [i([class("fa-solid fa-arrow-up-right-from-square")], [])],
+            ),
+          ]
+          False -> []
+        }
+      ],
+    ),
   )
 }
 

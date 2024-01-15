@@ -42,6 +42,8 @@
     "build": "gleam build && yarn run client:build && yarn run standalone_counter:build && yarn run tailwind:build"
   },
   "dependencies": {
+    "@gleam-lang/highlight.js-gleam": "^1.4.0",
+    "highlight.js": "^11.9.0",
     "sprocket-js": "file:../sprocket"
   }
 }

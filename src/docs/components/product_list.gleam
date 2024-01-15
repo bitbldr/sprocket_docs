@@ -130,52 +130,47 @@ pub fn product(ctx: Context, props: ProductProps) {
 
   render(
     ctx,
-    [
-      product_card(
-        product,
-        Some([
-          button_text(
-            [
-              class(
-                "text-blue-700 hover:text-blue-800 hover:underline focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:text-blue-600 dark:hover:text-blue-700 dark:focus:ring-blue-800 mr-2",
-              ),
-              on_click(on_hide),
-            ],
-            "Not Interested",
-          ),
-          ..case in_cart {
-            True -> [
-              button(
-                [
-                  class(
-                    "text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800",
-                  ),
-                  on_click(toggle_in_cart),
-                ],
-                [
-                  i([class("fa-solid fa-check mr-2")], []),
-                  text("Added to Cart!"),
-                ],
-              ),
-            ]
-            False -> [
-              button(
-                [
-                  class(
-                    "text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800",
-                  ),
-                  on_click(toggle_in_cart),
-                ],
-                [
-                  i([class("fa-solid fa-cart-shopping mr-2")], []),
-                  text("Add to Cart"),
-                ],
-              ),
-            ]
-          }
-        ]),
-      ),
-    ],
+    product_card(
+      product,
+      Some([
+        button_text(
+          [
+            class(
+              "text-blue-700 hover:text-blue-800 hover:underline focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:text-blue-600 dark:hover:text-blue-700 dark:focus:ring-blue-800 mr-2",
+            ),
+            on_click(on_hide),
+          ],
+          "Not Interested",
+        ),
+        ..case in_cart {
+          True -> [
+            button(
+              [
+                class(
+                  "text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800",
+                ),
+                on_click(toggle_in_cart),
+              ],
+              [i([class("fa-solid fa-check mr-2")], []), text("Added to Cart!")],
+            ),
+          ]
+          False -> [
+            button(
+              [
+                class(
+                  "text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800",
+                ),
+                on_click(toggle_in_cart),
+              ],
+              [
+                i([class("fa-solid fa-cart-shopping mr-2")], []),
+                text("Add to Cart"),
+              ],
+            ),
+          ]
+        }
+      ]),
+    ),
   )
 }
 
@@ -214,56 +209,54 @@ pub fn product_list(ctx: Context, props: ProductListProps) {
 
   render(
     ctx,
-    [
-      div(
-        [],
-        [
-          ul(
-            [role("list"), class("flex flex-col")],
-            products
-            |> list.filter_map(fn(p) {
-              case list.contains(hidden, p.id) {
-                True -> Error(Nil)
-                False ->
-                  Ok(keyed(
-                    int.to_string(p.id),
-                    li(
-                      [class("py-3 mr-4")],
-                      [
-                        component(
-                          product,
-                          ProductProps(
-                            product: p,
-                            on_hide: fn(_) { dispatch(Hide(p.id)) },
-                          ),
+    div(
+      [],
+      [
+        ul(
+          [role("list"), class("flex flex-col")],
+          products
+          |> list.filter_map(fn(p) {
+            case list.contains(hidden, p.id) {
+              True -> Error(Nil)
+              False ->
+                Ok(keyed(
+                  int.to_string(p.id),
+                  li(
+                    [class("py-3 mr-4")],
+                    [
+                      component(
+                        product,
+                        ProductProps(
+                          product: p,
+                          on_hide: fn(_) { dispatch(Hide(p.id)) },
                         ),
-                      ],
-                    ),
-                  ))
-              }
-            }),
-          ),
-          ..case list.is_empty(hidden) {
-            True -> []
-            False -> [
-              button(
-                [
-                  class(
-                    "mt-5 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800",
+                      ),
+                    ],
                   ),
-                  on_click(reset),
-                ],
-                [
-                  text("Show Hidden ("),
-                  text(int.to_string(list.length(hidden))),
-                  text(")"),
-                ],
-              ),
-            ]
-          }
-        ],
-      ),
-    ],
+                ))
+            }
+          }),
+        ),
+        ..case list.is_empty(hidden) {
+          True -> []
+          False -> [
+            button(
+              [
+                class(
+                  "mt-5 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800",
+                ),
+                on_click(reset),
+              ],
+              [
+                text("Show Hidden ("),
+                text(int.to_string(list.length(hidden))),
+                text(")"),
+              ],
+            ),
+          ]
+        }
+      ],
+    ),
   )
 }
 

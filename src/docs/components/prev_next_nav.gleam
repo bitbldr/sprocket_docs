@@ -2,7 +2,7 @@ import gleam/option.{Some}
 import gleam/result
 import sprocket/context.{type Context}
 import sprocket/component.{component, render}
-import sprocket/html/elements.{a, div, hr, i, text}
+import sprocket/html/elements.{a, div, fragment, hr, i, text}
 import sprocket/html/attributes.{class, classes}
 import sprocket/internal/utils/ordered_map.{type OrderedMap}
 import docs/utils/common.{maybe}
@@ -20,7 +20,7 @@ pub fn prev_next_nav(ctx: Context, props) {
 
   render(
     ctx,
-    [
+    fragment([
       hr([class("text-gray-500 my-6")]),
       div(
         [class("flex flex-row my-6")],
@@ -30,7 +30,7 @@ pub fn prev_next_nav(ctx: Context, props) {
           component(link, PageLinkProps(next_page, active, Next)),
         ],
       ),
-    ],
+    ]),
   )
 }
 
@@ -51,34 +51,32 @@ fn link(ctx: Context, props: PageLinkProps) {
   let PageLinkProps(page: page, active: active, next_or_prev: next_or_prev) =
     props
 
-  page
-  |> result.map(fn(page) {
-    let title = page.title
-    let href = page_route.href(page.route)
-    let is_active = page.route == active
+  render(
+    ctx,
+    page
+    |> result.map(fn(page) {
+      let title = page.title
+      let href = page_route.href(page.route)
+      let is_active = page.route == active
 
-    render(
-      ctx,
-      [
-        a(
-          [
-            classes([
-              Some(
-                "block py-1.5 px-2 text-blue-500 hover:text-blue-600 active:text-blue-700 no-underline hover:!underline",
-              ),
-              maybe(is_active, "font-bold"),
-            ]),
-            attributes.href(href),
-          ],
-          case next_or_prev {
-            Next -> [text(title), next_or_prev_icon(Next)]
-            Prev -> [next_or_prev_icon(Prev), text(title)]
-          },
-        ),
-      ],
-    )
-  })
-  |> result.unwrap(render(ctx, []))
+      a(
+        [
+          classes([
+            Some(
+              "block py-1.5 px-2 text-blue-500 hover:text-blue-600 active:text-blue-700 no-underline hover:!underline",
+            ),
+            maybe(is_active, "font-bold"),
+          ]),
+          attributes.href(href),
+        ],
+        case next_or_prev {
+          Next -> [text(title), next_or_prev_icon(Next)]
+          Prev -> [next_or_prev_icon(Prev), text(title)]
+        },
+      )
+    })
+    |> result.unwrap(fragment([])),
+  )
 }
 
 fn next_or_prev_icon(next_or_prev: NextOrPrev) {

@@ -25,19 +25,17 @@ pub fn toggle_button(ctx: Context, props: ToggleButtonProps) {
 
   render(
     ctx,
-    [
-      button(
-        [
-          class(case is_active {
-            True ->
-              "rounded-lg text-white px-3 py-2 bg-green-700 hover:bg-green-800 active:bg-green-900"
-            False ->
-              "rounded-lg text-white px-3 py-2 bg-blue-500 hover:bg-blue-600 active:bg-blue-700"
-          }),
-          on_click(toggle_active),
-        ],
-        [render_label(is_active)],
-      ),
-    ],
+    button(
+      [
+        class(case is_active {
+          True ->
+            "rounded-lg text-white px-3 py-2 bg-green-700 hover:bg-green-800 active:bg-green-900"
+          False ->
+            "rounded-lg text-white px-3 py-2 bg-blue-500 hover:bg-blue-600 active:bg-blue-700"
+        }),
+        on_click(toggle_active),
+      ],
+      [render_label(is_active)],
+    ),
   )
 }

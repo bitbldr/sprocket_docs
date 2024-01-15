@@ -9,11 +9,9 @@ pub type UnderTheHoodProps {
 pub fn under_the_hood_page(ctx: Context, _props: UnderTheHoodProps) {
   render(
     ctx,
-    [
-      article(
-        [],
-        [h1([], [text("Under the Hood")]), p([], [text("COMING SOON")])],
-      ),
-    ],
+    article(
+      [],
+      [h1([], [text("Under the Hood")]), p([], [text("COMING SOON")])],
+    ),
   )
 }

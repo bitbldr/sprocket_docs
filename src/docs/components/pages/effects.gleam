@@ -11,18 +11,16 @@ pub type EffectsPageProps {
 pub fn effects_page(ctx: Context, _props: EffectsPageProps) {
   render(
     ctx,
-    [
-      article(
-        [],
-        [
-          h1([], [text("Effects")]),
-          p([], [text("COMING SOON")]),
-          component(
-            clock,
-            ClockProps(label: Some("The current time is: "), time_unit: None),
-          ),
-        ],
-      ),
-    ],
+    article(
+      [],
+      [
+        h1([], [text("Effects")]),
+        p([], [text("COMING SOON")]),
+        component(
+          clock,
+          ClockProps(label: Some("The current time is: "), time_unit: None),
+        ),
+      ],
+    ),
   )
 }

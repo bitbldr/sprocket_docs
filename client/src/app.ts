@@ -1,10 +1,12 @@
-import { Doubleclick } from "./hooks/doubleclick";
+import { DoubleClick } from "./hooks/double_click";
 import { DarkMode } from "./hooks/dark_mode";
+import { CodeBlock } from "./hooks/codeblock";
 // import { connect } from "sprocket-js";
 import { connect } from "../../../sprocket/client/src/sprocket";
 
 const hooks = {
-  Doubleclick,
+  CodeBlock,
+  DoubleClick,
   DarkMode,
 };
 

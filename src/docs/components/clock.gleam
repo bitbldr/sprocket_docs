@@ -4,7 +4,7 @@ import gleam/option.{type Option, None, Some}
 import sprocket/context.{type Context, WithDeps, dep}
 import sprocket/component.{render}
 import sprocket/hooks.{effect, reducer}
-import sprocket/html/elements.{span, text}
+import sprocket/html/elements.{fragment, span, text}
 import sprocket/internal/utils/timer.{interval}
 
 type Model {
@@ -79,8 +79,9 @@ pub fn clock(ctx: Context, props: ClockProps) {
   render(
     ctx,
     case label {
-      Some(label) -> [span([], [text(label)]), span([], [text(current_time)])]
-      None -> [text(current_time)]
+      Some(label) ->
+        fragment([span([], [text(label)]), span([], [text(current_time)])])
+      None -> fragment([text(current_time)])
     },
   )
 }

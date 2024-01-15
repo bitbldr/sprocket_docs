@@ -76,73 +76,71 @@ pub fn dark_mode_toggle(ctx: Context, _props: DarkModeToggleProps) {
 
   render(
     ctx,
-    [
-      div(
-        [dark_mode_client(), class("m-4")],
-        [
-          case is_open {
-            True ->
-              div(
-                [
-                  classes([
-                    Some("flex-row"),
-                    case is_open {
-                      True -> Some("flex flex-row")
-                      False -> Some("hidden")
-                    },
-                  ]),
-                ],
-                [
-                  button(
-                    [
-                      on_click(set_mode_auto),
-                      classes([
-                        Some(
-                          "p-2 rounded-l border border-gray-200 hover:bg-gray-100 active:bg-gray-200",
-                        ),
-                        Some(selector_class(Auto, mode)),
-                      ]),
-                    ],
-                    [icon(Auto)],
-                  ),
-                  button(
-                    [
-                      on_click(set_mode_light),
-                      classes([
-                        Some(
-                          "p-2 border-t border-b border-gray-200 hover:bg-gray-100 active:bg-gray-200",
-                        ),
-                        Some(selector_class(Light, mode)),
-                      ]),
-                    ],
-                    [icon(Light)],
-                  ),
-                  button(
-                    [
-                      on_click(set_mode_dark),
-                      classes([
-                        Some(
-                          "p-2 rounded-r border border-gray-200 hover:bg-gray-100 active:bg-gray-200",
-                        ),
-                        Some(selector_class(Dark, mode)),
-                      ]),
-                    ],
-                    [icon(Dark)],
-                  ),
-                ],
-              )
-            False ->
-              button(
-                [
-                  on_click(toggle_open),
-                  class("p-2 rounded border border-gray-200"),
-                ],
-                [icon(mode)],
-              )
-          },
-        ],
-      ),
-    ],
+    div(
+      [dark_mode_client(), class("m-4")],
+      [
+        case is_open {
+          True ->
+            div(
+              [
+                classes([
+                  Some("flex-row"),
+                  case is_open {
+                    True -> Some("flex flex-row")
+                    False -> Some("hidden")
+                  },
+                ]),
+              ],
+              [
+                button(
+                  [
+                    on_click(set_mode_auto),
+                    classes([
+                      Some(
+                        "p-2 rounded-l border border-gray-200 hover:bg-gray-100 active:bg-gray-200",
+                      ),
+                      Some(selector_class(Auto, mode)),
+                    ]),
+                  ],
+                  [icon(Auto)],
+                ),
+                button(
+                  [
+                    on_click(set_mode_light),
+                    classes([
+                      Some(
+                        "p-2 border-t border-b border-gray-200 hover:bg-gray-100 active:bg-gray-200",
+                      ),
+                      Some(selector_class(Light, mode)),
+                    ]),
+                  ],
+                  [icon(Light)],
+                ),
+                button(
+                  [
+                    on_click(set_mode_dark),
+                    classes([
+                      Some(
+                        "p-2 rounded-r border border-gray-200 hover:bg-gray-100 active:bg-gray-200",
+                      ),
+                      Some(selector_class(Dark, mode)),
+                    ]),
+                  ],
+                  [icon(Dark)],
+                ),
+              ],
+            )
+          False ->
+            button(
+              [
+                on_click(toggle_open),
+                class("p-2 rounded border border-gray-200"),
+              ],
+              [icon(mode)],
+            )
+        },
+      ],
+    ),
   )
 }
 

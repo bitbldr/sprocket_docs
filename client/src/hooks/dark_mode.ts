@@ -19,7 +19,7 @@ const removeSystemDarkModeListener = () =>
     .removeEventListener("change", systemDarkModeListener);
 
 export const DarkMode = {
-  mounted({ el, pushEvent, handleEvent }) {
+  create({ el, pushEvent, handleEvent }) {
     const mode = localStorage.theme
       ? localStorage.theme
       : isDarkMode()
@@ -36,7 +36,7 @@ export const DarkMode = {
       }
     });
   },
-  destroyed({}) {
+  destroy() {
     removeSystemDarkModeListener();
   },
 };

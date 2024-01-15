@@ -3,7 +3,7 @@ import gleam/option.{type Option, None, Some}
 import sprocket/context.{type Context}
 import sprocket/component.{component, render}
 import sprocket/hooks.{reducer}
-import sprocket/html/elements.{a, div, keyed, text}
+import sprocket/html/elements.{a, div, fragment, keyed, text}
 import sprocket/html/attributes.{class, classes}
 import sprocket/internal/utils/ordered_map.{type OrderedMap, KeyedItem}
 import docs/utils/common.{maybe}
@@ -45,7 +45,7 @@ pub fn sidebar(ctx: Context, props) {
 
   render(
     ctx,
-    [
+    fragment([
       component(
         search_bar,
         SearchBarProps(on_search: fn(query) {
@@ -85,7 +85,7 @@ pub fn sidebar(ctx: Context, props) {
             },
           )
       }
-    ],
+    ]),
   )
 }
 
@@ -98,17 +98,15 @@ fn link(ctx: Context, props: LinkProps) {
 
   render(
     ctx,
-    [
-      a(
-        [
-          classes([
-            Some("block p-2 text-blue-500 hover:text-blue-700 hover:underline"),
-            maybe(is_active, "font-bold"),
-          ]),
-          attributes.href(href),
-        ],
-        [text(title)],
-      ),
-    ],
+    a(
+      [
+        classes([
+          Some("block p-2 text-blue-500 hover:text-blue-700 hover:underline"),
+          maybe(is_active, "font-bold"),
+        ]),
+        attributes.href(href),
+      ],
+      [text(title)],
+    ),
   )
 }

@@ -83,11 +83,7 @@ pub fn page_layout(page_title: String, csrf: String) {
               "bg-white dark:bg-gray-900 dark:text-white flex flex-col h-screen",
             ),
           ],
-          [
-            inner_content,
-            script([src("/app.js")], None),
-            script([], Some("hljs.highlightAll();")),
-          ],
+          [inner_content, script([src("/app.js")], None)],
         ),
       ],
     )

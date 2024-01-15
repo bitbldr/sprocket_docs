@@ -13,20 +13,18 @@ pub fn example_button(ctx: Context, props: ExampleButtonProps) {
 
   render(
     ctx,
-    [
-      button(
-        [
-          class(
-            "p-2 bg-blue-500 hover:bg-blue-600 active:bg-blue-700 text-white rounded-lg",
-          ),
-        ],
-        [
-          text(case label {
-            Some(label) -> label
-            None -> "Click me!"
-          }),
-        ],
-      ),
-    ],
+    button(
+      [
+        class(
+          "p-2 bg-blue-500 hover:bg-blue-600 active:bg-blue-700 text-white rounded-lg",
+        ),
+      ],
+      [
+        text(case label {
+          Some(label) -> label
+          None -> "Click me!"
+        }),
+      ],
+    ),
   )
 }

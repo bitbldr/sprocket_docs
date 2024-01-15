@@ -48,16 +48,14 @@ pub fn search_bar(ctx: Context, props) {
 
   render(
     ctx,
-    [
-      input([
-        input_type("text"),
-        class(
-          "m-2 pl-2 pr-4 py-1 rounded bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-600 focus:outline-none focus:border-blue-500",
-        ),
-        placeholder("Search..."),
-        value(query),
-        on_input(on_input_query),
-      ]),
-    ],
+    input([
+      input_type("text"),
+      class(
+        "m-2 pl-2 pr-4 py-1 rounded bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-600 focus:outline-none focus:border-blue-500",
+      ),
+      placeholder("Search..."),
+      value(query),
+      on_input(on_input_query),
+    ]),
   )
 }

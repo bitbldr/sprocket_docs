@@ -104,161 +104,156 @@ pub fn page_view(ctx: Context, props: PageViewProps) {
 
   render(
     ctx,
-    [
-      html(
-        [lang("en"), class(theme_class(mode))],
-        [
-          head(
-            [],
-            [
-              title(page_title),
-              meta([charset("utf-8")]),
-              meta([name("csrf-token"), content(csrf)]),
-              meta([
-                name("viewport"),
-                content("width=device-width, initial-scale=1"),
-              ]),
-              meta([
-                name("description"),
-                content(
-                  "Sprocket is a library for building real-time server components in Gleam.",
+    html(
+      [lang("en"), class(theme_class(mode))],
+      [
+        head(
+          [],
+          [
+            title(page_title),
+            meta([charset("utf-8")]),
+            meta([name("csrf-token"), content(csrf)]),
+            meta([
+              name("viewport"),
+              content("width=device-width, initial-scale=1"),
+            ]),
+            meta([
+              name("description"),
+              content(
+                "Sprocket is a library for building real-time server components in Gleam.",
+              ),
+            ]),
+            meta([
+              name("keywords"),
+              content(
+                "gleam, sprocket, web, server, real-time, components, html, css, javascript",
+              ),
+            ]),
+            // Set the <meta name="theme-color"> tag for mobile browsers to render correct colors
+            meta([name("theme-color"), content(meta_theme_color(mode))]),
+            link([rel("stylesheet"), href("/app.css")]),
+            link([
+              rel("stylesheet"),
+              href(
+                "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css",
+              ),
+              integrity(
+                "sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w==",
+              ),
+              crossorigin("anonymous"),
+              referrerpolicy("no-referrer"),
+            ]),
+            link([
+              id("syntax-theme"),
+              rel("stylesheet"),
+              media("(prefers-color-scheme: dark)"),
+              href(
+                "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css",
+              ),
+            ]),
+            link([
+              id("syntax-theme"),
+              rel("stylesheet"),
+              media(
+                "(prefers-color-scheme: light), (prefers-color-scheme: no-preference)",
+              ),
+              href(
+                "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-light.min.css",
+              ),
+            ]),
+            script(
+              [
+                src(
+                  "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js",
                 ),
-              ]),
-              meta([
-                name("keywords"),
-                content(
-                  "gleam, sprocket, web, server, real-time, components, html, css, javascript",
-                ),
-              ]),
-              // Set the <meta name="theme-color"> tag for mobile browsers to render correct colors
-              meta([name("theme-color"), content(meta_theme_color(mode))]),
-              link([rel("stylesheet"), href("/app.css")]),
-              link([
-                rel("stylesheet"),
-                href(
-                  "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css",
-                ),
-                integrity(
-                  "sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w==",
-                ),
-                crossorigin("anonymous"),
-                referrerpolicy("no-referrer"),
-              ]),
-              link([
-                id("syntax-theme"),
-                rel("stylesheet"),
-                media("(prefers-color-scheme: dark)"),
-                href(
-                  "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css",
-                ),
-              ]),
-              link([
-                id("syntax-theme"),
-                rel("stylesheet"),
-                media(
-                  "(prefers-color-scheme: light), (prefers-color-scheme: no-preference)",
-                ),
-                href(
-                  "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-light.min.css",
-                ),
-              ]),
-              script(
-                [
-                  src(
-                    "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js",
+              ],
+              None,
+            ),
+            script(
+              [src("https://gleam.run/javascript/highlightjs-gleam.js")],
+              None,
+            ),
+          ],
+        ),
+        body(
+          [
+            class(
+              "bg-white dark:bg-gray-900 dark:text-white flex flex-col h-screen",
+            ),
+          ],
+          [
+            div(
+              [],
+              [
+                provider(
+                  "theme",
+                  Theme(
+                    mode: mode,
+                    set_mode: fn(mode) { dispatch(SetMode(mode)) },
                   ),
-                ],
-                None,
-              ),
-              script(
-                [src("https://gleam.run/javascript/highlightjs-gleam.js")],
-                None,
-              ),
-            ],
-          ),
-          body(
-            [
-              class(
-                "bg-white dark:bg-gray-900 dark:text-white flex flex-col h-screen",
-              ),
-            ],
-            [
-              div(
-                [],
-                [
-                  provider(
-                    "theme",
-                    Theme(
-                      mode: mode,
-                      set_mode: fn(mode) { dispatch(SetMode(mode)) },
-                    ),
-                    div(
-                      [],
-                      [
-                        component(
-                          header,
-                          HeaderProps(menu_items: [
-                            MenuItem(
-                              "Github",
-                              "https://github.com/bitbldr/sprocket",
-                            ),
-                          ]),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-              component(
-                responsive_drawer,
-                ResponsiveDrawerProps(
-                  drawer: component(sidebar, SidebarProps(pages, route)),
-                  content: div(
+                  div(
+                    [],
                     [
-                      class(
-                        "prose dark:prose-invert prose-sm md:prose-base container mx-auto p-12",
+                      component(
+                        header,
+                        HeaderProps(menu_items: [
+                          MenuItem(
+                            "Github",
+                            "https://github.com/bitbldr/sprocket",
+                          ),
+                        ]),
                       ),
                     ],
-                    [
-                      case route {
-                        Introduction ->
-                          component(introduction_page, IntroductionPageProps)
-                        GettingStarted ->
-                          component(
-                            getting_started_page,
-                            GettingStartedPageProps,
-                          )
-                        Components ->
-                          component(components_page, ComponentsPageProps)
-                        Events ->
-                          component(
-                            props_and_events_page,
-                            PropsAndEventsPageProps,
-                          )
-                        StateManagement ->
-                          component(
-                            state_management_page,
-                            StateManagementPageProps,
-                          )
-                        Hooks -> component(hooks_page, HooksPageProps)
-                        Effects -> component(effects_page, EffectsPageProps)
-                        UnderTheHood ->
-                          component(under_the_hood_page, UnderTheHoodProps)
-                        Misc -> component(misc_page, MiscPageProps)
-                        Unknown -> component(not_found_page, NotFoundPageProps)
-                      },
-                      component(prev_next_nav, PrevNextNavProps(pages, route)),
-                    ],
                   ),
                 ),
+              ],
+            ),
+            component(
+              responsive_drawer,
+              ResponsiveDrawerProps(
+                drawer: component(sidebar, SidebarProps(pages, route)),
+                content: div(
+                  [
+                    class(
+                      "prose dark:prose-invert prose-sm md:prose-base container mx-auto p-12",
+                    ),
+                  ],
+                  [
+                    case route {
+                      Introduction ->
+                        component(introduction_page, IntroductionPageProps)
+                      GettingStarted ->
+                        component(getting_started_page, GettingStartedPageProps)
+                      Components ->
+                        component(components_page, ComponentsPageProps)
+                      Events ->
+                        component(
+                          props_and_events_page,
+                          PropsAndEventsPageProps,
+                        )
+                      StateManagement ->
+                        component(
+                          state_management_page,
+                          StateManagementPageProps,
+                        )
+                      Hooks -> component(hooks_page, HooksPageProps)
+                      Effects -> component(effects_page, EffectsPageProps)
+                      UnderTheHood ->
+                        component(under_the_hood_page, UnderTheHoodProps)
+                      Misc -> component(misc_page, MiscPageProps)
+                      Unknown -> component(not_found_page, NotFoundPageProps)
+                    },
+                    component(prev_next_nav, PrevNextNavProps(pages, route)),
+                  ],
+                ),
               ),
-              script([src("/app.js")], None),
-              script([], Some("hljs.highlightAll();")),
-            ],
-          ),
-        ],
-      ),
-    ],
+            ),
+            script([src("/app.js")], None),
+            script([], Some("hljs.highlightAll();")),
+          ],
+        ),
+      ],
+    ),
   )
 }
 
