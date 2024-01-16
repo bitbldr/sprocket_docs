@@ -1,3 +1,4 @@
+import gleam/io
 import gleam/int
 import gleam/string
 import gleam/option.{None}
@@ -19,7 +20,14 @@ pub fn main() {
   let validate_csrf = fn(_csrf) { Ok(Nil) }
 
   let port = load_port()
-  let ca = sprocket.start(validate_csrf, None)
+  let ca = case sprocket.start(validate_csrf, None) {
+    Ok(ca) -> ca
+    Error(err) -> {
+      io.debug(err)
+
+      panic("Failed to start sprocket")
+    }
+  }
 
   router.stack(AppContext(secret_key_base, ca))
   |> mist.new

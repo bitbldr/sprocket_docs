@@ -35,7 +35,7 @@ pub fn component(
         fn(state, conn, message) {
           handle_ws_message(id, state, conn, message, ca, view)
         },
-        fn() { #(Nil, None) },
+        fn(_) { #(Nil, None) },
         fn(_) { sprocket.cleanup(ca, id) },
       )
     }
@@ -71,7 +71,7 @@ pub fn view(
         fn(state, conn, message) {
           handle_ws_message(id, state, conn, message, ca, view)
         },
-        fn() { #(Nil, None) },
+        fn(_) { #(Nil, None) },
         fn(_) { sprocket.cleanup(ca, id) },
       )
     }

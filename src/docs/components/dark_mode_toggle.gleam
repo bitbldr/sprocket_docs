@@ -1,10 +1,9 @@
-import gleam/io
-import gleam/option.{None, Some}
+import gleam/option.{Some}
 import gleam/dynamic
 import sprocket/context.{type Context, type Element}
 import sprocket/component.{render}
 import sprocket/hooks.{client, consumer, handler, state}
-import sprocket/html/elements.{button, div, div_text, i, span, span_text, text}
+import sprocket/html/elements.{button, div, i}
 import sprocket/html/attributes.{class, classes, on_click}
 import docs/theme.{type DarkMode, Auto, Dark, Light, Theme}
 
@@ -17,21 +16,29 @@ pub fn dark_mode_toggle(ctx: Context, _props: DarkModeToggleProps) {
 
   use ctx, Theme(mode: mode, set_mode: set_mode) <- consumer(ctx, "theme")
 
+  // use ctx, click_outside_client, _ <- client(
+  //   ctx,
+  //   "ClickOutside",
+  //   Some(fn(msg, _payload, _send) {
+  //     case msg {
+  //       "click_outside" -> {
+  //         case is_open {
+  //           True -> set_open(False)
+  //           False -> Nil
+  //         }
+  //         Nil
+  //       }
+  //       _ -> Nil
+  //     }
+  //   }),
+  // )
+
   use ctx, dark_mode_client, send_dark_mode_client <- client(
     ctx,
     "DarkMode",
     Some(fn(msg, payload, _send) {
       case msg {
-        "click_outside" -> {
-          case is_open {
-            True -> set_open(False)
-            False -> Nil
-          }
-          Nil
-        }
         "set_mode" -> {
-          io.debug(#(msg, payload))
-
           case option.map(payload, dynamic.string) {
             Some(Ok(theme)) -> {
               case theme {
@@ -77,6 +84,7 @@ pub fn dark_mode_toggle(ctx: Context, _props: DarkModeToggleProps) {
   render(
     ctx,
     div(
+      // [dark_mode_client(), click_outside_client(), class("m-4")],
       [dark_mode_client(), class("m-4")],
       [
         case is_open {
