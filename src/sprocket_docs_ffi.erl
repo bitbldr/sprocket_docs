@@ -1,9 +1,9 @@
 -module(sprocket_docs_ffi).
 
--export([configure_logger_backend/0, priv_directory/0, current_timestamp/0]).
+-export([configure_logger_backend/1, priv_directory/0, current_timestamp/0]).
 
-configure_logger_backend() ->
-    ok = logger:set_primary_config(level, info),
+configure_logger_backend(Level) ->
+    ok = logger:set_primary_config(level, Level),
     ok = logger:set_handler_config(
         default,
         formatter,
