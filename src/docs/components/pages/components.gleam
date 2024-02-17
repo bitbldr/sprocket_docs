@@ -72,17 +72,15 @@ pub fn components_page(ctx: Context, _props: ComponentsPageProps) {
 
                   render(
                     ctx,
-                    [
-                      button(
-                        [class(\"p-2 bg-blue-500 hover:bg-blue-600 active:bg-blue-700 text-white rounded\")],
-                        [
-                          text(case label {
-                            Some(label) -> label
-                            None -> \"Click me!\"
-                          }),
-                        ],
-                      ),
-                    ],
+                    button(
+                      [class(\"p-2 bg-blue-500 hover:bg-blue-600 active:bg-blue-700 text-white rounded\")],
+                      [
+                        text(case label {
+                          Some(label) -> label
+                          None -> \"Click me!\"
+                        }),
+                      ],
+                    ),
                   )
                 }
                 ",
@@ -134,17 +132,15 @@ pub fn components_page(ctx: Context, _props: ComponentsPageProps) {
                 pub fn page_view(ctx: Context, _props: PageViewProps) {
                   render(
                     ctx,
-                    [
-                      div(
-                        [],
-                        [
-                          component(
-                            example_button,
-                            ExampleButtonProps(label: None),
-                          ),
-                        ],
-                      ),
-                    ]
+                    div(
+                      [],
+                      [
+                        component(
+                          example_button,
+                          ExampleButtonProps(label: None),
+                        ),
+                      ],
+                    ),
                   )
                 }
                 ",
@@ -237,20 +233,18 @@ pub fn components_page(ctx: Context, _props: ComponentsPageProps) {
 
               render(
                 ctx,
-                [
-                  button(
-                    [
-                      class(case is_active {
-                        True ->
-                          \"rounded-lg text-white px-3 py-2 bg-green-700 hover:bg-green-800 active:bg-green-900\"
-                        False ->
-                          \"rounded-lg text-white px-3 py-2 bg-blue-500 hover:bg-blue-600 active:bg-blue-700\"
-                      }),
-                      on_click(toggle_active),
-                    ],
-                    [render_label(is_active)],
-                  ),
-                ],
+                button(
+                  [
+                    class(case is_active {
+                      True ->
+                        \"rounded-lg text-white px-3 py-2 bg-green-700 hover:bg-green-800 active:bg-green-900\"
+                      False ->
+                        \"rounded-lg text-white px-3 py-2 bg-blue-500 hover:bg-blue-600 active:bg-blue-700\"
+                    }),
+                    on_click(toggle_active),
+                  ],
+                  [render_label(is_active)],
+                ),
               )
             }
             ",
@@ -285,36 +279,34 @@ pub fn components_page(ctx: Context, _props: ComponentsPageProps) {
                 pub fn page_view(ctx: Context, _props: PageViewProps) {
                   render(
                     ctx,
-                    [
-                      div(
-                        [],
-                        [
-                          component(
-                            toggle_button,
-                            ToggleButtonProps(render_label: fn(toggle) {
-                              case toggle {
-                                True ->
-                                  span(
-                                    [],
-                                    [
-                                      i([class(\"fa-solid fa-check mr-2\")], []),
-                                      text(\"Added to Cart!\"),
-                                    ],
-                                  )
-                                False ->
-                                  span(
-                                    [],
-                                    [
-                                      i([class(\"fa-solid fa-cart-shopping mr-2\")], []),
-                                      text(\"Add to Cart\"),
-                                    ],
-                                  )
-                              }
-                            }),
-                          ),
-                        ],
-                      ),
-                    ],
+                    div(
+                      [],
+                      [
+                        component(
+                          toggle_button,
+                          ToggleButtonProps(render_label: fn(toggle) {
+                            case toggle {
+                              True ->
+                                span(
+                                  [],
+                                  [
+                                    i([class(\"fa-solid fa-check mr-2\")], []),
+                                    text(\"Added to Cart!\"),
+                                  ],
+                                )
+                              False ->
+                                span(
+                                  [],
+                                  [
+                                    i([class(\"fa-solid fa-cart-shopping mr-2\")], []),
+                                    text(\"Add to Cart\"),
+                                  ],
+                                )
+                            }
+                          }),
+                        ),
+                      ],
+                    ),
                   )
                 }
               ",
@@ -486,17 +478,15 @@ pub fn components_page(ctx: Context, _props: ComponentsPageProps) {
                     qty: \"12 x 8 inches\",
                     price: 24.99,
                   )
-                
+
                 render(
                   ctx,
-                  [
-                    div(
-                      [class(\"flex flex-col\")],
-                      [
-                        product_card(some_product, None)
-                      ]
-                    ),
-                  ],
+                  div(
+                    [class(\"flex flex-col\")],
+                    [
+                      product_card(some_product, None)
+                    ]
+                  ),
                 )
               }
             ",
@@ -559,48 +549,46 @@ pub fn components_page(ctx: Context, _props: ComponentsPageProps) {
               pub fn product(ctx: Context, _props: PageViewProps) {
                 render(
                   ctx,
-                  [
-                    div(
-                      [class(\"flex flex-col\")],
-                      [
-                        product_card(
-                          Product(
-                            id: 2259,
-                            name: \"Organic Aromatherapy Candle\",
-                            description: \"Create a fresh ambiance with this organic aromatherapy candle. Hand-poured with pure essential oils, the fresh scent of citrus will brighten up your room.\",
-                            img_url: \"https://images.pexels.com/photos/7260249/pexels-photo-7260249.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2\",
-                            qty: \"1 candle\",
-                            price: 19.99,
-                          ),
-                          Some([
-                            component(
-                              toggle_button,
-                              ToggleButtonProps(render_label: fn(toggle) {
-                                case toggle {
-                                  True ->
-                                    span(
-                                      [],
-                                      [
-                                        i([class(\"fa-solid fa-check mr-2\")], []),
-                                        text(\"Added to Cart!\"),
-                                      ],
-                                    )
-                                  False ->
-                                    span(
-                                      [],
-                                      [
-                                        i([class(\"fa-solid fa-cart-shopping mr-2\")], []),
-                                        text(\"Add to Cart\"),
-                                      ],
-                                    )
-                                }
-                              }),
-                            ),
-                          ]),
+                  div(
+                    [class(\"flex flex-col\")],
+                    [
+                      product_card(
+                        Product(
+                          id: 2259,
+                          name: \"Organic Aromatherapy Candle\",
+                          description: \"Create a fresh ambiance with this organic aromatherapy candle. Hand-poured with pure essential oils, the fresh scent of citrus will brighten up your room.\",
+                          img_url: \"https://images.pexels.com/photos/7260249/pexels-photo-7260249.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2\",
+                          qty: \"1 candle\",
+                          price: 19.99,
                         ),
-                      ],
-                    ),
-                  ],
+                        Some([
+                          component(
+                            toggle_button,
+                            ToggleButtonProps(render_label: fn(toggle) {
+                              case toggle {
+                                True ->
+                                  span(
+                                    [],
+                                    [
+                                      i([class(\"fa-solid fa-check mr-2\")], []),
+                                      text(\"Added to Cart!\"),
+                                    ],
+                                  )
+                                False ->
+                                  span(
+                                    [],
+                                    [
+                                      i([class(\"fa-solid fa-cart-shopping mr-2\")], []),
+                                      text(\"Add to Cart\"),
+                                    ],
+                                  )
+                              }
+                            }),
+                          ),
+                        ]),
+                      ),
+                    ],
+                  ),
                 )
               }
             ",
@@ -702,22 +690,20 @@ pub fn components_page(ctx: Context, _props: ComponentsPageProps) {
 
                 render(
                   ctx,
-                  [
-                    div(
-                      [],
-                      list.map(
-                        products,
-                        fn (p) {
-                          keyed(p.id, 
-                            component(
-                              product,
-                              ProductProps(product: p),
-                            )
+                  div(
+                    [],
+                    list.map(
+                      products,
+                      fn (p) {
+                        keyed(p.id, 
+                          component(
+                            product,
+                            ProductProps(product: p),
                           )
-                        },
-                      ),
+                        )
+                      },
                     ),
-                  ],
+                  ),
                 )
               }
             ",

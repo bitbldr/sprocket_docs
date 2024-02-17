@@ -48,7 +48,7 @@ pub fn header(ctx: Context, props) {
                 ),
                 div(
                   [class("text-gray-500 text-sm")],
-                  [text("Real-time server components in Gleam ✨")],
+                  [text("Real-time server UI components in Gleam ✨")],
                 ),
               ],
             ),

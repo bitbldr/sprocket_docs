@@ -241,30 +241,28 @@ pub fn state_management_page(ctx: Context, _props: StateManagementPageProps) {
 
                 render(
                   ctx,
-                  [
-                    div(
-                      [],
-                      [
-                        button(
-                          [
-                            class(\"p-2 bg-blue-500 hover:bg-blue-600 active:bg-blue-700 text-white rounded\"),
-                            on_click(on_hello_button),
-                          ],
-                          [text(\"Say Hello!\")],
-                        ),
-                        ..case hello {
-                          None -> []
-                          Some(hello) -> [
-                            span([class(\"ml-2\")], [text(pair.second(hello))]),
-                            span(
-                              [class(\"ml-2 text-gray-400 bold\")],
-                              [text(pair.first(hello))],
-                            ),
-                          ]
-                        }
-                      ],
-                    ),
-                  ],
+                  div(
+                    [],
+                    [
+                      button(
+                        [
+                          class(\"p-2 bg-blue-500 hover:bg-blue-600 active:bg-blue-700 text-white rounded\"),
+                          on_click(on_hello_button),
+                        ],
+                        [text(\"Say Hello!\")],
+                      ),
+                      ..case hello {
+                        None -> []
+                        Some(hello) -> [
+                          span([class(\"ml-2\")], [text(pair.second(hello))]),
+                          span(
+                            [class(\"ml-2 text-gray-400 bold\")],
+                            [text(pair.first(hello))],
+                          ),
+                        ]
+                      }
+                    ],
+                  ),
                 )
               }
 

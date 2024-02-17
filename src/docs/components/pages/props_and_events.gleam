@@ -133,41 +133,39 @@ pub fn props_and_events_page(ctx: Context, _props: PropsAndEventsPageProps) {
 
               render(
                 ctx,
-                [
-                  div(
-                    [class(\"flex flex-row m-4\")],
-                    [
-                      component(
-                        button,
-                        StyledButtonProps(
-                          class: \"rounded-l\",
-                          label: \"-\",
-                          on_click: fn() { dispatch(UpdateCounter(count - 1)) },
-                        ),
+                div(
+                  [class(\"flex flex-row m-4\")],
+                  [
+                    component(
+                      button,
+                      StyledButtonProps(
+                        class: \"rounded-l\",
+                        label: \"-\",
+                        on_click: fn() { dispatch(UpdateCounter(count - 1)) },
                       ),
-                      component(
-                        display,
-                        DisplayProps(
-                          count: count,
-                          on_reset: Some(fn() {
-                            case enable_reset {
-                              True -> dispatch(ResetCounter)
-                              False -> Nil
-                            }
-                          }),
-                        ),
+                    ),
+                    component(
+                      display,
+                      DisplayProps(
+                        count: count,
+                        on_reset: Some(fn() {
+                          case enable_reset {
+                            True -> dispatch(ResetCounter)
+                            False -> Nil
+                          }
+                        }),
                       ),
-                      component(
-                        button,
-                        StyledButtonProps(
-                          class: \"rounded-r\",
-                          label: \"+\",
-                          on_click: fn() { dispatch(UpdateCounter(count + 1)) },
-                        ),
+                    ),
+                    component(
+                      button,
+                      StyledButtonProps(
+                        class: \"rounded-r\",
+                        label: \"+\",
+                        on_click: fn() { dispatch(UpdateCounter(count + 1)) },
                       ),
-                    ],
-                  ),
-                ],
+                    ),
+                  ],
+                ),
               )
             }
 
@@ -189,20 +187,18 @@ pub fn props_and_events_page(ctx: Context, _props: PropsAndEventsPageProps) {
 
               render(
                 ctx,
-                [
-                  html.button_text(
-                    [
-                      attributes.on_click(on_click),
-                      classes([
-                        class,
-                        Some(
-                          \"p-1 px-2 border dark:border-gray-500 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 active:bg-gray-300 dark:active:bg-gray-600\",
-                        ),
-                      ]),
-                    ],
-                    label,
-                  ),
-                ],
+                html.button_text(
+                  [
+                    attributes.on_click(on_click),
+                    classes([
+                      class,
+                      Some(
+                        \"p-1 px-2 border dark:border-gray-500 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 active:bg-gray-300 dark:active:bg-gray-600\",
+                      ),
+                    ]),
+                  ],
+                  label,
+                ),
               )
             }
 
@@ -215,16 +211,14 @@ pub fn props_and_events_page(ctx: Context, _props: PropsAndEventsPageProps) {
 
               render(
                 ctx,
-                [
-                  span(
-                    [
-                      class(
-                        \"p-1 px-2 w-10 bg-white dark:bg-gray-900 border-t border-b dark:border-gray-500 align-center text-center\",
-                      ),
-                    ],
-                    [text(int.to_string(count))],
-                  ),
-                ],
+                span(
+                  [
+                    class(
+                      \"p-1 px-2 w-10 bg-white dark:bg-gray-900 border-t border-b dark:border-gray-500 align-center text-center\",
+                    ),
+                  ],
+                  [text(int.to_string(count))],
+                ),
               )
             }
             ",

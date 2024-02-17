@@ -3,7 +3,7 @@ import gleam/option.{Some}
 import gleam/http/request.{type Request}
 import gleam/http/response.{type Response}
 import mist.{type Connection, type ResponseData}
-import sprocket/render.{render}
+import sprocket.{render}
 import sprocket/component.{component}
 import sprocket/html/render as html_render
 import docs/components/counter.{CounterProps, counter}

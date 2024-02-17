@@ -53,11 +53,9 @@ pub fn hooks_page(ctx: Context, _props: HooksPageProps) {
 
                 render(
                   ctx,
-                  [
-                    div([], [
-                      text(\"The current state is \" <> int.to_string(count)),
-                    ])
-                  ],
+                  div([], [
+                    text(\"The current state is \" <> int.to_string(count)),
+                  ])
                 )
               }
             ",
@@ -363,17 +361,15 @@ pub fn hooks_page(ctx: Context, _props: HooksPageProps) {
 
                 render(
                   ctx,
-                  [
-                    span(
-                      [
-                        client_doubleclick(),
-                        class(
-                          \"p-1 px-2 w-10 bg-white dark:bg-gray-900 border-t border-b dark:border-gray-500 align-center text-center\",
-                        ),
-                      ],
-                      [text(int.to_string(count))],
-                    ),
-                  ],
+                  span(
+                    [
+                      client_doubleclick(),
+                      class(
+                        \"p-1 px-2 w-10 bg-white dark:bg-gray-900 border-t border-b dark:border-gray-500 align-center text-center\",
+                      ),
+                    ],
+                    [text(int.to_string(count))],
+                  ),
                 )
               }
             ",
@@ -469,17 +465,15 @@ pub fn hooks_page(ctx: Context, _props: HooksPageProps) {
 
                 render(
                   ctx,
-                  [
-                    span(
-                      [
-                        handle_doubleclick(),
-                        class(
-                          \"p-1 px-2 w-10 bg-white dark:bg-gray-900 border-t border-b dark:border-gray-500 align-center text-center\",
-                        ),
-                      ],
-                      [text(int.to_string(count))],
-                    ),
-                  ],
+                  span(
+                    [
+                      handle_doubleclick(),
+                      class(
+                        \"p-1 px-2 w-10 bg-white dark:bg-gray-900 border-t border-b dark:border-gray-500 align-center text-center\",
+                      ),
+                    ],
+                    [text(int.to_string(count))],
+                  ),
                 )
               }
             ",
