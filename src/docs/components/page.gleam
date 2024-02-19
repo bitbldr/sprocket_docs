@@ -1,5 +1,4 @@
 import gleam/list
-import gleam/option
 import sprocket/context.{type Context, provider}
 import sprocket/component.{component, render}
 import sprocket/html/elements.{div}
