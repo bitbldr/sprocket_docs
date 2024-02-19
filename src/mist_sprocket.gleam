@@ -118,8 +118,6 @@ fn handle_ws_message(state, _conn, message) {
     erlang.rescue(fn() {
       case message {
         mist.Text(msg) -> {
-          let assert Ok(msg) = bit_array.to_string(msg)
-
           let _ =
             sprocket.handle_client(id, ca, view, msg, ws_send)
             |> result.map_error(fn(reason) {
@@ -150,7 +148,7 @@ fn handle_ws_message(state, _conn, message) {
 
 fn sender(conn) {
   fn(msg) {
-    mist.send_text_frame(conn, bit_array.from_string(msg))
+    mist.send_text_frame(conn, msg)
     |> result.map_error(fn(reason) {
       logger.error("failed to send websocket message: " <> msg)
       io.debug(reason)

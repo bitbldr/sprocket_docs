@@ -68,7 +68,7 @@ pub fn sidebar(ctx: Context, props) {
         None ->
           ordered_map.index_map(
             pages,
-            fn(i, item) {
+            fn(item, i) {
               let KeyedItem(_, page) = item
 
               keyed(

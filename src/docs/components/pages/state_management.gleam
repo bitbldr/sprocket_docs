@@ -141,7 +141,7 @@ pub fn state_management_page(ctx: Context, _props: StateManagementPageProps) {
             text(" using the predefined set options from "),
             code_text([], "hello_options"),
             text(
-              " which is used to intiialize the state of the reducer when the component is mounted.",
+              " which is used to initialize the state of the reducer when the component is mounted.",
             ),
           ],
         ),
@@ -149,11 +149,13 @@ pub fn state_management_page(ctx: Context, _props: StateManagementPageProps) {
           [],
           [
             text(
-              "We need one more thing to complete our component. We need to define a function that will be called when the button is clicked. It's important that we create an IdentifiableHandler using the ",
+              "We need one more thing to complete our component. We need to define a function that will be called when the button is clicked. It's important that we create an ",
             ),
+            code_text([], "IdentifiableHandler"),
+            text(" by using the "),
             code_text([], "handler"),
             text(
-              " hook so that we can ensure the id of the handler function is consistent across renders, preventing a new id being created and sent to the client on every update.",
+              " hook so that we can ensure the id of the handler function is consistent across renders, preventing a new id being created and sent to the client on every render.",
             ),
           ],
         ),
@@ -210,10 +212,6 @@ pub fn state_management_page(ctx: Context, _props: StateManagementPageProps) {
                 }
               }
 
-              fn initial(options: List(HelloOption)) -> Model {
-                Model(selection: None, options: options)
-              }
-
               pub type HelloButtonProps {
                 HelloButtonProps
               }
@@ -221,7 +219,7 @@ pub fn state_management_page(ctx: Context, _props: StateManagementPageProps) {
               pub fn hello_button(ctx: Context, _props: HelloButtonProps) {
                 use ctx, Model(selection: selection, options: options), dispatch <- reducer(
                   ctx,
-                  initial(hello_strings()),
+                  Model(selection: None, options: hello_options()),
                   update,
                 )
 

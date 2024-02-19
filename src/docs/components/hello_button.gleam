@@ -21,7 +21,7 @@ fn update(model: Model, msg: Msg) -> Model {
   case msg {
     NoOp -> model
     SayHello ->
-      Model(..model, selection: Some(int.random(0, list.length(model.options))))
+      Model(..model, selection: Some(int.random(list.length(model.options))))
   }
 }
 
