@@ -12,10 +12,9 @@ import gleam/http/request.{type Request}
 import gleam/http/response.{type Response}
 import ids/uuid
 import mist.{type Connection, type ResponseData}
-import sprocket.{render}
+import sprocket.{render_html}
 import sprocket/cassette.{type Cassette}
 import sprocket/component as sprocket_component
-import sprocket/html/render as html_render
 import sprocket/context.{type Element, type FunctionalComponent}
 import sprocket/internal/logger
 
@@ -56,7 +55,7 @@ pub fn component(
     }
 
     _ -> {
-      let body = render(rendered_el, html_render.renderer())
+      let body = render_html(rendered_el)
 
       response.new(200)
       |> response.set_body(body)
@@ -95,7 +94,7 @@ pub fn view(
       )
     }
     _ -> {
-      let body = render(layout(rendered_el), html_render.renderer())
+      let body = render_html(layout(rendered_el))
 
       response.new(200)
       |> response.set_body(body)
