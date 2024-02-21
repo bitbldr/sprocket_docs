@@ -1,12 +1,9 @@
-import gleam/io
 import gleam/int
 import gleam/string
-import gleam/option.{None}
 import gleam/result
 import gleam/erlang/os
 import gleam/erlang/process
 import mist
-import sprocket
 import docs/router
 import docs/app_context.{AppContext}
 import docs/utils/logger
@@ -20,16 +17,8 @@ pub fn main() {
   let validate_csrf = fn(_csrf) { Ok(Nil) }
 
   let port = load_port()
-  let ca = case sprocket.start(validate_csrf, None) {
-    Ok(ca) -> ca
-    Error(err) -> {
-      io.debug(err)
 
-      panic("Failed to start sprocket")
-    }
-  }
-
-  router.stack(AppContext(secret_key_base, ca))
+  router.stack(AppContext(secret_key_base, validate_csrf))
   |> mist.new
   |> mist.port(port)
   |> mist.start_http

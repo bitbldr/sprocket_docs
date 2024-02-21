@@ -1,6 +1,6 @@
 import gleam/bytes_builder.{type BytesBuilder}
 import gleam/string
-import gleam/option.{Some}
+import gleam/option.{None, Some}
 import gleam/bit_array
 import gleam/result
 import gleam/erlang
@@ -22,27 +22,29 @@ import docs/components/counter.{CounterProps, counter}
 import docs/components/page.{PageProps, page}
 import mist_sprocket.{component, view}
 
-pub fn router(app_ctx: AppContext) {
+pub fn router(app: AppContext) {
   fn(request: Request(Connection)) -> Response(ResponseData) {
     use <- rescue_crashes()
 
     case request.method, request.path_segments(request) {
-      Get, ["standalone"] -> standalone(request, app_ctx)
+      Get, ["standalone"] -> standalone(request, app)
       Get, ["counter", "live"] ->
         component(
           request,
-          app_ctx.ca,
           counter,
           CounterProps(initial: Some(100)),
+          app.validate_csrf,
+          None,
         )
 
       Get, _ ->
         view(
           request,
-          app_ctx.ca,
-          page_layout("Sprocket Docs", csrf.generate(app_ctx.secret_key_base)),
+          page_layout("Sprocket Docs", csrf.generate(app.secret_key_base)),
           page,
           PageProps(route: page_route.from_string(request.path)),
+          app.validate_csrf,
+          None,
         )
 
       _, _ ->

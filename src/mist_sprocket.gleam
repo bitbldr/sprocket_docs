@@ -1,37 +1,31 @@
 import gleam/io
-import gleam/option.{Some}
+import gleam/option.{type Option, Some}
 import gleam/list
-import gleam/bit_array
-import gleam/string
 import gleam/result
-import gleam/erlang
 import gleam/bytes_builder.{type BytesBuilder}
 import gleam/otp/actor
 import gleam/erlang/process
 import gleam/http/request.{type Request}
 import gleam/http/response.{type Response}
-import ids/uuid
 import mist.{type Connection, type ResponseData}
-import sprocket.{render_html}
-import sprocket/cassette.{type Cassette}
+import sprocket.{
+  type CSRFValidator, type Sprocket, type SprocketOpts, Empty, Joined,
+  render_html,
+}
 import sprocket/component as sprocket_component
 import sprocket/context.{type Element, type FunctionalComponent}
 import sprocket/internal/logger
 
-type State(p) {
-  State(
-    id: String,
-    ca: Cassette,
-    view: Element,
-    ws_send: fn(String) -> Result(Nil, Nil),
-  )
+type State {
+  State(spkt: Sprocket)
 }
 
 pub fn component(
   req: Request(Connection),
-  ca: Cassette,
   view: FunctionalComponent(p),
   props: p,
+  csrf_validator: CSRFValidator,
+  opts: Option(SprocketOpts),
 ) -> Response(ResponseData) {
   let selector = process.new_selector()
   let rendered_el = sprocket_component.component(view, props)
@@ -39,15 +33,17 @@ pub fn component(
   // if the request path ends with "live", then start a websocket connection
   case list.last(request.path_segments(req)) {
     Ok("live") -> {
-      let assert Ok(id) = uuid.generate_v4()
-
       mist.websocket(
         request: req,
         on_init: fn(conn) {
-          #(State(id, ca, rendered_el, sender(conn)), Some(selector))
+          #(
+            State(sprocket.new(rendered_el, sender(conn), csrf_validator, opts)),
+            Some(selector),
+          )
         },
-        on_close: fn(_state) {
-          let _ = sprocket.cleanup(ca, id)
+        on_close: fn(state) {
+          let _ = sprocket.cleanup(state.spkt)
+
           Nil
         },
         handler: handle_ws_message,
@@ -68,10 +64,11 @@ pub fn component(
 
 pub fn view(
   req: Request(Connection),
-  ca: Cassette,
   layout: fn(Element) -> Element,
   view: FunctionalComponent(p),
   props: p,
+  csrf_validator: CSRFValidator,
+  opts: Option(SprocketOpts),
 ) -> Response(ResponseData) {
   let selector = process.new_selector()
   let rendered_el = sprocket_component.component(view, props)
@@ -79,15 +76,17 @@ pub fn view(
   // if the request path ends with "live", then start a websocket connection
   case list.last(request.path_segments(req)) {
     Ok("live") -> {
-      let assert Ok(id) = uuid.generate_v4()
-
       mist.websocket(
         request: req,
         on_init: fn(conn) {
-          #(State(id, ca, rendered_el, sender(conn)), Some(selector))
+          #(
+            State(sprocket.new(rendered_el, sender(conn), csrf_validator, opts)),
+            Some(selector),
+          )
         },
-        on_close: fn(_state) {
-          let _ = sprocket.cleanup(ca, id)
+        on_close: fn(state) {
+          let _ = sprocket.cleanup(state.spkt)
+
           Nil
         },
         handler: handle_ws_message,
@@ -111,36 +110,37 @@ fn mist_response(response: Response(BytesBuilder)) -> Response(ResponseData) {
 }
 
 fn handle_ws_message(state, _conn, message) {
-  let State(id, ca, view, ws_send) = state
+  let State(spkt) = state
 
-  case
-    erlang.rescue(fn() {
-      case message {
-        mist.Text(msg) -> {
-          let _ =
-            sprocket.handle_client(id, ca, view, msg, ws_send)
-            |> result.map_error(fn(reason) {
-              logger.error("failed to handle websocket message: " <> msg)
-              io.debug(reason)
-            })
-
-          actor.continue(state)
+  case message {
+    mist.Text(msg) -> {
+      case sprocket.handle_ws(spkt, msg) {
+        Ok(response) -> {
+          case response {
+            Joined(spkt) -> {
+              actor.continue(State(spkt))
+            }
+            Empty -> {
+              actor.continue(state)
+            }
+          }
         }
-        mist.Closed | mist.Shutdown -> actor.Stop(process.Normal)
-        _ -> {
-          logger.info("Received unsupported websocket message type")
-          io.debug(message)
+        Error(err) -> {
+          logger.error("failed to handle websocket message: " <> msg)
+          io.debug(err)
 
           actor.continue(state)
         }
       }
-    })
-  {
-    Ok(response) -> response
-    Error(error) -> {
-      logger.error(string.inspect(error))
+    }
+    mist.Closed | mist.Shutdown -> {
+      actor.Stop(process.Normal)
+    }
+    _ -> {
+      logger.info("Received unsupported websocket message type")
+      io.debug(message)
 
-      panic
+      actor.continue(state)
     }
   }
 }

@@ -12,45 +12,37 @@ pub type StateManagementPageProps {
 pub fn state_management_page(ctx: Context, _props: StateManagementPageProps) {
   render(
     ctx,
-    article(
-      [],
-      [
-        h1([], [text("State Management")]),
-        p(
-          [],
-          [
-            text(
-              "State is managed using stateful components and hooks. We previously saw how to create a simple state variable using the ",
-            ),
-            code_text([], "state"),
-            text(" hook. Here we will take a look at using the "),
-            code_text([], "reducer"),
-            text(
-              " hook to model more complex state and transformations. We'll also utilize the ",
-            ),
-            code_text([], "handler"),
-            text(" hook to help us dispatch events to the reducer."),
-          ],
+    article([], [
+      h1([], [text("State Management")]),
+      p([], [
+        text(
+          "State is managed using stateful components and hooks. We previously saw how to create a simple state variable using the ",
         ),
-        h2([], [text("Reducer Functions")]),
-        p(
-          [],
-          [
-            text(
-              "Reducer functions are functions that take a state and message and return a new state. They are used to update state in response to events. Let's create a ",
-            ),
-            code_text([], "hello_button"),
-            text(
-              " component as an example, we can define a function that updates the state when the button is clicked.",
-            ),
-          ],
+        code_text([], "state"),
+        text(" hook. Here we will take a look at using the "),
+        code_text([], "reducer"),
+        text(
+          " hook to model more complex state and transformations. We'll also utilize the ",
         ),
-        p([], [text("First we define our state struct and message types:")]),
-        component(
-          codeblock,
-          CodeBlockProps(
-            language: "gleam",
-            body: "
+        code_text([], "handler"),
+        text(" hook to help us dispatch events to the reducer."),
+      ]),
+      h2([], [text("Reducer Functions")]),
+      p([], [
+        text(
+          "Reducer functions are functions that take a state and message and return a new state. They are used to update state in response to events. Let's create a ",
+        ),
+        code_text([], "hello_button"),
+        text(
+          " component as an example, we can define a function that updates the state when the button is clicked.",
+        ),
+      ]),
+      p([], [text("First we define our state struct and message types:")]),
+      component(
+        codeblock,
+        CodeBlockProps(
+          language: "gleam",
+          body: "
               type Model {
                 Model(selection: Option(Int), options: List(HelloOption))
               }
@@ -60,22 +52,19 @@ pub fn state_management_page(ctx: Context, _props: StateManagementPageProps) {
                 SayHello
               }
             ",
-          ),
         ),
-        p(
-          [],
-          [
-            text(
-              "Here we're storing a list of options and the index of the selected option in the state.",
-            ),
-          ],
+      ),
+      p([], [
+        text(
+          "Here we're storing a list of options and the index of the selected option in the state.",
         ),
-        p([], [text("Next we define our update function:")]),
-        component(
-          codeblock,
-          CodeBlockProps(
-            language: "gleam",
-            body: "
+      ]),
+      p([], [text("Next we define our update function:")]),
+      component(
+        codeblock,
+        CodeBlockProps(
+          language: "gleam",
+          body: "
               fn update(model: Model, msg: Msg) -> Model {
                 case msg {
                   NoOp -> model
@@ -84,107 +73,89 @@ pub fn state_management_page(ctx: Context, _props: StateManagementPageProps) {
                 }
               }
             ",
-          ),
         ),
-        p(
-          [],
-          [
-            text(
-              "An update function takes the current state and a message and returns a new state.",
-            ),
-          ],
+      ),
+      p([], [
+        text(
+          "An update function takes the current state and a message and returns a new state.",
         ),
-        h2([], [text("Introducing the Reducer Hook")]),
-        p(
-          [],
-          [
-            text("Let's declare a "),
-            code_text([], "reducer"),
-            text(
-              " hook in our component that initializes the state model and uses our update function:",
-            ),
-          ],
+      ]),
+      h2([], [text("Introducing the Reducer Hook")]),
+      p([], [
+        text("Let's declare a "),
+        code_text([], "reducer"),
+        text(
+          " hook in our component that initializes the state model and uses our update function:",
         ),
-        component(
-          codeblock,
-          CodeBlockProps(
-            language: "gleam",
-            body: "
+      ]),
+      component(
+        codeblock,
+        CodeBlockProps(
+          language: "gleam",
+          body: "
               use ctx, Model(selection: selection, options: options), dispatch <- reducer(
                 ctx,
                 initial(hello_options()),
                 update,
               )
             ",
-          ),
         ),
-        p(
-          [],
-          [
-            text(
-              "You can see here we are provided with the current state of the reducer, which we can use in our component. ",
-            ),
-            text("Notice, we also are provided with a "),
-            code_text([], "dispatch"),
-            text(
-              " function from the reducer. The dispatch function is used to send messages to the reducer which will update the state and trigger a re-render.",
-            ),
-          ],
+      ),
+      p([], [
+        text(
+          "You can see here we are provided with the current state of the reducer, which we can use in our component. ",
         ),
-        p(
-          [],
-          [
-            text("The function call to "),
-            code_text([], "initial"),
-            text(" here returns an initial "),
-            code_text([], "Model"),
-            text(" using the predefined set options from "),
-            code_text([], "hello_options"),
-            text(
-              " which is used to initialize the state of the reducer when the component is mounted.",
-            ),
-          ],
+        text("Notice, we also are provided with a "),
+        code_text([], "dispatch"),
+        text(
+          " function from the reducer. The dispatch function is used to send messages to the reducer which will update the state and trigger a re-render.",
         ),
-        p(
-          [],
-          [
-            text(
-              "We need one more thing to complete our component. We need to define a function that will be called when the button is clicked. It's important that we create an ",
-            ),
-            code_text([], "IdentifiableHandler"),
-            text(" by using the "),
-            code_text([], "handler"),
-            text(
-              " hook so that we can ensure the id of the handler function is consistent across renders, preventing a new id being created and sent to the client on every render.",
-            ),
-          ],
+      ]),
+      p([], [
+        text("The function call to "),
+        code_text([], "initial"),
+        text(" here returns an initial "),
+        code_text([], "Model"),
+        text(" using the predefined set options from "),
+        code_text([], "hello_options"),
+        text(
+          " which is used to initialize the state of the reducer when the component is mounted.",
         ),
-        component(
-          codeblock,
-          CodeBlockProps(
-            language: "gleam",
-            body: "
+      ]),
+      p([], [
+        text(
+          "We need one more thing to complete our component. We need to define a function that will be called when the button is clicked. It's important that we create an ",
+        ),
+        code_text([], "IdentifiableHandler"),
+        text(" by using the "),
+        code_text([], "handler"),
+        text(
+          " hook so that we can ensure the id of the handler function is consistent across renders, preventing a new id being created and sent to the client on every render.",
+        ),
+      ]),
+      component(
+        codeblock,
+        CodeBlockProps(
+          language: "gleam",
+          body: "
               use ctx, on_hello_button <- handler(
                 ctx,
                 fn(_) { dispatch(SayHello) },
               )
             ",
-          ),
         ),
-        h2([], [text("Putting it all together")]),
-        p(
-          [],
-          [
-            text(
-              "We now have all the pieces we need to create a more interesting button that updates whenever it is clicked. Let's put it all together:",
-            ),
-          ],
+      ),
+      h2([], [text("Putting it all together")]),
+      p([], [
+        text(
+          "We now have all the pieces we need to create a more interesting button that updates whenever it is clicked. Let's put it all together:",
         ),
-        component(
-          codeblock,
-          CodeBlockProps(
-            language: "gleam",
-            body: "
+      ]),
+      component(
+        codeblock,
+        CodeBlockProps(
+          language: "gleam",
+          body: "
               import gleam/int
               import gleam/list
               import gleam/pair
@@ -208,7 +179,7 @@ pub fn state_management_page(ctx: Context, _props: StateManagementPageProps) {
                 case msg {
                   NoOp -> model
                   SayHello ->
-                    Model(..model, selection: Some(int.random(0, list.length(model.options))))
+                    Model(..model, selection: Some(int.random(list.length(model.options))))
                 }
               }
 
@@ -292,34 +263,24 @@ pub fn state_management_page(ctx: Context, _props: StateManagementPageProps) {
                 ]
               }
             ",
-          ),
         ),
-        example([component(hello_button, HelloButtonProps)]),
-        p(
-          [],
-          [
-            text(
-              "We now have a functional button that says hello in a different language when it's clicked.",
-            ),
-          ],
+      ),
+      example([component(hello_button, HelloButtonProps)]),
+      p([], [
+        text(
+          "We now have a functional button that says hello in a different language when it's clicked.",
         ),
-        p(
-          [],
-          [
-            text(
-              "Remember, all of these state changes are happening on the server. Events are being passed from the client to the server, the latest view is rendered and a minimal diff update is sent back to the client a which is then patched into the DOM!",
-            ),
-          ],
+      ]),
+      p([], [
+        text(
+          "Remember, all of these state changes are happening on the server. Events are being passed from the client to the server, the latest view is rendered and a minimal diff update is sent back to the client a which is then patched into the DOM!",
         ),
-        p(
-          [],
-          [
-            text(
-              "These are just two of the hooks that are available in Sprocket. There are many more to explore! We'll cover hooks more in-depth in the next section.",
-            ),
-          ],
+      ]),
+      p([], [
+        text(
+          "These are just two of the hooks that are available in Sprocket. There are many more to explore! We'll cover hooks more in-depth in the next section.",
         ),
-      ],
-    ),
+      ]),
+    ]),
   )
 }
