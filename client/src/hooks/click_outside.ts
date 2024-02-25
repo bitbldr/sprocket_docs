@@ -1,15 +1,15 @@
 interface MaybeClickOutsideMouseEvent extends MouseEvent {
-  click_outside?: boolean;
+  clickOutside?: boolean;
 }
 
 export const ClickOutside = {
   create({ el, pushEvent }) {
     el.addEventListener("click", (e: MouseEvent) => {
-      (e as MaybeClickOutsideMouseEvent).click_outside = true;
+      (e as MaybeClickOutsideMouseEvent).clickOutside = true;
     });
 
     document.addEventListener("click", (e: MaybeClickOutsideMouseEvent) => {
-      if (!e.click_outside) {
+      if (!e.clickOutside) {
         pushEvent("click_outside", {});
       }
     });

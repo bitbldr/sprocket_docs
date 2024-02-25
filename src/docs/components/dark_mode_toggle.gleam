@@ -56,30 +56,21 @@ pub fn dark_mode_toggle(ctx: Context, _props: DarkModeToggleProps) {
   )
 
   use ctx, toggle_open <- handler(ctx, fn(_) { set_open(!is_open) })
-  use ctx, set_mode_auto <- handler(
-    ctx,
-    fn(_) {
-      let _ = send_dark_mode_client("set_mode", Some("auto"))
-      set_mode(Auto)
-      set_open(False)
-    },
-  )
-  use ctx, set_mode_light <- handler(
-    ctx,
-    fn(_) {
-      let _ = send_dark_mode_client("set_mode", Some("light"))
-      set_mode(Light)
-      set_open(False)
-    },
-  )
-  use ctx, set_mode_dark <- handler(
-    ctx,
-    fn(_) {
-      let _ = send_dark_mode_client("set_mode", Some("dark"))
-      set_mode(Dark)
-      set_open(False)
-    },
-  )
+  use ctx, set_mode_auto <- handler(ctx, fn(_) {
+    let _ = send_dark_mode_client("set_mode", Some("auto"))
+    set_mode(Auto)
+    set_open(False)
+  })
+  use ctx, set_mode_light <- handler(ctx, fn(_) {
+    let _ = send_dark_mode_client("set_mode", Some("light"))
+    set_mode(Light)
+    set_open(False)
+  })
+  use ctx, set_mode_dark <- handler(ctx, fn(_) {
+    let _ = send_dark_mode_client("set_mode", Some("dark"))
+    set_mode(Dark)
+    set_open(False)
+  })
 
   render(
     ctx,

@@ -10,7 +10,8 @@ import docs/utils/logger
 import docs/utils/common
 
 pub fn main() {
-  logger.configure_backend(logger.Debug)
+  logger.configure_backend(logger.Info)
+
   let secret_key_base = common.random_string(64)
 
   // TODO: actually validate csrf token
