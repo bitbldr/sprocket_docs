@@ -55,54 +55,35 @@ pub fn product_card(product: Product, actions: Option(List(Element))) {
           ]),
         ],
       ),
-      div(
-        [class("flex-1 flex flex-col p-5")],
-        [
-          div(
-            [class("flex-1 flex flex-row")],
-            [
-              div(
-                [class("flex-1")],
-                [
-                  h5_text(
-                    [
-                      class(
-                        "text-xl font-semibold tracking-tight text-gray-900 dark:text-white",
-                      ),
-                    ],
-                    name,
-                  ),
-                  div_text([class("py-2 text-gray-500")], description),
-                ],
+      div([class("flex-1 flex flex-col p-5")], [
+        div([class("flex-1 flex flex-row")], [
+          div([class("flex-1")], [
+            h5_text(
+              [
+                class(
+                  "text-xl font-semibold tracking-tight text-gray-900 dark:text-white",
+                ),
+              ],
+              name,
+            ),
+            div_text([class("py-2 text-gray-500")], description),
+          ]),
+          div([], [
+            div([class("flex-1 flex flex-col text-right")], [
+              div_text(
+                [class("text-xl font-bold text-gray-900 dark:text-white")],
+                "$" <> float.to_string(price),
               ),
-              div(
-                [],
-                [
-                  div(
-                    [class("flex-1 flex flex-col text-right")],
-                    [
-                      div_text(
-                        [
-                          class(
-                            "text-xl font-bold text-gray-900 dark:text-white",
-                          ),
-                        ],
-                        "$" <> float.to_string(price),
-                      ),
-                      div_text([class("text-sm text-gray-500")], qty),
-                    ],
-                  ),
-                ],
-              ),
-            ],
-          ),
-          case actions {
-            None -> div([], [])
-            Some(actions) ->
-              div([class("flex flex flex-row justify-end")], actions)
-          },
-        ],
-      ),
+              div_text([class("text-sm text-gray-500")], qty),
+            ]),
+          ]),
+        ]),
+        case actions {
+          None -> div([], [])
+          Some(actions) ->
+            div([class("flex flex flex-row justify-end")], actions)
+        },
+      ]),
     ],
   )
 }
@@ -112,21 +93,15 @@ pub fn product(ctx: Context, props: ProductProps) {
 
   use ctx, in_cart, set_in_cart <- state(ctx, False)
 
-  use ctx, toggle_in_cart <- handler(
-    ctx,
-    fn(_) {
-      set_in_cart(!in_cart)
-      Nil
-    },
-  )
+  use ctx, toggle_in_cart <- handler(ctx, fn(_) {
+    set_in_cart(!in_cart)
+    Nil
+  })
 
-  use ctx, on_hide <- handler(
-    ctx,
-    fn(_) {
-      on_hide(product.id)
-      Nil
-    },
-  )
+  use ctx, on_hide <- handler(ctx, fn(_) {
+    on_hide(product.id)
+    Nil
+  })
 
   render(
     ctx,
@@ -209,54 +184,47 @@ pub fn product_list(ctx: Context, props: ProductListProps) {
 
   render(
     ctx,
-    div(
-      [],
-      [
-        ul(
-          [role("list"), class("flex flex-col")],
-          products
-          |> list.filter_map(fn(p) {
-            case list.contains(hidden, p.id) {
-              True -> Error(Nil)
-              False ->
-                Ok(keyed(
-                  int.to_string(p.id),
-                  li(
-                    [class("py-3 mr-4")],
-                    [
-                      component(
-                        product,
-                        ProductProps(
-                          product: p,
-                          on_hide: fn(_) { dispatch(Hide(p.id)) },
-                        ),
-                      ),
-                    ],
+    div([], [
+      ul(
+        [role("list"), class("flex flex-col")],
+        products
+        |> list.filter_map(fn(p) {
+          case list.contains(hidden, p.id) {
+            True -> Error(Nil)
+            False ->
+              Ok(keyed(
+                int.to_string(p.id),
+                li([class("py-3 mr-4")], [
+                  component(
+                    product,
+                    ProductProps(product: p, on_hide: fn(_) {
+                      dispatch(Hide(p.id))
+                    }),
                   ),
-                ))
-            }
-          }),
-        ),
-        ..case list.is_empty(hidden) {
-          True -> []
-          False -> [
-            button(
-              [
-                class(
-                  "mt-5 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800",
-                ),
-                on_click(reset),
-              ],
-              [
-                text("Show Hidden ("),
-                text(int.to_string(list.length(hidden))),
-                text(")"),
-              ],
-            ),
-          ]
-        }
-      ],
-    ),
+                ]),
+              ))
+          }
+        }),
+      ),
+      ..case list.is_empty(hidden) {
+        True -> []
+        False -> [
+          button(
+            [
+              class(
+                "mt-5 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800",
+              ),
+              on_click(reset),
+            ],
+            [
+              text("Show Hidden ("),
+              text(int.to_string(list.length(hidden))),
+              text(")"),
+            ],
+          ),
+        ]
+      }
+    ]),
   )
 }
 

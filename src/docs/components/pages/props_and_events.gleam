@@ -13,89 +13,78 @@ pub type PropsAndEventsPageProps {
 pub fn props_and_events_page(ctx: Context, _props: PropsAndEventsPageProps) {
   render(
     ctx,
-    article(
-      [],
-      [
-        h1([], [text("Props and Events")]),
-        p(
-          [],
-          [
-            text(
-              "
+    article([], [
+      h1([], [text("Props and Events")]),
+      p([], [
+        text(
+          "
                   Props and events are used by components to communicate with each other. Props are how components communicate
                   with their children, and events are how components communicate with their parents in the component hierarchy.
                 ",
-            ),
-          ],
         ),
-        p(
-          [],
-          [
-            text(
-              "
+      ]),
+      p([], [
+        text(
+          "
                   Props are passed to components as arguments to the component function. Event callbacks are
                   are also passed to components as props in the form of a function. The component
                   can then call the event callback when an event occurs, notifying the parent.
                 ",
-            ),
-          ],
         ),
-        p(
-          [],
-          [
-            text(
-              "Let's take a look at how props and events work in a functional example. In this example, the ",
-            ),
-            code_text([], "counter"),
-            text(" component is passing a prop called "),
-            code_text([], "on_click"),
-            text(" to the two "),
-            code_text([], "button"),
-            text(
-              "
+      ]),
+      p([], [
+        text(
+          "Let's take a look at how props and events work in a functional example. In this example, the ",
+        ),
+        code_text([], "counter"),
+        text(" component is passing a prop called "),
+        code_text([], "on_click"),
+        text(" to the two "),
+        code_text([], "button"),
+        text(
+          "
                     components. The ",
-            ),
-            code_text([], "counter"),
-            text(" component is also passing a prop called "),
-            code_text([], "count"),
-            text(" to the "),
-            code_text([], "display"),
-            text(
-              " component.
-                ",
-            ),
-            text(
-              "
-                    When the ",
-            ),
-            code_text([], "button"),
-            text(" components are clicked, they call the "),
-            code_text([], "on_click"),
-            text(
-              " event handler that was passed to them
-                    as a prop. The ",
-            ),
-            code_text([], "counter"),
-            text(" component then increments its "),
-            code_text([], "count"),
-            text(" state and re-renders. The "),
-            code_text([], "display"),
-            text(
-              " component
-                    is also re-rendered because its ",
-            ),
-            code_text([], "count"),
-            text(
-              " prop has changed.
-                ",
-            ),
-          ],
         ),
-        component(
-          codeblock,
-          CodeBlockProps(
-            language: "gleam",
-            body: "
+        code_text([], "counter"),
+        text(" component is also passing a prop called "),
+        code_text([], "count"),
+        text(" to the "),
+        code_text([], "display"),
+        text(
+          " component.
+                ",
+        ),
+        text(
+          "
+                    When the ",
+        ),
+        code_text([], "button"),
+        text(" components are clicked, they call the "),
+        code_text([], "on_click"),
+        text(
+          " event handler that was passed to them
+                    as a prop. The ",
+        ),
+        code_text([], "counter"),
+        text(" component then increments its "),
+        code_text([], "count"),
+        text(" state and re-renders. The "),
+        code_text([], "display"),
+        text(
+          " component
+                    is also re-rendered because its ",
+        ),
+        code_text([], "count"),
+        text(
+          " prop has changed.
+                ",
+        ),
+      ]),
+      component(
+        codeblock,
+        CodeBlockProps(
+          language: "gleam",
+          body: "
             import gleam/int
             import gleam/option.{None, Option, Some}
             import sprocket/context.{Context, WithDeps, dep}
@@ -222,25 +211,21 @@ pub fn props_and_events_page(ctx: Context, _props: PropsAndEventsPageProps) {
               )
             }
             ",
-          ),
         ),
-        example([component(counter, CounterProps(enable_reset: False))]),
-        p(
-          [],
-          [
-            text("So "),
-            span_text([class("font-bold")], "state flows down"),
-            text(" the component tree while "),
-            span_text([class("font-bold")], "events bubble up"),
-            text(
-              ".
+      ),
+      example([component(counter, CounterProps(enable_reset: False))]),
+      p([], [
+        text("So "),
+        span_text([class("font-bold")], "state flows down"),
+        text(" the component tree while "),
+        span_text([class("font-bold")], "events bubble up"),
+        text(
+          ".
                 We'll cover state management more in-depth in the next section, but it's useful to start thinking about how this data-flow will inform
                 where state should live in your component hierarchy. And since we have the safety provided by the Gleam type system,
                 we aren't afraid of refactoring our state to a different part of the hierarchy when our requirements or designs inevitably change!",
-            ),
-          ],
         ),
-      ],
-    ),
+      ]),
+    ]),
   )
 }

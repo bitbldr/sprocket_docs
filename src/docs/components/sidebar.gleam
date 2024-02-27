@@ -57,33 +57,27 @@ pub fn sidebar(ctx: Context, props) {
       ),
       ..case search_filter {
         Some(query) -> [
-          div(
-            [],
-            [
-              div([class("font-bold italic my-1")], [text("No results for: ")]),
-              div([], [text(query)]),
-            ],
-          ),
+          div([], [
+            div([class("font-bold italic my-1")], [text("No results for: ")]),
+            div([], [text(query)]),
+          ]),
         ]
         None ->
-          ordered_map.index_map(
-            pages,
-            fn(item, i) {
-              let KeyedItem(_, page) = item
+          ordered_map.index_map(pages, fn(item, i) {
+            let KeyedItem(_, page) = item
 
-              keyed(
-                page.title,
-                component(
-                  link,
-                  LinkProps(
-                    int.to_string(i + 1) <> ". " <> page.title,
-                    page_route.href(page.route),
-                    page.route == active,
-                  ),
+            keyed(
+              page.title,
+              component(
+                link,
+                LinkProps(
+                  int.to_string(i + 1) <> ". " <> page.title,
+                  page_route.href(page.route),
+                  page.route == active,
                 ),
-              )
-            },
-          )
+              ),
+            )
+          })
       }
     ]),
   )

@@ -35,39 +35,32 @@ pub fn counter(ctx: Context, props: CounterProps) {
 
   render(
     ctx,
-    div(
-      [class("flex flex-row m-4")],
-      [
-        component(
-          button,
-          StyledButtonProps(
-            class: "rounded-l",
-            label: "-",
-            on_click: fn() { dispatch(UpdateCounter(count - 1)) },
-          ),
+    div([class("flex flex-row m-4")], [
+      component(
+        button,
+        StyledButtonProps(class: "rounded-l", label: "-", on_click: fn() {
+          dispatch(UpdateCounter(count - 1))
+        }),
+      ),
+      component(
+        display,
+        DisplayProps(
+          count: count,
+          on_reset: Some(fn() {
+            case enable_reset {
+              True -> dispatch(ResetCounter)
+              False -> Nil
+            }
+          }),
         ),
-        component(
-          display,
-          DisplayProps(
-            count: count,
-            on_reset: Some(fn() {
-              case enable_reset {
-                True -> dispatch(ResetCounter)
-                False -> Nil
-              }
-            }),
-          ),
-        ),
-        component(
-          button,
-          StyledButtonProps(
-            class: "rounded-r",
-            label: "+",
-            on_click: fn() { dispatch(UpdateCounter(count + 1)) },
-          ),
-        ),
-      ],
-    ),
+      ),
+      component(
+        button,
+        StyledButtonProps(class: "rounded-r", label: "+", on_click: fn() {
+          dispatch(UpdateCounter(count + 1))
+        }),
+      ),
+    ]),
   )
 }
 

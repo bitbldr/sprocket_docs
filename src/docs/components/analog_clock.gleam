@@ -72,11 +72,17 @@ pub fn analog_clock(ctx: Context, _props: AnalogClockProps) {
   let hours = { hours * 3600 } + minutes
 
   let clock_second_hand_transform =
-    "rotate(" <> float.to_string(360.0 *. { int.to_float(seconds) /. 60.0 }) <> ",192,192)"
+    "rotate("
+    <> float.to_string(360.0 *. { int.to_float(seconds) /. 60.0 })
+    <> ",192,192)"
   let clock_minute_hand_transform =
-    "rotate(" <> float.to_string(360.0 *. { int.to_float(minutes) /. 3600.0 }) <> ",192,192)"
+    "rotate("
+    <> float.to_string(360.0 *. { int.to_float(minutes) /. 3600.0 })
+    <> ",192,192)"
   let clock_hour_hand_transform =
-    "rotate(" <> float.to_string(360.0 *. { int.to_float(hours) /. 43_200.0 }) <> ",192,192)"
+    "rotate("
+    <> float.to_string(360.0 *. { int.to_float(hours) /. 43_200.0 })
+    <> ",192,192)"
 
   render(
     ctx,

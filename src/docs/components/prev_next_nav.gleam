@@ -22,14 +22,11 @@ pub fn prev_next_nav(ctx: Context, props) {
     ctx,
     fragment([
       hr([class("text-gray-500 my-6")]),
-      div(
-        [class("flex flex-row my-6")],
-        [
-          component(link, PageLinkProps(prev_page, active, Prev)),
-          div([class("flex-1")], []),
-          component(link, PageLinkProps(next_page, active, Next)),
-        ],
-      ),
+      div([class("flex flex-row my-6")], [
+        component(link, PageLinkProps(prev_page, active, Prev)),
+        div([class("flex-1")], []),
+        component(link, PageLinkProps(next_page, active, Next)),
+      ]),
     ]),
   )
 }

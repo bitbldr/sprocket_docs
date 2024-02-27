@@ -15,13 +15,10 @@ pub fn toggle_button(ctx: Context, props: ToggleButtonProps) {
   use ctx, is_active, set_active <- state(ctx, False)
 
   // add a handler hook to toggle the active state
-  use ctx, toggle_active <- handler(
-    ctx,
-    fn(_) {
-      set_active(!is_active)
-      Nil
-    },
-  )
+  use ctx, toggle_active <- handler(ctx, fn(_) {
+    set_active(!is_active)
+    Nil
+  })
 
   render(
     ctx,

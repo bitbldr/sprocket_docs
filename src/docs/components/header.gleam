@@ -26,42 +26,31 @@ pub fn header(ctx: Context, props) {
         ),
       ],
       [
-        a(
-          [href("/")],
-          [
-            div(
-              [class("p-2 mx-2")],
-              [
-                div(
-                  [class("text-2xl")],
-                  [
-                    span(
-                      [
-                        class(
-                          "inline-block animate-spin repeat-1 delay-500 ease-in-out",
-                        ),
-                      ],
-                      [text("⚙️")],
-                    ),
-                    span([class("italic bold")], [text("Sprocket")]),
-                  ],
-                ),
-                div(
-                  [class("text-gray-500 text-sm")],
-                  [text("Real-time server UI components in Gleam ✨")],
-                ),
-              ],
-            ),
-          ],
-        ),
+        a([href("/")], [
+          div([class("p-2 mx-2")], [
+            div([class("text-2xl")], [
+              span(
+                [
+                  class(
+                    "inline-block animate-spin repeat-1 delay-500 ease-in-out",
+                  ),
+                ],
+                [text("⚙️")],
+              ),
+              span([class("italic bold")], [text("Sprocket")]),
+            ]),
+            div([class("text-gray-500 text-sm")], [
+              text("Real-time server UI components in Gleam ✨"),
+            ]),
+          ]),
+        ]),
         div([class("flex-1")], []),
         div([], [component(dark_mode_toggle, DarkModeToggleProps)]),
         div(
           [],
-          list.map(
-            menu_items,
-            fn(item) { component(menu_item, MenuItemProps(item)) },
-          ),
+          list.map(menu_items, fn(item) {
+            component(menu_item, MenuItemProps(item))
+          }),
         ),
       ],
     ),
@@ -92,10 +81,9 @@ fn menu_item(ctx: Context, props: MenuItemProps) {
         text(label),
         ..case is_external {
           True -> [
-            span(
-              [class("text-gray-500 text-sm ml-2")],
-              [i([class("fa-solid fa-arrow-up-right-from-square")], [])],
-            ),
+            span([class("text-gray-500 text-sm ml-2")], [
+              i([class("fa-solid fa-arrow-up-right-from-square")], []),
+            ]),
           ]
           False -> []
         }

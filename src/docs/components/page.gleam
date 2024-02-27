@@ -86,63 +86,54 @@ pub fn page(ctx: Context, props: PageProps) {
 
   render(
     ctx,
-    div(
-      [id("app")],
-      [
-        div(
-          [],
-          [
-            provider(
-              "theme",
-              Theme(mode: mode, set_mode: fn(mode) { dispatch(SetMode(mode)) }),
-              div(
-                [],
-                [
-                  component(
-                    header,
-                    HeaderProps(menu_items: [
-                      MenuItem("Github", "https://github.com/bitbldr/sprocket"),
-                    ]),
-                  ),
-                ],
-              ),
+    div([id("app")], [
+      div([], [
+        provider(
+          "theme",
+          Theme(mode: mode, set_mode: fn(mode) { dispatch(SetMode(mode)) }),
+          div([], [
+            component(
+              header,
+              HeaderProps(menu_items: [
+                MenuItem("Github", "https://github.com/bitbldr/sprocket"),
+              ]),
             ),
-          ],
+          ]),
         ),
-        component(
-          responsive_drawer,
-          ResponsiveDrawerProps(
-            drawer: component(sidebar, SidebarProps(pages, route)),
-            content: div(
-              [
-                class(
-                  "prose dark:prose-invert prose-sm md:prose-base container mx-auto p-12",
-                ),
-              ],
-              [
-                case route {
-                  Introduction ->
-                    component(introduction_page, IntroductionPageProps)
-                  GettingStarted ->
-                    component(getting_started_page, GettingStartedPageProps)
-                  Components -> component(components_page, ComponentsPageProps)
-                  Events ->
-                    component(props_and_events_page, PropsAndEventsPageProps)
-                  StateManagement ->
-                    component(state_management_page, StateManagementPageProps)
-                  Hooks -> component(hooks_page, HooksPageProps)
-                  Effects -> component(effects_page, EffectsPageProps)
-                  UnderTheHood ->
-                    component(under_the_hood_page, UnderTheHoodProps)
-                  Misc -> component(misc_page, MiscPageProps)
-                  Unknown -> component(not_found_page, NotFoundPageProps)
-                },
-                component(prev_next_nav, PrevNextNavProps(pages, route)),
-              ],
-            ),
+      ]),
+      component(
+        responsive_drawer,
+        ResponsiveDrawerProps(
+          drawer: component(sidebar, SidebarProps(pages, route)),
+          content: div(
+            [
+              class(
+                "prose dark:prose-invert prose-sm md:prose-base container mx-auto p-12",
+              ),
+            ],
+            [
+              case route {
+                Introduction ->
+                  component(introduction_page, IntroductionPageProps)
+                GettingStarted ->
+                  component(getting_started_page, GettingStartedPageProps)
+                Components -> component(components_page, ComponentsPageProps)
+                Events ->
+                  component(props_and_events_page, PropsAndEventsPageProps)
+                StateManagement ->
+                  component(state_management_page, StateManagementPageProps)
+                Hooks -> component(hooks_page, HooksPageProps)
+                Effects -> component(effects_page, EffectsPageProps)
+                UnderTheHood ->
+                  component(under_the_hood_page, UnderTheHoodProps)
+                Misc -> component(misc_page, MiscPageProps)
+                Unknown -> component(not_found_page, NotFoundPageProps)
+              },
+              component(prev_next_nav, PrevNextNavProps(pages, route)),
+            ],
           ),
         ),
-      ],
-    ),
+      ),
+    ]),
   )
 }

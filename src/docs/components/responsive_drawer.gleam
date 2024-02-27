@@ -53,40 +53,36 @@ pub fn responsive_drawer(ctx: Context, props) {
 
   render(
     ctx,
-    div(
-      [classes([Some("flex-1 flex flex-row")])],
-      [
-        aside(
-          [
-            classes([
-              case show {
-                True -> Some("block fixed top-0 left-0 bottom-0")
-                False -> Some("hidden")
-              },
-              Some(
-                "md:block w-64 z-40 transition-transform -translate-x-full translate-x-0 transition-transform",
-              ),
-            ]),
-          ],
-          [
-            div(
-              [
-                class(
-                  "h-screen sticky top-0 px-3 py-4 overflow-y-auto bg-gray-100/75 dark:bg-gray-800/75 backdrop-blur-md",
-                ),
-              ],
-              [drawer],
+    div([classes([Some("flex-1 flex flex-row")])], [
+      aside(
+        [
+          classes([
+            case show {
+              True -> Some("block fixed top-0 left-0 bottom-0")
+              False -> Some("hidden")
+            },
+            Some(
+              "md:block w-64 z-40 transition-transform -translate-x-full translate-x-0 transition-transform",
             ),
-          ],
-        ),
-        div(
-          [class("w-0")],
+          ]),
+        ],
+        [
+          div(
+            [
+              class(
+                "h-screen sticky top-0 px-3 py-4 overflow-y-auto bg-gray-100/75 dark:bg-gray-800/75 backdrop-blur-md",
+              ),
+            ],
+            [drawer],
+          ),
+        ],
+      ),
+      div([class("w-0")], [
+        button(
           [
-            button(
-              [
-                on_click(toggle_drawer),
-                class(
-                  "
+            on_click(toggle_drawer),
+            class(
+              "
                     sticky
                     top-2
                     inline-flex
@@ -105,18 +101,16 @@ pub fn responsive_drawer(ctx: Context, props) {
                     dark:hover:bg-gray-700
                     dark:focus:ring-gray-600
                   ",
-                ),
-              ],
-              [i([class("fa-solid fa-bars")], [])],
             ),
           ],
+          [i([class("fa-solid fa-bars")], [])],
         ),
-        div([class("flex-1 overflow-hidden")], [content]),
-        ..case show {
-          True -> [backdrop]
-          False -> []
-        }
-      ],
-    ),
+      ]),
+      div([class("flex-1 overflow-hidden")], [content]),
+      ..case show {
+        True -> [backdrop]
+        False -> []
+      }
+    ]),
   )
 }
