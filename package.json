@@ -44,6 +44,6 @@
   "dependencies": {
     "@gleam-lang/highlight.js-gleam": "^1.4.0",
     "highlight.js": "^11.9.0",
-    "sprocket-js": "^0.1.8"
+    "sprocket-js": "^0.1.9"
   }
 }

@@ -95,7 +95,7 @@ pub fn state_management_page(ctx: Context, _props: StateManagementPageProps) {
           body: "
               use ctx, Model(selection: selection, options: options), dispatch <- reducer(
                 ctx,
-                initial(hello_options()),
+                Model(selection: None, options: hello_options()),
                 update,
               )
             ",
@@ -112,11 +112,11 @@ pub fn state_management_page(ctx: Context, _props: StateManagementPageProps) {
         ),
       ]),
       p([], [
-        text("The function call to "),
-        code_text([], "initial"),
-        text(" here returns an initial "),
-        code_text([], "Model"),
-        text(" using the predefined set options from "),
+        text("The second argument, "),
+        code_text([], "Model(selection: None, options: hello_options())"),
+        text(
+          ", defines an initial state for the reducer using the predefined set options from ",
+        ),
         code_text([], "hello_options"),
         text(
           " which is used to initialize the state of the reducer when the component is mounted.",

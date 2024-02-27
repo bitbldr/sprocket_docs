@@ -57,7 +57,6 @@ pub fn clock(ctx: Context, props: ClockProps) {
     fn() {
       let interval_duration = case time_unit {
         erlang.Millisecond -> 1
-        erlang.Second -> 1000
         _ -> 1000
       }
 
@@ -74,17 +73,14 @@ pub fn clock(ctx: Context, props: ClockProps) {
     WithDeps([dep(time), dep(time_unit)]),
   )
 
-  let current_time = format_time(time, "%y-%m-%d %I:%M:%S %p")
+  let current_time = format_time(time, "%y-%m-%d %I:%M:%S %p", time_unit)
 
-  render(
-    ctx,
-    case label {
-      Some(label) ->
-        fragment([span([], [text(label)]), span([], [text(current_time)])])
-      None -> fragment([text(current_time)])
-    },
-  )
+  render(ctx, case label {
+    Some(label) ->
+      fragment([span([], [text(label)]), span([], [text(current_time)])])
+    None -> fragment([text(current_time)])
+  })
 }
 
 @external(erlang, "Elixir.FFIUtils", "format_time")
-pub fn format_time(a: a, b: String) -> String
+pub fn format_time(a: a, b: String, unit: erlang.TimeUnit) -> String
