@@ -30,7 +30,7 @@ function findOrCreateMeteThemeColorElement(selector: string): Element {
 }
 
 // Set the <meta name="theme-color"> tag for mobile browsers to render correct colors
-function setMetaThemeColor(dark: boolean) {
+function setMetaThemeColor(mode: "auto" | "light" | "dark") {
   const metaThemeColor = findOrCreateMeteThemeColorElement(
     "meta[name=theme-color]"
   );
@@ -38,29 +38,55 @@ function setMetaThemeColor(dark: boolean) {
   const lightColor = "#ffffff";
   const darkColor = "#121212";
 
-  if (dark) {
+  if (mode === "auto") {
+    metaThemeColor.setAttribute(
+      "content",
+      isDarkMode() ? darkColor : lightColor
+    );
+  } else if (mode === "dark") {
     metaThemeColor.setAttribute("content", darkColor);
   } else {
     metaThemeColor.setAttribute("content", lightColor);
   }
 }
 
-const applyMode = (mode: "auto" | "light" | "dark") => {
+type Mode = "auto" | "light" | "dark";
+
+function setDataThemeAttribute(mode: Mode) {
+  const maybeLink = document.getElementById("highlight-theme");
+  maybeLink && document.head.removeChild(maybeLink);
+
+  const link = document.createElement("link");
+  link.id = "highlight-theme";
+  link.rel = "stylesheet";
+  link.type = "text/css";
+
+  if (mode === "light") {
+    link.href =
+      "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-light.min.css";
+    document.head.appendChild(link);
+  } else if (mode === "dark") {
+    link.href =
+      "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css";
+    document.head.appendChild(link);
+  }
+}
+
+const applyMode = (mode: Mode) => {
   if (mode === "auto") {
     if (isDarkMode()) {
       document.documentElement.classList.add("dark");
-      setMetaThemeColor(true);
     } else {
       document.documentElement.classList.remove("dark");
-      setMetaThemeColor(false);
     }
   } else if (mode === "dark") {
     document.documentElement.classList.add("dark");
-    setMetaThemeColor(true);
   } else {
     document.documentElement.classList.remove("dark");
-    setMetaThemeColor(false);
   }
+
+  setMetaThemeColor(mode);
+  setDataThemeAttribute(mode);
 };
 
 const mode = localStorage.theme || "auto";
