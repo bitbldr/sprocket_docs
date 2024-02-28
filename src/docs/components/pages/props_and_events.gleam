@@ -114,9 +114,7 @@ pub fn props_and_events_page(ctx: Context, _props: PropsAndEventsPageProps) {
               CounterProps
             }
 
-            pub fn counter(ctx: Context, props: CounterProps) {
-              let CounterProps(enable_reset: enable_reset) = props
-
+            pub fn counter(ctx: Context, _props: CounterProps) {
               // Define a reducer to handle events and update the state
               use ctx, count, dispatch <- reducer(ctx, 0, update)
 
@@ -135,15 +133,7 @@ pub fn props_and_events_page(ctx: Context, _props: PropsAndEventsPageProps) {
                     ),
                     component(
                       display,
-                      DisplayProps(
-                        count: count,
-                        on_reset: Some(fn() {
-                          case enable_reset {
-                            True -> dispatch(ResetCounter)
-                            False -> Nil
-                          }
-                        }),
-                      ),
+                      DisplayProps(count: count),
                     ),
                     component(
                       button,
@@ -160,25 +150,26 @@ pub fn props_and_events_page(ctx: Context, _props: PropsAndEventsPageProps) {
 
             pub type ButtonProps {
               ButtonProps(label: String, on_click: fn() -> Nil)
-              StyledButtonProps(class: Option(String), label: String, on_click: fn() -> Nil)
+              StyledButtonProps(class: String, label: String, on_click: fn() -> Nil)
             }
 
             pub fn button(ctx: Context, props: ButtonProps) {
+              // here we unpack the different types of ButtonProps that can be passed to the button component
               let #(class, label, on_click) = case props {
                 ButtonProps(label, on_click) -> #(None, label, on_click)
                 StyledButtonProps(class, label, on_click) -> #(Some(class), label, on_click)
               }
 
-              use ctx, on_click <- handler(
+              use ctx, handle_click <- handler(
                 ctx,
-                fn(_) { props.on_click() },
+                fn(_) { on_click() },
               )
 
               render(
                 ctx,
                 html.button_text(
                   [
-                    attributes.on_click(on_click),
+                    attributes.on_click(handle_click),
                     classes([
                       class,
                       Some(

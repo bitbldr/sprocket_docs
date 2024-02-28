@@ -4,7 +4,7 @@ import sprocket/context.{type Context}
 import sprocket/component.{component, render}
 import sprocket/hooks.{client, handler, reducer}
 import sprocket/html/elements.{button_text, div, span, text}
-import sprocket/html/attributes.{class, classes}
+import sprocket/html/attributes.{class, classes, on_click}
 
 type Model =
   Int
@@ -70,18 +70,18 @@ pub type ButtonProps {
 }
 
 pub fn button(ctx: Context, props: ButtonProps) {
-  let #(class, label, on_click) = case props {
+  let #(class, label, on_click_fn) = case props {
     ButtonProps(label, on_click) -> #(None, label, on_click)
     StyledButtonProps(class, label, on_click) -> #(Some(class), label, on_click)
   }
 
-  use ctx, on_click <- handler(ctx, fn(_) { on_click() })
+  use ctx, handle_click <- handler(ctx, fn(_) { on_click_fn() })
 
   render(
     ctx,
     button_text(
       [
-        attributes.on_click(on_click),
+        on_click(handle_click),
         classes([
           class,
           Some(
