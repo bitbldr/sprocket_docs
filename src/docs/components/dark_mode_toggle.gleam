@@ -20,7 +20,7 @@ pub fn dark_mode_toggle(ctx: Context, _props: DarkModeToggleProps) {
     theme
     |> option.unwrap(Theme(Auto, fn(_) { Nil }))
 
-  use ctx, click_outside_client, send_click_outside <- client(
+  use ctx, click_outside_client, _send_click_outside_client <- client(
     ctx,
     "ClickOutside",
     Some(fn(msg, _payload, _send) {
