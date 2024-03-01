@@ -1,8 +1,8 @@
 import gleam/option.{Some}
 import gleam/dynamic
-import sprocket/context.{type Context, type Element}
+import sprocket/context.{type Context, type Element} as _
 import sprocket/component.{render}
-import sprocket/hooks.{client, consumer, handler, state}
+import sprocket/hooks.{client, handler, provider, state}
 import sprocket/html/elements.{button, div, i}
 import sprocket/html/attributes.{class, classes, on_click}
 import docs/theme.{type DarkMode, Auto, Dark, Light, Theme}
@@ -14,24 +14,28 @@ pub type DarkModeToggleProps {
 pub fn dark_mode_toggle(ctx: Context, _props: DarkModeToggleProps) {
   use ctx, is_open, set_open <- state(ctx, False)
 
-  use ctx, Theme(mode: mode, set_mode: set_mode) <- consumer(ctx, "theme")
+  use ctx, theme <- provider(ctx, "theme")
 
-  // use ctx, click_outside_client, _ <- client(
-  //   ctx,
-  //   "ClickOutside",
-  //   Some(fn(msg, _payload, _send) {
-  //     case msg {
-  //       "click_outside" -> {
-  //         case is_open {
-  //           True -> set_open(False)
-  //           False -> Nil
-  //         }
-  //         Nil
-  //       }
-  //       _ -> Nil
-  //     }
-  //   }),
-  // )
+  let Theme(mode: mode, set_mode: set_mode) =
+    theme
+    |> option.unwrap(Theme(Auto, fn(_) { Nil }))
+
+  use ctx, click_outside_client, send_click_outside <- client(
+    ctx,
+    "ClickOutside",
+    Some(fn(msg, _payload, _send) {
+      case msg {
+        "click_outside" -> {
+          case is_open {
+            True -> set_open(False)
+            False -> Nil
+          }
+          Nil
+        }
+        _ -> Nil
+      }
+    }),
+  )
 
   use ctx, dark_mode_client, send_dark_mode_client <- client(
     ctx,
@@ -74,72 +78,65 @@ pub fn dark_mode_toggle(ctx: Context, _props: DarkModeToggleProps) {
 
   render(
     ctx,
-    div(
-      // [dark_mode_client(), click_outside_client(), class("m-4")],
-      [dark_mode_client(), class("m-4")],
-      [
-        case is_open {
-          True ->
-            div(
-              [
-                classes([
-                  Some("flex-row"),
-                  case is_open {
-                    True -> Some("flex flex-row")
-                    False -> Some("hidden")
-                  },
-                ]),
-              ],
-              [
-                button(
-                  [
-                    on_click(set_mode_auto),
-                    classes([
-                      Some(
-                        "p-2 rounded-l border border-gray-200 hover:bg-gray-100 active:bg-gray-200",
-                      ),
-                      Some(selector_class(Auto, mode)),
-                    ]),
-                  ],
-                  [icon(Auto)],
-                ),
-                button(
-                  [
-                    on_click(set_mode_light),
-                    classes([
-                      Some(
-                        "p-2 border-t border-b border-gray-200 hover:bg-gray-100 active:bg-gray-200",
-                      ),
-                      Some(selector_class(Light, mode)),
-                    ]),
-                  ],
-                  [icon(Light)],
-                ),
-                button(
-                  [
-                    on_click(set_mode_dark),
-                    classes([
-                      Some(
-                        "p-2 rounded-r border border-gray-200 hover:bg-gray-100 active:bg-gray-200",
-                      ),
-                      Some(selector_class(Dark, mode)),
-                    ]),
-                  ],
-                  [icon(Dark)],
-                ),
-              ],
-            )
-          False ->
-            button(
-              [
-                on_click(toggle_open),
-                class("p-2 rounded border border-gray-200"),
-              ],
-              [icon(mode)],
-            )
-        },
-      ],
-    ),
+    div([dark_mode_client(), click_outside_client(), class("m-4")], [
+      case is_open {
+        True ->
+          div(
+            [
+              classes([
+                Some("flex-row"),
+                case is_open {
+                  True -> Some("flex flex-row")
+                  False -> Some("hidden")
+                },
+              ]),
+            ],
+            [
+              button(
+                [
+                  on_click(set_mode_auto),
+                  classes([
+                    Some(
+                      "p-2 rounded-l border border-gray-200 hover:bg-gray-100 active:bg-gray-200",
+                    ),
+                    Some(selector_class(Auto, mode)),
+                  ]),
+                ],
+                [icon(Auto)],
+              ),
+              button(
+                [
+                  on_click(set_mode_light),
+                  classes([
+                    Some(
+                      "p-2 border-t border-b border-gray-200 hover:bg-gray-100 active:bg-gray-200",
+                    ),
+                    Some(selector_class(Light, mode)),
+                  ]),
+                ],
+                [icon(Light)],
+              ),
+              button(
+                [
+                  on_click(set_mode_dark),
+                  classes([
+                    Some(
+                      "p-2 rounded-r border border-gray-200 hover:bg-gray-100 active:bg-gray-200",
+                    ),
+                    Some(selector_class(Dark, mode)),
+                  ]),
+                ],
+                [icon(Dark)],
+              ),
+            ],
+          )
+        False ->
+          button(
+            [on_click(toggle_open), class("p-2 rounded border border-gray-200")],
+            [icon(mode)],
+          )
+      },
+    ]),
   )
 }
 

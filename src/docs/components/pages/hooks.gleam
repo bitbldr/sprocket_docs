@@ -94,7 +94,7 @@ pub fn hooks_page(ctx: Context, _props: HooksPageProps) {
         [],
         "We'll go over each of the native hooks and how to use them and also cover how to create custom hooks.",
       ),
-      h2([], [text("State Hooks")]),
+      h2([], [text("State")]),
       p([], [
         text(
           "State hooks are used to manage a piece of state within a component. The current state along with a setter function are provided to the component. State is initialized to the value provided and can be updated by calling the setter function with the new value. State is maintained across renders but is reinitialized when a component is unmounted and remounted.",
@@ -109,7 +109,7 @@ pub fn hooks_page(ctx: Context, _props: HooksPageProps) {
             ",
         ),
       ),
-      h2([], [text("Reducer Hooks")]),
+      h2([], [text("Reducer")]),
       p([], [
         text(
           "Reducer hooks are used to manage more complex state, which can be referred to as a model. Similar to a state hook, a reducer will maintain the state across renders and be reinitialized when a component is mounted. However, a reducer is better for when state changes require complex transforms to a state model or when state logic needs to be abstracted out of a component module. For when an Elm or Redux architecture is preferred, a reducer hook should be used.",
@@ -163,7 +163,7 @@ pub fn hooks_page(ctx: Context, _props: HooksPageProps) {
         [],
         "Reducer hooks allow state management to be refactored out of the component file and into a separate module. This can be useful for complex state management logic or message types that are shared across multiple components.",
       ),
-      h2([], [text("Handler Hooks")]),
+      h2([], [text("Handler")]),
       p([], [
         text(
           "Handler hooks are used to create event handlers, They take a function and return an IdentifiableCallback. The IdentifiableCallback can be passed to an event handler attribute and ensures that event id's do not change across renders resulting in unnecessary diff patching. The callback will be called when the event is triggered and provide an optional CallbackParam depending on the event type.",
@@ -180,7 +180,7 @@ pub fn hooks_page(ctx: Context, _props: HooksPageProps) {
             ",
         ),
       ),
-      h2([], [text("Effect Hooks")]),
+      h2([], [text("Effect")]),
       p([], [
         text(
           "Effect hooks are used to perform side-effects. They take a function that is called on mount and when the trigger value changes. They can also specify an optional cleanup function as a return value.",
@@ -213,7 +213,7 @@ pub fn hooks_page(ctx: Context, _props: HooksPageProps) {
           " trigger is used to specify a list of dependencies that will cause the effect function to be called again when any of the dependencies change. If an empty list is provided, the effect function will only be called on mount.",
         ),
       ]),
-      h2([], [text("Memo Hooks")]),
+      h2([], [text("Memo")]),
       p([], [
         text(
           "Memo hooks are used to memoize a computed value. They take a function and a list of dependencies and return a memoized value. The memoized value will only be re-evaluated when the dependencies change.",
@@ -228,7 +228,7 @@ pub fn hooks_page(ctx: Context, _props: HooksPageProps) {
             ",
         ),
       ),
-      h2([], [text("Callback Hooks")]),
+      h2([], [text("Callback")]),
       p([], [
         text(
           "Callback hooks are used to memoize a function. They take a function and a list of dependencies and return a memoized function. The memoized function will only be re-evaluated when the dependencies change.",
@@ -243,22 +243,39 @@ pub fn hooks_page(ctx: Context, _props: HooksPageProps) {
             ",
         ),
       ),
-      h2([], [text("Context Hooks")]),
+      h2([], [text("Provider")]),
       p_text(
         [],
-        "Context hooks are used to dynamically access and subscribe to some data from a current component context.",
+        "
+        Provider hooks are used to access some data from a parent or ancestor component in the UI tree.
+        The hook takes a provider key and returns the value provided by the ancestor. It is useful
+        for providing global state or some slice of data to a component without having to pass it down
+        through the component tree, sometimes known as \"prop drilling\".
+        ",
       ),
+      p([], [
+        text("This hook is conceptually similar to the "),
+        code_text([], "useContext"),
+        text(" hook in React."),
+      ]),
       component(
         codeblock,
         CodeBlockProps(
           language: "gleam",
           body: "
-              use ctx, current_user <- context(ctx, CurrentUser)
+              use ctx, current_user <- provider(ctx, \"user\")
             ",
         ),
       ),
-      p_text([], "COMING SOON"),
-      h2([], [text("Client Hooks")]),
+      p_text(
+        [],
+        "
+          Because the provider key is a global identifier, it is important to use a unique key to avoid collisions with
+          other providers. The key should be a string that is unique to the data being provided and if used in a
+          library then it is recommened that it be namespaced to avoid conflicts with other keys within the application.
+        ",
+      ),
+      h2([], [text("Client")]),
       p([], [
         text(
           "Client hooks are a special type of hook that enable a component to implement logic on the client.",
@@ -290,7 +307,7 @@ pub fn hooks_page(ctx: Context, _props: HooksPageProps) {
               pub fn display(ctx: Context, props: DisplayProps) {
                 let DisplayProps(count: count, on_reset: on_reset) = props
 
-                use ctx, client_doubleclick, _client_doubleclick_dispatch <- client(
+                use ctx, doubleclick_client, _doubleclick_client_dispatch <- client(
                   ctx,
                   \"DoubleClick\",
                   Some(fn(msg, _payload, _dispatch) {
@@ -310,7 +327,7 @@ pub fn hooks_page(ctx: Context, _props: HooksPageProps) {
                   ctx,
                   span(
                     [
-                      client_doubleclick(),
+                      doubleclick_client(),
                       class(
                         \"p-1 px-2 w-10 bg-white dark:bg-gray-900 border-t border-b dark:border-gray-500 align-center text-center\",
                       ),
@@ -365,14 +382,14 @@ pub fn hooks_page(ctx: Context, _props: HooksPageProps) {
         CodeBlockProps(
           language: "gleam",
           body: "
-              pub fn double_click(ctx: Context, on_double_click: fn() -> Nil, cb) {
-                use ctx, handle_doubleclick, _client_doubleclick_dispatch <- client(
+              pub fn doubleclick(ctx: Context, on_doubleclick: fn() -> Nil, cb) {
+                use ctx, handle_doubleclick, _doubleclick_client_dispatch <- client(
                   ctx,
                   \"DoubleClick\",
                   Some(fn(msg, _payload, _dispatch) {
                     case msg {
                       \"doubleclick\" -> {
-                        on_double_click()
+                        on_doubleclick()
                       }
                       _ -> Nil
                     }
@@ -386,7 +403,7 @@ pub fn hooks_page(ctx: Context, _props: HooksPageProps) {
       ),
       p([], [
         text("To use the "),
-        code_text([], "double_click"),
+        code_text([], "doubleclick"),
         text(
           " hook, we can call it within a component as we normally would a native hook",
         ),
@@ -399,7 +416,7 @@ pub fn hooks_page(ctx: Context, _props: HooksPageProps) {
               pub fn display(ctx: Context, props: DisplayProps) {
                 let DisplayProps(count: count, on_reset: on_reset) = props
 
-                use ctx, handle_doubleclick <- double_click(ctx, fn() { dispatch(Reset) }})
+                use ctx, handle_doubleclick <- doubleclick(ctx, fn() { dispatch(Reset) }})
 
                 render(
                   ctx,
