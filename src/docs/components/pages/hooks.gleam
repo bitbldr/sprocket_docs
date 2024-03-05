@@ -70,7 +70,9 @@ pub fn hooks_page(ctx: Context, _props: HooksPageProps) {
         div([], [
           span_text([class("font-bold")], "Note:"),
           text(
-            " Hooks must be called in exactly the same order on every render and should be defined at the top of a component body. This means hooks cannot be called conditionally or within loops or nested functions.",
+            " Hooks must be called in exactly the same order on every render and should be defined at the
+            top of a component body. This means hooks cannot be called conditionally or within loops or
+            nested functions.",
           ),
         ]),
       ]),
@@ -97,7 +99,10 @@ pub fn hooks_page(ctx: Context, _props: HooksPageProps) {
       h2([], [text("State")]),
       p([], [
         text(
-          "State hooks are used to manage a piece of state within a component. The current state along with a setter function are provided to the component. State is initialized to the value provided and can be updated by calling the setter function with the new value. State is maintained across renders but is reinitialized when a component is unmounted and remounted.",
+          "State hooks are used to manage a piece of state within a component. The current state along with a
+          setter function are provided to the component. State is initialized to the value provided and can be
+          updated by calling the setter function with the new value. State is maintained across renders but is
+          reinitialized when a component is unmounted and remounted.",
         ),
       ]),
       component(
@@ -125,7 +130,8 @@ pub fn hooks_page(ctx: Context, _props: HooksPageProps) {
           "Gleam Actor",
         ),
         text(
-          " OTP process (i.e. gen_server) and changes to the state (messages sent via dispatch) result in a re-render of the view.",
+          " OTP process (i.e. gen_server) and changes to the state (messages sent via dispatch) result in a
+          re-render of the view.",
         ),
       ]),
       p_text(
@@ -164,7 +170,8 @@ pub fn hooks_page(ctx: Context, _props: HooksPageProps) {
       ),
       p([], [
         text(
-          "The current model along with a dispatch function are provided. The model is initialized to the value provided and can be updated by calling the dispatch function with a message.",
+          "The current model along with a dispatch function are provided. The model is initialized to the value
+          provided and can be updated by calling the dispatch function with a message.",
         ),
       ]),
       component(
@@ -178,12 +185,17 @@ pub fn hooks_page(ctx: Context, _props: HooksPageProps) {
       ),
       p_text(
         [],
-        "Reducer hooks allow state management to be refactored out of the component file and into a separate module. This can be useful for complex state management logic or message types that are shared across multiple components.",
+        "Reducer hooks allow state management to be refactored out of the component file and into a separate
+        module. This can be useful for complex state management logic or message types that are shared across
+        multiple components.",
       ),
       h2([], [text("Handler")]),
       p([], [
         text(
-          "Handler hooks are used to create event handlers, They take a function and return an IdentifiableCallback. The IdentifiableCallback can be passed to an event handler attribute and ensures that event id's do not change across renders resulting in unnecessary diff patching. The callback will be called when the event is triggered and provide an optional CallbackParam depending on the event type.",
+          "Handler hooks are used to create event handlers, They take a function and return an IdentifiableCallback.
+          The IdentifiableCallback can be passed to an event handler attribute and ensures that event id's do not
+          change across renders resulting in unnecessary diff patching. The callback will be called when the event
+          is triggered and provide an optional CallbackParam depending on the event type.",
         ),
       ]),
       component(
@@ -200,7 +212,8 @@ pub fn hooks_page(ctx: Context, _props: HooksPageProps) {
       h2([], [text("Effect")]),
       p([], [
         text(
-          "Effect hooks are used to perform side-effects. They take a function that is called on mount and when the trigger value changes. They can also specify an optional cleanup function as a return value.",
+          "Effect hooks are used to perform side-effects. They take a function that is called on mount and when the
+          trigger value changes. They can also specify an optional cleanup function as a return value.",
         ),
       ]),
       component(
@@ -227,13 +240,16 @@ pub fn hooks_page(ctx: Context, _props: HooksPageProps) {
         text("The "),
         code_text([], "WithDeps"),
         text(
-          " trigger is used to specify a list of dependencies that will cause the effect function to be called again when any of the dependencies change. If an empty list is provided, the effect function will only be called on mount.",
+          " trigger is used to specify a list of dependencies that will cause the effect function to be called again
+          when any of the dependencies change. If an empty list is provided, the effect function will only be called
+          on mount.",
         ),
       ]),
       h2([], [text("Memo")]),
       p([], [
         text(
-          "Memo hooks are used to memoize a computed value. They take a function and a list of dependencies and return a memoized value. The memoized value will only be re-evaluated when the dependencies change.",
+          "Memo hooks are used to memoize a computed value. They take a function and a list of dependencies and
+          return a memoized value. The memoized value will only be re-evaluated when the dependencies change.",
         ),
       ]),
       component(
@@ -248,7 +264,8 @@ pub fn hooks_page(ctx: Context, _props: HooksPageProps) {
       h2([], [text("Callback")]),
       p([], [
         text(
-          "Callback hooks are used to memoize a function. They take a function and a list of dependencies and return a memoized function. The memoized function will only be re-evaluated when the dependencies change.",
+          "Callback hooks are used to memoize a function. They take a function and a list of dependencies and return
+          a memoized function. The memoized function will only be re-evaluated when the dependencies change.",
         ),
       ]),
       component(
@@ -391,7 +408,8 @@ pub fn hooks_page(ctx: Context, _props: HooksPageProps) {
       h2([], [text("Custom Hooks")]),
       p([], [
         text(
-          "Hooks can be combined to create custom hooks. For example, we can refactor our doubleclick client hook logic to create a reusable custom hook.",
+          "Hooks can be combined to create custom hooks. For example, we can refactor our doubleclick client hook
+          logic to create a reusable custom hook.",
         ),
       ]),
       component(
