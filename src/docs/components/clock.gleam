@@ -4,7 +4,7 @@ import gleam/option.{type Option, None, Some}
 import sprocket/context.{type Context, WithDeps, dep}
 import sprocket/component.{render}
 import sprocket/hooks.{effect, reducer}
-import sprocket/html/elements.{fragment, span, text}
+import sprocket/html/elements.{fragment, ignore_while, span, text}
 import sprocket/internal/utils/timer.{interval}
 
 type Model {

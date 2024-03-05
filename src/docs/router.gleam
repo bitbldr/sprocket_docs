@@ -28,7 +28,7 @@ pub fn router(app: AppContext) {
 
     case request.method, request.path_segments(request) {
       Get, ["standalone"] -> standalone(request, app)
-      Get, ["counter", "live"] ->
+      Get, ["counter", _] ->
         component(
           request,
           counter,

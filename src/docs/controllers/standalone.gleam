@@ -3,7 +3,8 @@ import gleam/option.{Some}
 import gleam/http/request.{type Request}
 import gleam/http/response.{type Response}
 import mist.{type Connection, type ResponseData}
-import sprocket.{render_html}
+import sprocket.{render}
+import sprocket/renderers/html.{html_renderer}
 import sprocket/component.{component}
 import docs/components/counter.{CounterProps, counter}
 import docs/app_context.{type AppContext}
@@ -16,7 +17,7 @@ pub fn standalone(
 ) -> Response(ResponseData) {
   let view = component(counter, CounterProps(initial: Some(100)))
 
-  let standalone_counter = render_html(view)
+  let standalone_counter = render(view, html_renderer())
 
   let csrf = csrf.generate(app_ctx.secret_key_base)
 

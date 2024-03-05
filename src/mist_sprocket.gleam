@@ -9,9 +9,9 @@ import gleam/http/request.{type Request}
 import gleam/http/response.{type Response}
 import mist.{type Connection, type ResponseData}
 import sprocket.{
-  type CSRFValidator, type Sprocket, type SprocketOpts, Empty, Joined,
-  render_html,
+  type CSRFValidator, type Sprocket, type SprocketOpts, Empty, Joined, render,
 }
+import sprocket/renderers/html.{html_renderer}
 import sprocket/component as sprocket_component
 import sprocket/context.{type Element, type FunctionalComponent}
 import sprocket/internal/logger
@@ -30,9 +30,9 @@ pub fn component(
   let selector = process.new_selector()
   let rendered_el = sprocket_component.component(view, props)
 
-  // if the request path ends with "live", then start a websocket connection
+  // if the request path ends with "connect", then start a websocket connection
   case list.last(request.path_segments(req)) {
-    Ok("live") -> {
+    Ok("connect") -> {
       mist.websocket(
         request: req,
         on_init: fn(conn) {
@@ -51,7 +51,7 @@ pub fn component(
     }
 
     _ -> {
-      let body = render_html(rendered_el)
+      let body = render(rendered_el, html_renderer())
 
       response.new(200)
       |> response.set_body(body)
@@ -73,9 +73,9 @@ pub fn view(
   let selector = process.new_selector()
   let rendered_el = sprocket_component.component(view, props)
 
-  // if the request path ends with "live", then start a websocket connection
+  // if the request path ends with "connect", then start a websocket connection
   case list.last(request.path_segments(req)) {
-    Ok("live") -> {
+    Ok("connect") -> {
       mist.websocket(
         request: req,
         on_init: fn(conn) {
@@ -93,7 +93,7 @@ pub fn view(
       )
     }
     _ -> {
-      let body = render_html(layout(rendered_el))
+      let body = render(layout(rendered_el), html_renderer())
 
       response.new(200)
       |> response.set_body(body)

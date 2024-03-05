@@ -19,8 +19,8 @@ pub type PageRoute {
 }
 
 pub fn from_string(route: String) -> PageRoute {
-  let route = case string.ends_with(route, "/live") {
-    True -> string.slice(route, 0, string.length(route) - 5)
+  let route = case string.ends_with(route, "/connect") {
+    True -> string.slice(route, 0, string.length(route) - 8)
     False -> route
   }
 

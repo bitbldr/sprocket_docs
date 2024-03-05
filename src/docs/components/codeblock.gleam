@@ -4,7 +4,7 @@ import gleam/int
 import gleam/option.{None}
 import sprocket/context.{type Context}
 import sprocket/component.{render}
-import sprocket/html/elements.{code_text, div, ignored, pre}
+import sprocket/html/elements.{code_text, div, ignore, pre}
 import sprocket/html/attributes.{class}
 import sprocket/hooks.{client}
 
@@ -24,7 +24,7 @@ pub fn codeblock(ctx: Context, props: CodeBlockProps) {
   render(
     ctx,
     div([class("not-prose overflow-x-auto text-sm")], [
-      ignored(
+      ignore(
         pre([], [
           code_text(
             [

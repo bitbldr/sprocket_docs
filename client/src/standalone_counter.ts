@@ -6,12 +6,12 @@ window.addEventListener("DOMContentLoaded", () => {
     ?.getAttribute("content");
 
   if (csrfToken) {
-    connect("/counter/live", {
+    connect("/counter/connect", {
       csrfToken,
       targetEl: document.getElementById("counter") as Element,
     });
 
-    connect("/counter/live", {
+    connect("/counter/connect", {
       csrfToken,
       targetEl: document.getElementById("no-first-paint-counter") as Element,
     });
