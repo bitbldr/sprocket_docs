@@ -1,7 +1,7 @@
 import sprocket/context.{type Context}
 import sprocket/component.{component, render}
 import sprocket/html/elements.{
-  a, article, code_text, div, h1, h2, p, p_text, span_text, text,
+  a, a_text, article, code_text, div, h1, h2, p, p_text, span_text, text,
 }
 import sprocket/html/attributes.{class, href, target}
 import docs/components/common.{alert, example}
@@ -86,7 +86,7 @@ pub fn hooks_page(ctx: Context, _props: HooksPageProps) {
         CodeBlockProps(
           language: "gleam",
           body: "
-              import sprocket/hooks.{state, reducer, handler, effect, memo, callback, channel, context, portal, client}
+              import sprocket/hooks.{state, reducer, handler, effect, memo, callback, channel, provider, client}
             ",
         ),
       ),
@@ -112,9 +112,26 @@ pub fn hooks_page(ctx: Context, _props: HooksPageProps) {
       h2([], [text("Reducer")]),
       p([], [
         text(
-          "Reducer hooks are used to manage more complex state, which can be referred to as a model. Similar to a state hook, a reducer will maintain the state across renders and be reinitialized when a component is mounted. However, a reducer is better for when state changes require complex transforms to a state model or when state logic needs to be abstracted out of a component module. For when an Elm or Redux architecture is preferred, a reducer hook should be used.",
+          "Reducer hooks are used to manage more complex state. Similar to a state hook, a reducer
+          will maintain the state across renders and be reinitialized when a component is mounted.
+          However, a reducer is better for when state changes require complex transforms to a state
+          model or when state logic needs to be abstracted out of a component module.",
         ),
       ]),
+      p([], [
+        text("Under the hood, a reducer hook is a lightweight "),
+        a_text(
+          [href("https://hexdocs.pm/gleam_otp/0.1.3/gleam/otp/acto")],
+          "Gleam Actor",
+        ),
+        text(
+          " OTP process (i.e. gen_server) and changes to the state (messages sent via dispatch) result in a re-render of the view.",
+        ),
+      ]),
+      p_text(
+        [],
+        "For when an Elm or Redux architecture is preferred, a reducer hook should be used.",
+      ),
       component(
         codeblock,
         CodeBlockProps(
