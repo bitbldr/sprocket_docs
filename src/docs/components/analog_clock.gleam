@@ -53,8 +53,6 @@ pub fn analog_clock(ctx: Context, _props: AnalogClockProps) {
         dispatch(UpdateTime(erlang.system_time(erlang.Second)))
       }
 
-      update_time()
-
       let cancel = interval(interval_duration, update_time)
 
       Some(fn() { cancel() })

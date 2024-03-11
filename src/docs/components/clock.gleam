@@ -4,7 +4,7 @@ import gleam/option.{type Option, None, Some}
 import sprocket/context.{type Context, WithDeps, dep}
 import sprocket/component.{render}
 import sprocket/hooks.{effect, reducer}
-import sprocket/html/elements.{fragment, ignore_while, span, text}
+import sprocket/html/elements.{fragment, span, text}
 import sprocket/internal/utils/timer.{interval}
 
 type Model {
@@ -51,7 +51,7 @@ pub fn clock(ctx: Context, props: ClockProps) {
     time_unit
     |> option.unwrap(erlang.Second)
 
-  // Example effect that runs whenever the `time` variable changes and has a cleanup function
+  // Example effect that has a cleanup function and runs whenever `time` or `time_unit` changes
   use ctx <- effect(
     ctx,
     fn() {
@@ -63,8 +63,6 @@ pub fn clock(ctx: Context, props: ClockProps) {
       let update_time = fn() {
         dispatch(UpdateTime(erlang.system_time(time_unit)))
       }
-
-      update_time()
 
       let cancel = interval(interval_duration, update_time)
 
