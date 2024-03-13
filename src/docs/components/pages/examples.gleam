@@ -37,7 +37,7 @@ pub type ExamplesPageProps {
 }
 
 pub fn examples_page(ctx: Context, _props: ExamplesPageProps) {
-  use ctx, Model(time_unit), dispatch <- reducer(ctx, initial(), update)
+  use ctx, Model(time_unit), _dispatch <- reducer(ctx, initial(), update)
 
   render(
     ctx,
@@ -52,12 +52,6 @@ pub fn examples_page(ctx: Context, _props: ExamplesPageProps) {
               label: Some("The current time is: "),
               time_unit: Some(time_unit),
             ),
-          ),
-          component(
-            unit_toggle,
-            UnitToggleProps(current: time_unit, on_select: fn(unit) {
-              dispatch(SetTimeUnit(unit))
-            }),
           ),
         ]),
         p([], [
