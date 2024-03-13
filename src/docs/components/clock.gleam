@@ -7,12 +7,15 @@ import sprocket/hooks.{effect, reducer}
 import sprocket/html/elements.{fragment, span, text}
 import sprocket/internal/utils/timer.{interval}
 
+type ErlangTimestamp =
+  #(Int, Int, Int)
+
 type Model {
-  Model(time: Int, timezone: String)
+  Model(time: ErlangTimestamp, timezone: String)
 }
 
 type Msg {
-  UpdateTime(Int)
+  UpdateTime(ErlangTimestamp)
 }
 
 fn update(model: Model, msg: Msg) -> Model {
@@ -24,7 +27,7 @@ fn update(model: Model, msg: Msg) -> Model {
 }
 
 fn initial() -> Model {
-  Model(time: erlang.system_time(erlang.Second), timezone: "UTC")
+  Model(time: erlang.erlang_timestamp(), timezone: "UTC")
 }
 
 pub type ClockProps {
@@ -60,9 +63,7 @@ pub fn clock(ctx: Context, props: ClockProps) {
         _ -> 1000
       }
 
-      let update_time = fn() {
-        dispatch(UpdateTime(erlang.system_time(time_unit)))
-      }
+      let update_time = fn() { dispatch(UpdateTime(erlang.erlang_timestamp())) }
 
       let cancel = interval(interval_duration, update_time)
 
@@ -71,7 +72,7 @@ pub fn clock(ctx: Context, props: ClockProps) {
     WithDeps([dep(time), dep(time_unit)]),
   )
 
-  let current_time = format_time(time, "%y-%m-%d %I:%M:%S %p", time_unit)
+  let current_time = format_utc_timestamp(time, time_unit)
 
   render(ctx, case label {
     Some(label) ->
@@ -80,5 +81,8 @@ pub fn clock(ctx: Context, props: ClockProps) {
   })
 }
 
-@external(erlang, "Elixir.FFIUtils", "format_time")
-pub fn format_time(a: a, b: String, unit: erlang.TimeUnit) -> String
+@external(erlang, "print_time", "format_utc_timestamp")
+pub fn format_utc_timestamp(
+  time: ErlangTimestamp,
+  unit: erlang.TimeUnit,
+) -> String

@@ -18,7 +18,7 @@ import docs/components/pages/getting_started.{
   GettingStartedPageProps, getting_started_page,
 }
 import docs/components/pages/components.{ComponentsPageProps, components_page}
-import docs/components/pages/misc.{MiscPageProps, misc_page}
+import docs/components/pages/examples.{ExamplesPageProps, examples_page}
 import docs/components/pages/not_found.{NotFoundPageProps, not_found_page}
 import docs/components/pages/hooks.{HooksPageProps, hooks_page}
 import docs/components/pages/props_and_events.{
@@ -32,8 +32,8 @@ import docs/components/pages/under_the_hood.{
   UnderTheHoodProps, under_the_hood_page,
 }
 import docs/page_route.{
-  type PageRoute, Components, Effects, Events, GettingStarted, Hooks,
-  Introduction, Misc, Page, StateManagement, UnderTheHood, Unknown,
+  type PageRoute, Components, Effects, Events, Examples, GettingStarted, Hooks,
+  Introduction, Page, StateManagement, UnderTheHood, Unknown,
 }
 import docs/theme.{type DarkMode, type Theme, Auto, Theme}
 
@@ -76,7 +76,7 @@ pub fn page(ctx: Context, props: PageProps) {
         Page("Hooks", Hooks),
         Page("Effects", Effects),
         Page("Under the Hood", UnderTheHood),
-        Page("Misc.", Misc),
+        Page("Examples", Examples),
       ]
       |> list.map(fn(page) { KeyedItem(page.route, page) })
       |> ordered_map.from_list()
@@ -126,7 +126,7 @@ pub fn page(ctx: Context, props: PageProps) {
                 Effects -> component(effects_page, EffectsPageProps)
                 UnderTheHood ->
                   component(under_the_hood_page, UnderTheHoodProps)
-                Misc -> component(misc_page, MiscPageProps)
+                Examples -> component(examples_page, ExamplesPageProps)
                 Unknown -> component(not_found_page, NotFoundPageProps)
               },
               component(prev_next_nav, PrevNextNavProps(pages, route)),

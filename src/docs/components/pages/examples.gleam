@@ -3,7 +3,7 @@ import gleam/erlang
 import sprocket/context.{type Context}
 import sprocket/component.{component, render}
 import sprocket/html/elements.{
-  a_text, article, button_text, div, h1, h2, p, p_text, text,
+  a_text, article, button_text, div, h1, h2, p, p_text, raw, text,
 }
 import sprocket/html/attributes.{class, classes, href, on_click}
 import sprocket/hooks.{handler, reducer}
@@ -32,18 +32,17 @@ fn initial() -> Model {
   Model(time_unit: erlang.Second)
 }
 
-pub type MiscPageProps {
-  MiscPageProps
+pub type ExamplesPageProps {
+  ExamplesPageProps
 }
 
-pub fn misc_page(ctx: Context, _props: MiscPageProps) {
-  use ctx, Model(time_unit), _dispatch <- reducer(ctx, initial(), update)
+pub fn examples_page(ctx: Context, _props: ExamplesPageProps) {
+  use ctx, Model(time_unit), dispatch <- reducer(ctx, initial(), update)
 
   render(
     ctx,
     article([], [
-      h1([], [text("Miscellaneous")]),
-      h2([], [text("Example Components")]),
+      h1([], [text("Example Components")]),
       div([], [
         div([class("my-2")], [component(analog_clock, AnalogClockProps)]),
         div([], [
@@ -54,10 +53,22 @@ pub fn misc_page(ctx: Context, _props: MiscPageProps) {
               time_unit: Some(time_unit),
             ),
           ),
+          component(
+            unit_toggle,
+            UnitToggleProps(current: time_unit, on_select: fn(unit) {
+              dispatch(SetTimeUnit(unit))
+            }),
+          ),
         ]),
         p([], [
           text(
-            "An html escaped & safe <span style=\"color: green\">string</span>",
+            "An escaped & safe html <span style=\"color: green\">string</span>",
+          ),
+        ]),
+        p([], [
+          raw(
+            "div",
+            "An unescaped <b>raw <em>html</em></b> <span style=\"color: blue\">string</span></b>",
           ),
         ]),
         component(counter, CounterProps(initial: Some(0))),

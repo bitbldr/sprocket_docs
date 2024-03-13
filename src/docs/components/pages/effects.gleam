@@ -1,4 +1,4 @@
-import gleam/option.{None, Some}
+import gleam/option.{None}
 import sprocket/context.{type Context}
 import sprocket/component.{component, render}
 import sprocket/html/elements.{article, code_text, h1, p, p_text, text}
@@ -42,7 +42,8 @@ pub fn effects_page(ctx: Context, _props: EffectsPageProps) {
       ]),
       p_text(
         [],
-        "Let's take a look at an example of a clock component that uses an effect hook to update the time every second.",
+        "Let's take a look at an example of a clock component that uses an effect hook to start a timer and
+        update the time every second.",
       ),
       component(
         codeblock,
@@ -122,7 +123,7 @@ pub fn effects_page(ctx: Context, _props: EffectsPageProps) {
                 WithDeps([dep(time), dep(time_unit)]),
               )
 
-              let current_time = format_time(time, \"%y-%m-%d %I:%M:%S %p\", time_unit)
+              let current_time = format_utc_timestamp(time, time_unit)
 
               render(ctx, case label {
                 Some(label) ->
@@ -130,13 +131,96 @@ pub fn effects_page(ctx: Context, _props: EffectsPageProps) {
                 None -> fragment([text(current_time)])
               })
             }
+
+            @external(erlang, \"print_time\", \"format_utc_timestamp\")
+            pub fn format_utc_timestamp(time: ErlangTimestamp, unit: erlang.TimeUnit) -> String
           ",
         ),
       ),
-      example([
-        component(
-          clock,
-          ClockProps(label: Some("The current time is: "), time_unit: None),
+      p([], [
+        text(
+          "We also need a bit of erlang code here to handle formatting the timestamp. But this also demonstrates
+          how easy it is to integrate with erlang code in Gleam using FFI. Using the ",
+        ),
+        code_text([], "@external"),
+        text(
+          " attribute, we can call erlang functions from our Gleam code. In this case, we're calling the ",
+        ),
+        code_text([], "format_utc_timestamp"),
+        text(" function defined in our "),
+        code_text([], "print_time"),
+        text(
+          " module. This function takes an erlang timestamp and a time unit and returns a formatted string.
+          The erlang code for this module is shown below.",
+        ),
+      ]),
+      component(
+        codeblock,
+        CodeBlockProps(
+          language: "erlang",
+          body: "
+            -module(print_time).
+            -export([format_utc_timestamp/2]).
+
+            format_utc_timestamp(Timestamp, Unit) ->
+                {_, _, Micro} = Timestamp,
+                {{Year, Month, Day}, {Hour, Minute, Second}} = calendar:now_to_universal_time(Timestamp),
+
+                Mstr = element(
+                    Month, {\"Jan\", \"Feb\", \"Mar\", \"Apr\", \"May\", \"Jun\", \"Jul\", \"Aug\", \"Sep\", \"Oct\", \"Nov\", \"Dec\"}
+                ),
+
+                AM_PM =
+                    if
+                        Hour < 12 -> \"AM\";
+                        true -> \"PM\"
+                    end,
+
+                Hour =
+                    if
+                        Hour > 12 -> Hour - 12;
+                        true -> Hour
+                    end,
+
+                Formatted =
+                    case Unit of
+                        millisecond ->
+                            Milli = Micro div 1000,
+
+                            io_lib:format(\"~2w ~s ~4w ~2w:~2..0w:~2..0w.~3..0w ~s\", [
+                                Day, Mstr, Year, Hour, Minute, Second, Milli, AM_PM
+                            ]);
+                        _ ->
+                            io_lib:format(\"~2w ~s ~4w ~2w:~2..0w:~2..0w ~s\", [
+                                Day, Mstr, Year, Hour, Minute, Second, AM_PM
+                            ])
+                    end,
+
+                erlang:iolist_to_binary(Formatted).
+
+          ",
+        ),
+      ),
+      example([component(clock, ClockProps(label: None, time_unit: None))]),
+      p([], [
+        text(
+          "In this example, we have a clock component that uses an effect hook to start a timer and update the time
+          every second. The effect hook is defined with a dependency on the ",
+        ),
+        code_text([], "time"),
+        text(" and "),
+        code_text([], "time_unit"),
+        text(
+          " properties. This means that the effect will run whenever these properties change. The effect hook
+          returns a cleanup function that cancels the timer. This cleanup function is called when the component is
+          unmounted or when the effect hook is re-run. This is a great way to ensure that resources are cleaned up
+          when they are no longer needed.",
+        ),
+      ]),
+      p([], [
+        text(
+          "This example also prints a message to the console when the component is mounted using an effect hook with
+          an empty list of dependencies. This effect will only run once when the component is first mounted. ",
         ),
       ]),
     ]),
