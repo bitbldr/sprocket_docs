@@ -9,13 +9,13 @@ format_utc_timestamp(Timestamp, Unit) ->
         Month, {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"}
     ),
 
-    AMPM =
+    Meridiem =
         case Hour < 12 of
             true -> "AM";
             false -> "PM"
         end,
 
-    AMPMHour =
+    MeridiemHour =
         case Hour > 12 of
             true -> Hour - 12;
             false -> Hour
@@ -27,11 +27,11 @@ format_utc_timestamp(Timestamp, Unit) ->
                 Milli = Micro div 1000,
 
                 io_lib:format("~2w ~s ~4w ~2w:~2..0w:~2..0w.~3..0w ~s", [
-                    Day, Mstr, Year, AMPMHour, Minute, Second, Milli, AMPM
+                    Day, Mstr, Year, MeridiemHour, Minute, Second, Milli, Meridiem
                 ]);
             _ ->
                 io_lib:format("~2w ~s ~4w ~2w:~2..0w:~2..0w ~s", [
-                    Day, Mstr, Year, AMPMHour, Minute, Second, AMPM
+                    Day, Mstr, Year, MeridiemHour, Minute, Second, Meridiem
                 ])
         end,
 

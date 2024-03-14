@@ -170,17 +170,17 @@ pub fn effects_page(ctx: Context, _props: EffectsPageProps) {
                     Month, {\"Jan\", \"Feb\", \"Mar\", \"Apr\", \"May\", \"Jun\", \"Jul\", \"Aug\", \"Sep\", \"Oct\", \"Nov\", \"Dec\"}
                 ),
 
-                AM_PM =
-                    if
-                        Hour < 12 -> \"AM\";
-                        true -> \"PM\"
-                    end,
+            Meridiem =
+                case Hour < 12 of
+                    true -> \"AM\";
+                    false -> \"PM\"
+                end,
 
-                Hour =
-                    if
-                        Hour > 12 -> Hour - 12;
-                        true -> Hour
-                    end,
+            MeridiemHour =
+                case Hour > 12 of
+                    true -> Hour - 12;
+                    false -> Hour
+                end,
 
                 Formatted =
                     case Unit of
@@ -188,16 +188,15 @@ pub fn effects_page(ctx: Context, _props: EffectsPageProps) {
                             Milli = Micro div 1000,
 
                             io_lib:format(\"~2w ~s ~4w ~2w:~2..0w:~2..0w.~3..0w ~s\", [
-                                Day, Mstr, Year, Hour, Minute, Second, Milli, AM_PM
+                                Day, Mstr, Year, MeridiemHour, Minute, Second, Milli, Meridiem
                             ]);
                         _ ->
                             io_lib:format(\"~2w ~s ~4w ~2w:~2..0w:~2..0w ~s\", [
-                                Day, Mstr, Year, Hour, Minute, Second, AM_PM
+                                Day, Mstr, Year, MeridiemHour, Minute, Second, Meridiem
                             ])
                     end,
 
                 erlang:iolist_to_binary(Formatted).
-
           ",
         ),
       ),
