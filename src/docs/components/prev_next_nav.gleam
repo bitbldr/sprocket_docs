@@ -54,7 +54,7 @@ fn link(ctx: Context, props: PageLinkProps) {
     |> result.map(fn(page) {
       let title = page.title
       let href = page_route.href(page)
-      let is_active = page.name == active
+      let is_active = page.uri == active
 
       a(
         [

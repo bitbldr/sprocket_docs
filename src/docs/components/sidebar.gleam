@@ -1,3 +1,4 @@
+import gleam/io
 import gleam/int
 import gleam/option.{type Option, None, Some}
 import sprocket/context.{type Context}
@@ -73,7 +74,7 @@ pub fn sidebar(ctx: Context, props) {
                 LinkProps(
                   int.to_string(i + 1) <> ". " <> route.title,
                   page_route.href(route),
-                  route.name == active,
+                  route.uri == active,
                 ),
               ),
             )

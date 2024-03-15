@@ -42,9 +42,10 @@ pub type PageProps {
 pub fn page(ctx: Context, props: PageProps) {
   let PageProps(app, path: path) = props
 
-  let page_name = page_route.name_from_path(path)
+  let current_page_name =
+    page_route.name_from_path(path, default: "introduction")
 
-  let page_content = page_server.get_page(app.page_server, page_name)
+  let page_content = page_server.get_page(app.page_server, current_page_name)
 
   use ctx, Model(mode), dispatch <- reducer(ctx, initial(), update)
 
@@ -52,7 +53,7 @@ pub fn page(ctx: Context, props: PageProps) {
     ctx,
     fn() {
       page_server.list_page_routes(app.page_server)
-      |> list.map(fn(page_route) { KeyedItem(page_route.name, page_route) })
+      |> list.map(fn(page_route) { KeyedItem(page_route.uri, page_route) })
       |> ordered_map.from_list()
     },
     context.OnMount,
@@ -78,7 +79,7 @@ pub fn page(ctx: Context, props: PageProps) {
       component(
         responsive_drawer,
         ResponsiveDrawerProps(
-          drawer: component(sidebar, SidebarProps(pages, path)),
+          drawer: component(sidebar, SidebarProps(pages, current_page_name)),
           content: div(
             [
               class(
@@ -90,7 +91,10 @@ pub fn page(ctx: Context, props: PageProps) {
                 Ok(page_server.Page(_, _, html)) -> ignore(raw("div", html))
                 _ -> component(not_found_page, NotFoundPageProps)
               },
-              component(prev_next_nav, PrevNextNavProps(pages, page_name)),
+              component(
+                prev_next_nav,
+                PrevNextNavProps(pages, current_page_name),
+              ),
             ],
           ),
         ),

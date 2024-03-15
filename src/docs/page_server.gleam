@@ -18,7 +18,7 @@ pub type PageServer =
   Subject(Message)
 
 pub type Page {
-  Page(name: String, title: String, content: String)
+  Page(uri: String, title: String, content: String)
 }
 
 pub opaque type State {
@@ -45,7 +45,7 @@ fn handle_message(message: Message, state: State) -> actor.Next(Message, State) 
       let titles =
         state.pages
         |> ordered_map.to_list()
-        |> list.map(fn(page) { PageRoute(page.title, page.name) })
+        |> list.map(fn(page) { PageRoute(page.title, page.uri) })
 
       actor.send(caller, titles)
 
@@ -78,16 +78,27 @@ fn load_pages() -> OrderedMap(String, Page) {
 
   files
   // we are only interested in djot files so check the file extension and filter out the rest
-  |> list.filter(fn(file) {
+  // and remove the extension from the file name
+  |> list.filter_map(fn(file) {
     file
     |> string.split(".")
-    |> list.last()
-    |> result.map(fn(ext) { ext == "djot" })
-    |> result.unwrap(False)
+    |> fn(parts) {
+      let parts_length = list.length(parts)
+      case parts_length > 1, list.last(parts) {
+        True, Ok("djot") -> {
+          let parts = list.take(parts, parts_length - 1)
+
+          Ok(#(string.join(parts, ""), "djot"))
+        }
+        _, _ -> Error(Nil)
+      }
+    }
   })
   |> list.fold_right(ordered_map.new(), fn(pages, file) {
+    let #(filename, ext) = file
+
     let assert basename =
-      file
+      filename
       // check to see if the file has an ordinal idetifier with and underscore
       |> string.split_once("_")
       |> result.map(fn(p) {
@@ -95,13 +106,13 @@ fn load_pages() -> OrderedMap(String, Page) {
           // if the first part is a number, treat as ordinal identifier and just
           // use the second part as the basename
           Ok(_) -> pair.second(p)
-          Error(_) -> file
+          Error(_) -> filename
         }
       })
       // if the file doesn't have an underscore, use the whole file as the basename
-      |> result.unwrap(file)
+      |> result.unwrap(filename)
 
-    case simplifile.read(pages_directory <> "/" <> file) {
+    case simplifile.read(pages_directory <> "/" <> filename <> "." <> ext) {
       Ok(content) -> {
         let html = jot.to_html(content)
 
