@@ -5,7 +5,7 @@ import sprocket/component.{component, render}
 import sprocket/hooks.{reducer}
 import sprocket/html/elements.{a, div, fragment, keyed, text}
 import sprocket/html/attributes.{class, classes}
-import sprocket/internal/utils/ordered_map.{type OrderedMap, KeyedItem}
+import docs/utils/ordered_map.{type OrderedMap, KeyedItem}
 import docs/utils/common.{maybe}
 import docs/components/search_bar.{SearchBarProps, search_bar}
 import docs/page_route.{type PageRoute}

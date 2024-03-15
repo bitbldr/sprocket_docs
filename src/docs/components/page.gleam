@@ -4,7 +4,7 @@ import sprocket/component.{component, render}
 import sprocket/html/elements.{div, ignore, raw}
 import sprocket/html/attributes.{class, id}
 import sprocket/hooks.{memo, reducer} as _
-import sprocket/internal/utils/ordered_map.{KeyedItem}
+import docs/utils/ordered_map.{KeyedItem}
 import docs/components/header.{HeaderProps, MenuItem, header}
 import docs/components/responsive_drawer.{
   ResponsiveDrawerProps, responsive_drawer,

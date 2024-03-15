@@ -1,8 +1,8 @@
+import gleam/int
 import gleam/string
 import gleam/list
 import gleam/pair
 import gleam/result
-import gleam/dict.{type Dict}
 import gleam/function
 import gleam/otp/actor.{Spec}
 import gleam/erlang/process.{type Subject}
@@ -10,6 +10,7 @@ import simplifile
 import jot
 import docs/utils/common.{priv_directory}
 import docs/page_route.{type PageRoute, PageRoute}
+import docs/utils/ordered_map.{type OrderedMap}
 
 const call_timeout = 5000
 
@@ -21,7 +22,7 @@ pub type Page {
 }
 
 pub opaque type State {
-  State(pages: Dict(String, Page))
+  State(pages: OrderedMap(String, Page))
 }
 
 pub opaque type Message {
@@ -36,17 +37,15 @@ fn handle_message(message: Message, state: State) -> actor.Next(Message, State) 
       actor.Stop(process.Normal)
     }
     GetPage(caller, name) -> {
-      actor.send(caller, dict.get(state.pages, name))
+      actor.send(caller, ordered_map.get(state.pages, name))
 
       actor.continue(state)
     }
     ListPageRoutes(caller) -> {
       let titles =
         state.pages
-        |> dict.to_list()
-        |> list.map(fn(page) {
-          PageRoute(pair.second(page).title, pair.first(page))
-        })
+        |> ordered_map.to_list()
+        |> list.map(fn(page) { PageRoute(page.title, page.name) })
 
       actor.send(caller, titles)
 
@@ -70,23 +69,37 @@ pub fn start() {
   actor.start_spec(Spec(init, call_timeout, handle_message))
 }
 
-fn load_pages() -> Dict(String, Page) {
+fn load_pages() -> OrderedMap(String, Page) {
   let pages_directory = priv_directory() <> "/pages"
 
   let assert Ok(files) =
     pages_directory
     |> simplifile.read_directory()
 
-  list.fold(files, dict.new(), fn(pages, file) {
-    let assert Ok(basename) =
+  files
+  // we are only interested in djot files so check the file extension and filter out the rest
+  |> list.filter(fn(file) {
+    file
+    |> string.split(".")
+    |> list.last()
+    |> result.map(fn(ext) { ext == "djot" })
+    |> result.unwrap(False)
+  })
+  |> list.fold_right(ordered_map.new(), fn(pages, file) {
+    let assert basename =
       file
-      |> string.split(on: "/")
-      |> list.last
-      |> result.try(fn(name) {
-        name
-        |> string.split(".")
-        |> list.first()
+      // check to see if the file has an ordinal idetifier with and underscore
+      |> string.split_once("_")
+      |> result.map(fn(p) {
+        case int.parse(pair.first(p)) {
+          // if the first part is a number, treat as ordinal identifier and just
+          // use the second part as the basename
+          Ok(_) -> pair.second(p)
+          Error(_) -> file
+        }
       })
+      // if the file doesn't have an underscore, use the whole file as the basename
+      |> result.unwrap(file)
 
     case simplifile.read(pages_directory <> "/" <> file) {
       Ok(content) -> {
@@ -95,7 +108,7 @@ fn load_pages() -> Dict(String, Page) {
         // TODO: parse title from content
         let title = basename
 
-        dict.insert(pages, basename, Page(basename, title, html))
+        ordered_map.insert(pages, basename, Page(basename, title, html))
       }
       Error(_) -> {
         pages

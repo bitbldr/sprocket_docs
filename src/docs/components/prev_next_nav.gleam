@@ -4,7 +4,7 @@ import sprocket/context.{type Context}
 import sprocket/component.{component, render}
 import sprocket/html/elements.{a, div, fragment, hr, i, text}
 import sprocket/html/attributes.{class, classes}
-import sprocket/internal/utils/ordered_map.{type OrderedMap}
+import docs/utils/ordered_map.{type OrderedMap}
 import docs/utils/common.{maybe}
 import docs/page_route.{type PageRoute}
 
