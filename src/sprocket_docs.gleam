@@ -8,6 +8,7 @@ import docs/router
 import docs/app_context.{AppContext}
 import docs/utils/logger
 import docs/utils/common
+import docs/page_server
 
 pub fn main() {
   logger.configure_backend(logger.Info)
@@ -19,7 +20,9 @@ pub fn main() {
 
   let port = load_port()
 
-  router.stack(AppContext(secret_key_base, validate_csrf))
+  let assert Ok(page_server) = page_server.start()
+
+  router.stack(AppContext(secret_key_base, validate_csrf, page_server))
   |> mist.new
   |> mist.port(port)
   |> mist.start_http

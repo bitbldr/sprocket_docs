@@ -15,7 +15,6 @@ import docs/utils/csrf
 import docs/utils/logger
 import docs/utils/common.{mist_response}
 import docs/app_context.{type AppContext}
-import docs/page_route
 import docs/controllers/standalone.{standalone}
 import docs/layouts/page_layout.{page_layout}
 import docs/components/counter.{CounterProps, counter}
@@ -42,7 +41,7 @@ pub fn router(app: AppContext) {
           request,
           page_layout("Sprocket Docs", csrf.generate(app.secret_key_base)),
           page,
-          PageProps(route: page_route.from_string(request.path)),
+          PageProps(app, path: request.path),
           app.validate_csrf,
           None,
         )

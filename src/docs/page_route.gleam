@@ -1,62 +1,42 @@
 import gleam/string
-import docs/utils/logger
+import gleam/list
+import gleam/result
 
 pub type Page {
   Page(title: String, route: PageRoute)
 }
 
 pub type PageRoute {
-  Introduction
-  GettingStarted
-  Components
-  Events
-  StateManagement
-  Effects
-  Hooks
-  UnderTheHood
-  Examples
-  Unknown
+  PageRoute(title: String, name: String)
 }
 
-pub fn from_string(route: String) -> PageRoute {
-  let route = case string.ends_with(route, "/connect") {
-    True -> string.slice(route, 0, string.length(route) - 8)
-    False -> route
+pub fn name_from_path(path: String) -> String {
+  let path = case string.ends_with(path, "/connect") {
+    True -> string.slice(path, 0, string.length(path) - 8)
+    False -> path
   }
 
-  let route = case route {
+  let path = case path {
     "" -> "/"
-    _ -> route
+    _ -> path
   }
 
-  case route {
-    "/" -> Introduction
-    "/getting_started" -> GettingStarted
-    "/components" -> Components
-    "/props_and_events" -> Events
-    "/state" -> StateManagement
-    "/effects" -> Effects
-    "/hooks" -> Hooks
-    "/under_the_hood" -> UnderTheHood
-    "/examples" -> Examples
-    _ -> Unknown
+  case path {
+    "/" -> "index"
+    path -> {
+      path
+      |> string.split("#")
+      |> list.first()
+      |> result.try(fn(first) {
+        first
+        |> string.split("/")
+        |> list.last()
+      })
+      |> result.unwrap("index")
+    }
   }
 }
 
 pub fn href(route: PageRoute) -> String {
-  case route {
-    Introduction -> "/"
-    GettingStarted -> "/getting_started"
-    Components -> "/components"
-    Events -> "/props_and_events"
-    StateManagement -> "/state"
-    Effects -> "/effects"
-    Hooks -> "/hooks"
-    UnderTheHood -> "/under_the_hood"
-    Examples -> "/examples"
-    Unknown -> {
-      logger.error("Unknown page route")
-      panic
-    }
-  }
+  "/" <> route.name
 }

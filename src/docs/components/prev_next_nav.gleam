@@ -6,10 +6,10 @@ import sprocket/html/elements.{a, div, fragment, hr, i, text}
 import sprocket/html/attributes.{class, classes}
 import sprocket/internal/utils/ordered_map.{type OrderedMap}
 import docs/utils/common.{maybe}
-import docs/page_route.{type Page, type PageRoute}
+import docs/page_route.{type PageRoute}
 
 pub type PrevNextNavProps {
-  PrevNextNavProps(pages: OrderedMap(PageRoute, Page), active: PageRoute)
+  PrevNextNavProps(pages: OrderedMap(String, PageRoute), active: String)
 }
 
 pub fn prev_next_nav(ctx: Context, props) {
@@ -38,8 +38,8 @@ type NextOrPrev {
 
 type PageLinkProps {
   PageLinkProps(
-    page: Result(Page, Nil),
-    active: PageRoute,
+    page: Result(PageRoute, Nil),
+    active: String,
     next_or_prev: NextOrPrev,
   )
 }
@@ -53,8 +53,8 @@ fn link(ctx: Context, props: PageLinkProps) {
     page
     |> result.map(fn(page) {
       let title = page.title
-      let href = page_route.href(page.route)
-      let is_active = page.route == active
+      let href = page_route.href(page)
+      let is_active = page.name == active
 
       a(
         [

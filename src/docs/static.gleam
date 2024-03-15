@@ -7,7 +7,7 @@ import simplifile
 import gleam/result
 import gleam/string
 import gleam/list
-import docs/utils/common.{mist_response}
+import docs/utils/common.{mist_response, priv_directory}
 
 pub fn middleware(
   service: Service(in, ResponseData),
@@ -56,6 +56,3 @@ pub fn middleware(
     }
   }
 }
-
-@external(erlang, "sprocket_docs_ffi", "priv_directory")
-pub fn priv_directory() -> String

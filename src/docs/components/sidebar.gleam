@@ -8,7 +8,7 @@ import sprocket/html/attributes.{class, classes}
 import sprocket/internal/utils/ordered_map.{type OrderedMap, KeyedItem}
 import docs/utils/common.{maybe}
 import docs/components/search_bar.{SearchBarProps, search_bar}
-import docs/page_route.{type Page, type PageRoute}
+import docs/page_route.{type PageRoute}
 
 type Model {
   Model(search_filter: Option(String))
@@ -31,7 +31,7 @@ fn initial() -> Model {
 }
 
 pub type SidebarProps {
-  SidebarProps(pages: OrderedMap(PageRoute, Page), active: PageRoute)
+  SidebarProps(pages: OrderedMap(String, PageRoute), active: String)
 }
 
 pub fn sidebar(ctx: Context, props) {
@@ -64,16 +64,16 @@ pub fn sidebar(ctx: Context, props) {
         ]
         None ->
           ordered_map.index_map(pages, fn(item, i) {
-            let KeyedItem(_, page) = item
+            let KeyedItem(basename, route) = item
 
             keyed(
-              page.title,
+              basename,
               component(
                 link,
                 LinkProps(
-                  int.to_string(i + 1) <> ". " <> page.title,
-                  page_route.href(page.route),
-                  page.route == active,
+                  int.to_string(i + 1) <> ". " <> route.title,
+                  page_route.href(route),
+                  route.name == active,
                 ),
               ),
             )

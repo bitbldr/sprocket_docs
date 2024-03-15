@@ -26,3 +26,6 @@ pub fn random_string(length: Int) -> String {
   |> bit_array.base64_url_encode(False)
   |> string.slice(0, length)
 }
+
+@external(erlang, "sprocket_docs_ffi", "priv_directory")
+pub fn priv_directory() -> String
