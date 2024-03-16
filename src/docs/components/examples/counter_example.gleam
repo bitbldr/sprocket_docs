@@ -1,3 +1,4 @@
+import gleam/int
 import gleam/result
 import gleam/string
 import gleam/dict.{type Dict}
@@ -17,18 +18,28 @@ pub fn props_for_counter_example(props: Dict(String, String)) {
     })
     |> result.unwrap(False)
 
-  CounterExampleProps(enable_reset: enable_reset)
+  let initial =
+    dict.get(props, "initial")
+    |> result.try(int.parse)
+    |> result.unwrap(0)
+
+  CounterExampleProps(initial: initial, enable_reset: enable_reset)
 }
 
 pub type CounterExampleProps {
-  CounterExampleProps(enable_reset: Bool)
+  CounterExampleProps(initial: Int, enable_reset: Bool)
 }
 
 pub fn counter_example(ctx: Context, props: CounterExampleProps) {
-  let CounterExampleProps(enable_reset) = props
+  let CounterExampleProps(initial, enable_reset) = props
 
   render(
     ctx,
-    example([component(counter, CounterProps(enable_reset: enable_reset))]),
+    example([
+      component(
+        counter,
+        CounterProps(initial: initial, enable_reset: enable_reset),
+      ),
+    ]),
   )
 }

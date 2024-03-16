@@ -204,7 +204,9 @@ pub fn props_and_events_page(ctx: Context, _props: PropsAndEventsPageProps) {
             ",
         ),
       ),
-      example([component(counter, CounterProps(enable_reset: False))]),
+      example([
+        component(counter, CounterProps(initial: 0, enable_reset: False)),
+      ]),
       p([], [
         text("So "),
         span_text([class("font-bold")], "state flows down"),

@@ -1,4 +1,3 @@
-import gleam/io
 import gleam/bytes_builder.{type BytesBuilder}
 import gleam/string
 import gleam/dict
@@ -30,8 +29,6 @@ pub fn router(app: AppContext) {
     case request.method, request.path_segments(request) {
       Get, ["standalone"] -> standalone(request, app)
       Get, ["components", name, "connect"] -> {
-        io.debug(#(name, get_component_with_props(name, dict.new())))
-
         case get_component_with_props(name, dict.new()) {
           Ok(#(c, p)) -> component(request, c, p, app.validate_csrf, None)
 

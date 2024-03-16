@@ -24,14 +24,14 @@ fn update(_model: Model, msg: Msg) -> Model {
 }
 
 pub type CounterProps {
-  CounterProps(enable_reset: Bool)
+  CounterProps(initial: Int, enable_reset: Bool)
 }
 
 pub fn counter(ctx: Context, props: CounterProps) {
-  let CounterProps(enable_reset: enable_reset) = props
+  let CounterProps(initial: initial, enable_reset: enable_reset) = props
 
   // Define a reducer to handle events and update the state
-  use ctx, count, dispatch <- reducer(ctx, 0, update)
+  use ctx, count, dispatch <- reducer(ctx, initial, update)
 
   render(
     ctx,

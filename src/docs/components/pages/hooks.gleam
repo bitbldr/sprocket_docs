@@ -404,7 +404,7 @@ pub fn hooks_page(ctx: Context, _props: HooksPageProps) {
             ",
         ),
       ),
-      example([component(counter, CounterProps(enable_reset: True))]),
+      example([component(counter, CounterProps(initial: 0, enable_reset: True))]),
       h2([], [text("Custom Hooks")]),
       p([], [
         text(

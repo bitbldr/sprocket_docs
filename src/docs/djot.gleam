@@ -208,7 +208,6 @@ fn parse_component_prop(
 ) -> #(String, String, Chars) {
   case in {
     [] -> #(key, value, [])
-    ["\"", ..in] -> #(key, value, in)
     [" ", ..in] -> #(key, value, in)
     ["=", "\"", ..in] -> parse_component_prop_value(in, key, value)
     [c, ..in] -> parse_component_prop(in, key <> c, value)
@@ -222,7 +221,7 @@ fn parse_component_prop_value(
 ) -> #(String, String, Chars) {
   case in {
     [] -> #(key, value, [])
-    [">", ..in] -> #(key, value, in)
+    ["\"", ..in] -> #(key, value, in)
     [" ", ..in] -> #(key, value, in)
     [c, ..in] -> parse_component_prop_value(in, key, value <> c)
   }
