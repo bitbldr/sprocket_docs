@@ -12,4 +12,4 @@ func say-hello(nm) {
 
 here is a rendered standalone component
 
-<.counter initial="100" />
+<.counter_example initial="100" />
