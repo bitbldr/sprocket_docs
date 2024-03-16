@@ -1,14 +1,16 @@
+import { connect } from "sprocket-js";
 import { DoubleClick } from "./hooks/double_click";
 import { DarkMode } from "./hooks/dark_mode";
 import { CodeBlock } from "./hooks/codeblock";
 import { ClickOutside } from "./hooks/click_outside";
-import { connect } from "sprocket-js";
+import { LoadComponents } from "./hooks/load_components";
 
 const hooks = {
   CodeBlock,
   DoubleClick,
   DarkMode,
   ClickOutside,
+  LoadComponents,
 };
 
 window.addEventListener("DOMContentLoaded", () => {

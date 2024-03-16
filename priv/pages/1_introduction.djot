@@ -4,15 +4,7 @@ Introduction Page
 
 **Bold text**
 
-
 `HTML <em>Itailc</em> and <span style="color:red">Red</span>`{=html}
-
-```=html
-<div>
-  <div id='no-first-paint-counter'></div>
-  <script src="/standalone_counter.js"></script>
-</div>
-```
 
 We had `<sometag>foos</sometag>`{=html} for dinner.
 Then wrapped the leftovers in `\LaTeX`{=latex}.

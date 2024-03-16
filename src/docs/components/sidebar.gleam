@@ -1,4 +1,3 @@
-import gleam/io
 import gleam/int
 import gleam/option.{type Option, None, Some}
 import sprocket/context.{type Context}

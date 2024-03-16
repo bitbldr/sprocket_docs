@@ -1,0 +1,15 @@
+# Examples
+
+Examples Page
+
+**Bold text**
+
+```mylang
+func say-hello(nm) {
+    print("hello ${nm}!");
+}
+```
+
+here is a rendered standalone component
+
+<.counter initial="100" />

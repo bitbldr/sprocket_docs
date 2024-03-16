@@ -32,7 +32,6 @@ gleam_crypto = "~> 0.4"
 gleam_otp = "~> 0.7"
 ids = "~> 0.10"
 simplifile = "~> 1.5"
-jot = "~> 0.3"
 
 [dev-dependencies]
 gleeunit = "~> 1.0"

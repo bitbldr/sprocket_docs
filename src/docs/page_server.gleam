@@ -7,10 +7,11 @@ import gleam/function
 import gleam/otp/actor.{Spec}
 import gleam/erlang/process.{type Subject}
 import simplifile
-import jot
+import docs/djot
 import docs/utils/common.{priv_directory}
 import docs/page_route.{type PageRoute, PageRoute}
 import docs/utils/ordered_map.{type OrderedMap}
+import docs/registry.{render_component_html}
 
 const call_timeout = 5000
 
@@ -114,18 +115,26 @@ fn load_pages() -> OrderedMap(String, Page) {
 
     case simplifile.read(pages_directory <> "/" <> filename <> "." <> ext) {
       Ok(content) -> {
-        let html = jot.to_html(content)
+        let html = djot.to_html(content, render_component_html)
+
+        let uri = urlify(basename)
 
         // TODO: parse title from content
         let title = basename
 
-        ordered_map.insert(pages, basename, Page(basename, title, html))
+        ordered_map.insert(pages, uri, Page(uri, title, html))
       }
       Error(_) -> {
         pages
       }
     }
   })
+}
+
+fn urlify(path: String) -> String {
+  path
+  |> string.lowercase()
+  |> string.replace(" ", "-")
 }
 
 pub fn get_page(actor: PageServer, name: String) -> Result(Page, Nil) {

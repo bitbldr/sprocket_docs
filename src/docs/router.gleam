@@ -1,6 +1,7 @@
 import gleam/bytes_builder.{type BytesBuilder}
 import gleam/string
-import gleam/option.{None, Some}
+import gleam/dict
+import gleam/option.{None}
 import gleam/bit_array
 import gleam/result
 import gleam/erlang
@@ -17,8 +18,8 @@ import docs/utils/common.{mist_response}
 import docs/app_context.{type AppContext}
 import docs/controllers/standalone.{standalone}
 import docs/layouts/page_layout.{page_layout}
-import docs/components/counter.{CounterProps, counter}
 import docs/components/page.{PageProps, page}
+import docs/registry.{get_component_with_props}
 import mist_sprocket.{component, view}
 
 pub fn router(app: AppContext) {
@@ -27,15 +28,16 @@ pub fn router(app: AppContext) {
 
     case request.method, request.path_segments(request) {
       Get, ["standalone"] -> standalone(request, app)
-      Get, ["counter", _] ->
-        component(
-          request,
-          counter,
-          CounterProps(initial: Some(100)),
-          app.validate_csrf,
-          None,
-        )
+      Get, ["components", name, "connect"] -> {
+        case get_component_with_props(name, dict.new()) {
+          Ok(#(c, p)) -> component(request, c, p, app.validate_csrf, None)
 
+          Error(_) ->
+            not_found()
+            |> response.map(bytes_builder.from_string)
+            |> mist_response()
+        }
+      }
       Get, _ ->
         view(
           request,

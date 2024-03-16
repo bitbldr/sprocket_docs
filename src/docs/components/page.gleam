@@ -1,9 +1,10 @@
 import gleam/list
+import gleam/option.{None}
 import sprocket/context.{type Context, provider}
 import sprocket/component.{component, render}
 import sprocket/html/elements.{div, ignore, raw}
 import sprocket/html/attributes.{class, id}
-import sprocket/hooks.{memo, reducer} as _
+import sprocket/hooks.{client, memo, reducer} as _
 import docs/utils/ordered_map.{KeyedItem}
 import docs/components/header.{HeaderProps, MenuItem, header}
 import docs/components/responsive_drawer.{
@@ -59,6 +60,8 @@ pub fn page(ctx: Context, props: PageProps) {
     context.OnMount,
   )
 
+  use ctx, load_components_client, _ <- client(ctx, "LoadComponents", None)
+
   render(
     ctx,
     div([id("app")], [
@@ -88,7 +91,8 @@ pub fn page(ctx: Context, props: PageProps) {
             ],
             [
               case page_content {
-                Ok(page_server.Page(_, _, html)) -> ignore(raw("div", html))
+                Ok(page_server.Page(_, _, html)) ->
+                  div([load_components_client()], [ignore(raw("div", html))])
                 _ -> component(not_found_page, NotFoundPageProps)
               },
               component(
