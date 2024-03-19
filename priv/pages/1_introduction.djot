@@ -1,18 +1,54 @@
 # Introduction
 
-Introduction Page
+Welcome to the official documentation for Sprocket, a real-time server-side component library for
+Gleam! In this guide, we'll cover the core concepts of Sprocket, but some prerequisite knowledge of
+Gleam is recommended. Gleam is a type-safe functional language designed to harness the power of the
+Erlang Beam virtual machine. Whether you are a Gleam enthusiast or new to this exciting language,
+this documentation will serve as your roadmap to building highly scalable, robust, and efficient
+server-side component views for your web application.
 
-**Bold text**
+_*Fun fact:* Sprocket is named after the humble bicycle gear that enables the wheels to spin
+effortlessly! Also, this documentation is completely powered by it!_
 
-`HTML <em>Itailc</em> and <span style="color:red">Red</span>`{=html}
+::: text-yellow-800 bg-yellow-50 dark:bg-gray-800 dark:text-yellow-300
+🚧 *Important Note:* Sprocket is under heavy development and this documentation is a work in
+progress! Please proceed with caution as things are likely to change. 🚧
+:::
 
-We had `<sometag>foos</sometag>`{=html} for dinner.
-Then wrapped the leftovers in `\LaTeX`{=latex}.
+## Why Another Component Library?
 
-```{=html}
-<video width="320" height="240" controls>
-  <source src="static/movie.mp4" type="video/mp4">
-  <source src="static/movie.ogg" type="video/ogg">
-  Your browser does not support the video tag.
-</video>
-```
+Sprocket is designed around a collection of functional patterns that empower developers to build
+application interfaces with ease. Embracing the strengths of the Erlang Beam virtual machine's
+concurrency and fault-tolerance capabilities enables developers to build highly scalable and
+fault-tolerant applications that are easy to reason about and maintain.
+
+The main goal of this library is to bridge the gap between existing functional component libraries,
+type-safety, and real-time server rendered views so that developers can quickly construct
+applications without compromising on type guarantees. By leveraging the Erlang Beam VM, Sprocket is
+built on a solid foundation that enables scalable and fault-tolerant applications.
+
+## Key Features
+
+* *Real-time Components:* Build scalable real-time server-rendered applications by designing modular
+and reusable components with Sprocket's declarative approach.
+
+* *Type-Safety:* Gleam's static typing guarantees that your code is free of runtime errors while
+making it easier to reason about complex systems and
+
+* *Concurrency:* Sprocket harnesses the power of the Erlang Beam VM, providing lightweight processes
+and easy-to-use abstractions for concurrent programming.
+
+* *Fault-Tolerance:* Battle-tested fault-tolerance mechanisms ensure that your applications are
+resilient even under adverse conditions.
+
+* *Interoperability:* Seamlessly plug-in to Erlang/Elixir's exisitng libraries with Gleam's first
+class FFI.
+
+* *Scalability:* Easily scale your application thanks to the Erlang Beam VM's distributed nature.
+
+* *Open Source:* Sprocket is completely open-source and free to use. Contributions are welcome and
+and encouraged! 
+
+## Ready to get started?
+
+In the next section, we'll cover prerequisites and getting your Sprocket application up and running.
