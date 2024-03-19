@@ -37,7 +37,7 @@ pub type Container {
     language: Option(String),
     content: String,
   )
-  Component(name: String, props: Dict(String, String))
+  Component(name: String, props: List(#(String, String)))
 }
 
 pub type Inline {
@@ -57,7 +57,7 @@ type Refs =
   Dict(String, String)
 
 type ComponentRenderer =
-  fn(String, Dict(String, String)) -> Result(String, Nil)
+  fn(String, List(#(String, String))) -> Result(String, Nil)
 
 // TODO: document
 pub fn to_html(djot: String, render_component_html: ComponentRenderer) -> String {
@@ -162,7 +162,7 @@ fn parse_component(in: Chars) -> Option(#(Container, Chars)) {
   case in {
     ["<", ".", ..in] -> {
       let #(name, in) = parse_component_name(in, "")
-      let #(props, in) = parse_component_props(in, dict.new())
+      let #(props, in) = parse_component_props(in, [])
       let in = drop_spaces(in)
 
       Some(#(Component(name, props), in))
@@ -181,8 +181,8 @@ fn parse_component_name(in: Chars, name: String) -> #(String, Chars) {
 
 fn parse_component_props(
   in: Chars,
-  props: Dict(String, String),
-) -> #(Dict(String, String), Chars) {
+  props: List(#(String, String)),
+) -> #(List(#(String, String)), Chars) {
   case in {
     [] -> #(props, [])
     ["/", ">", ..in] -> #(props, in)
@@ -195,7 +195,7 @@ fn parse_component_props(
     [" ", ..in] -> parse_component_props(in, props)
     _ -> {
       let #(key, value, in) = parse_component_prop(in, "", "")
-      let props = dict.insert(props, key, value)
+      let props = [#(key, value), ..props]
       parse_component_props(in, props)
     }
   }
@@ -676,7 +676,7 @@ fn container_to_html(
     Component(name, props) -> {
       case render_component_html(name, props) {
         Ok(component_html) -> {
-          html <> wrap_component_html(name, component_html)
+          html <> wrap_component_html(name, component_html, props)
         }
         Error(_) -> {
           io.println_error("Component renderer not found: " <> name)
@@ -702,8 +702,19 @@ fn close_tag(html: String, tag: String) -> String {
   html <> "</" <> tag <> ">"
 }
 
-fn wrap_component_html(name: String, component_html: String) -> String {
-  open_tag("", "div", dict.from_list([#("data-sprocket", name)]))
+fn wrap_component_html(
+  name: String,
+  component_html: String,
+  props: List(#(String, String)),
+) -> String {
+  let data_props =
+    props
+    |> list.map(fn(prop) {
+      let #(k, v) = prop
+      #("data-prop-" <> k, v)
+    })
+
+  open_tag("", "div", dict.from_list([#("data-sprocket", name), ..data_props]))
   <> component_html
   <> close_tag("", "div")
 }

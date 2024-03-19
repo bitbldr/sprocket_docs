@@ -1,15 +1,20 @@
 import gleam/int
 import gleam/result
 import gleam/string
-import gleam/dict.{type Dict}
+import gleam/dict
 import sprocket/context.{type Context}
 import sprocket/component.{component, render}
 import docs/components/common.{example}
 import docs/components/events_counter.{CounterProps, counter}
 
-pub fn props_for_counter_example(props: Dict(String, String)) {
+pub fn props_for_counter_example(props: List(#(String, String))) {
+  let props =
+    props
+    |> dict.from_list()
+
   let enable_reset =
-    dict.get(props, "enable_reset")
+    props
+    |> dict.get("enable_reset")
     |> result.map(fn(enable_reset) {
       case string.lowercase(enable_reset) {
         "true" -> True
@@ -19,7 +24,8 @@ pub fn props_for_counter_example(props: Dict(String, String)) {
     |> result.unwrap(False)
 
   let initial =
-    dict.get(props, "initial")
+    props
+    |> dict.get("initial")
     |> result.try(int.parse)
     |> result.unwrap(0)
 

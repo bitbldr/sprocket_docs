@@ -1,6 +1,5 @@
 import gleam/bytes_builder.{type BytesBuilder}
 import gleam/string
-import gleam/dict
 import gleam/option.{None}
 import gleam/bit_array
 import gleam/result
@@ -29,7 +28,11 @@ pub fn router(app: AppContext) {
     case request.method, request.path_segments(request) {
       Get, ["standalone"] -> standalone(request, app)
       Get, ["components", name, "connect"] -> {
-        case get_component_with_props(name, dict.new()) {
+        let default_props =
+          request.get_query(request)
+          |> result.unwrap([])
+
+        case get_component_with_props(name, default_props) {
           Ok(#(c, p)) -> component(request, c, p, app.validate_csrf, None)
 
           Error(_) ->

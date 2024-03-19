@@ -4,6 +4,8 @@ Examples Page
 
 **Bold text**
 
+`code text`
+
 ```mylang
 func say-hello(nm) {
     print("hello ${nm}!");

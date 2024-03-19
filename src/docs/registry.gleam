@@ -1,4 +1,3 @@
-import gleam/dict.{type Dict}
 import sprocket.{render}
 import sprocket/renderers/html.{html_renderer}
 import sprocket/component.{component}
@@ -8,7 +7,7 @@ import docs/components/examples/counter_example.{
 
 pub fn render_component_html(
   name: String,
-  props: Dict(String, String),
+  props: List(#(String, String)),
 ) -> Result(String, Nil) {
   case name {
     "counter_example" -> {
@@ -21,7 +20,7 @@ pub fn render_component_html(
   }
 }
 
-pub fn get_component_with_props(name: String, props: Dict(String, String)) {
+pub fn get_component_with_props(name: String, props: List(#(String, String))) {
   case name {
     "counter_example" -> {
       Ok(#(counter_example, props_for_counter_example(props)))
