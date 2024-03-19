@@ -139,12 +139,12 @@ pub fn effects_page(ctx: Context, _props: EffectsPageProps) {
       ),
       p([], [
         text(
-          "We also need a bit of erlang code here to handle formatting the timestamp. But this also demonstrates
-          how easy it is to integrate with erlang code in Gleam using FFI. Using the ",
+          "We can also use a bit of erlang code here to handle formatting the timestamp, which demonstrates
+          how easy it is to call some erlang functionality from Gleam using FFI. Using the ",
         ),
         code_text([], "@external"),
         text(
-          " attribute, we can call erlang functions from our Gleam code. In this case, we're calling the ",
+          " attribute, we can declare typed erlang interfaces in our Gleam code. In this case, we're calling the ",
         ),
         code_text([], "format_utc_timestamp"),
         text(" function defined in our "),

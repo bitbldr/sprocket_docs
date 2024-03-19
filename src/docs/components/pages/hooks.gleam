@@ -194,7 +194,7 @@ pub fn hooks_page(ctx: Context, _props: HooksPageProps) {
         text(
           "Handler hooks are used to create event handlers, They take a function and return an IdentifiableCallback.
           The IdentifiableCallback can be passed to an event handler attribute and ensures that event id's do not
-          change across renders resulting in unnecessary diff patching. The callback will be called when the event
+          change across renders resulting in unnecessary diff updates. The callback will be called when the event
           is triggered and provide an optional CallbackParam depending on the event type.",
         ),
       ]),
@@ -257,7 +257,7 @@ pub fn hooks_page(ctx: Context, _props: HooksPageProps) {
         CodeBlockProps(
           language: "gleam",
           body: "
-              use ctx, memoized_value <- memo(ctx, fn() { expensive_fn() }, WithDeps([dep(some_value)]))
+              use ctx, memoized_value <- memo(ctx, fn() { expensive_fn(some_value) }, WithDeps([dep(some_value)]))
             ",
         ),
       ),
@@ -273,7 +273,7 @@ pub fn hooks_page(ctx: Context, _props: HooksPageProps) {
         CodeBlockProps(
           language: "gleam",
           body: "
-              use ctx, memoized_fn <- callback(ctx, some_fn, WithDeps([dep(some_value)]))
+              use ctx, memoized_fn <- callback(ctx, fn() { some_fn(some_value) }, WithDeps([dep(some_value)]))
             ",
         ),
       ),
@@ -321,7 +321,7 @@ pub fn hooks_page(ctx: Context, _props: HooksPageProps) {
                   We can expand the ",
         ),
         code_text([], "display"),
-        text(" component to accept another optional prop called "),
+        text(" component to accept another prop called "),
         code_text([], "on_reset"),
         text(
           " which will reset the count and re-render the component when the ",
@@ -335,7 +335,7 @@ pub fn hooks_page(ctx: Context, _props: HooksPageProps) {
           language: "gleam",
           body: "
               pub type DisplayProps {
-                DisplayProps(count: Int, on_reset: Option(fn() -> Nil))
+                DisplayProps(count: Int, on_reset: fn() -> Nil)
               }
 
               pub fn display(ctx: Context, props: DisplayProps) {
@@ -346,12 +346,7 @@ pub fn hooks_page(ctx: Context, _props: HooksPageProps) {
                   \"DoubleClick\",
                   Some(fn(msg, _payload, _dispatch) {
                     case msg {
-                      \"doubleclick\" -> {
-                        case on_reset {
-                          Some(on_reset) -> on_reset()
-                          None -> Nil
-                        }
-                      }
+                      \"doubleclick\" -> on_reset()
                       _ -> Nil
                     }
                   }),
@@ -451,7 +446,7 @@ pub fn hooks_page(ctx: Context, _props: HooksPageProps) {
               pub fn display(ctx: Context, props: DisplayProps) {
                 let DisplayProps(count: count, on_reset: on_reset) = props
 
-                use ctx, handle_doubleclick <- doubleclick(ctx, fn() { dispatch(Reset) }})
+                use ctx, handle_doubleclick <- doubleclick(ctx, on_reset)
 
                 render(
                   ctx,
