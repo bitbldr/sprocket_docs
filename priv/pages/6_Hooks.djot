@@ -1,0 +1,299 @@
+# Hooks
+
+Hooks are the essential mechanism that enable components to implement stateful logic, produce and
+consume side-effects, and couple a component to it's hierarchical context within the UI tree. They
+also make it easy to abstract and reuse stateful logic across different components.
+
+Fundamentally, hooks are just higher order functions that are called from a stateful component which
+take the current context (and possibly other values) and provide a list of variables that can be
+used within the component. Internally, these function's can 'hook' into the component's lifecycle
+using this context and create the basis for stateful logic. For example, the `state` hook provides a
+state variable and a setter function.
+
+```gleam
+pub fn example(ctx: Context, _props: ExampleProps) {
+
+  use ctx, count, set_count <- state(ctx, 0)
+
+  render(
+    ctx,
+    div([], [
+      text("The current state is " <> int.to_string(count)),
+    ])
+  )
+}
+```
+
+Understanding the `use` keyword and how higher order functions work in Gleam is necessary to fully
+understand the hook syntax. Check out the [official Gleam documentation on use
+expressions](https://gleam.run/book/tour/use.html) for more information.
+
+::: text-blue-800 bg-blue-50 dark:bg-gray-800 dark:text-blue-300
+*Note:* Hooks must be called in exactly the same order on every render and should be defined at the
+top of a component body. This means hooks cannot be called conditionally or within loops or nested
+functions.
+:::
+
+Sprocket provides a common set of native hooks that can be imported from the `sprocket/hooks`
+module.
+
+```gleam
+import sprocket/hooks.{state, reducer, handler, effect, memo, callback, channel, provider, client}
+```
+
+We'll go over each of the native hooks and how to use them and also cover how to create custom
+hooks.
+
+## State
+
+State hooks are used to manage a piece of state within a component. The current state along with a
+setter function are provided to the component. State is initialized to the value provided and can be
+updated by calling the setter function with the new value. State is maintained across renders but is
+reinitialized when a component is unmounted and remounted.
+
+```gleam
+use ctx, count, set_count <- state(ctx, 0)
+```
+
+## Reducer
+
+Reducer hooks are used to manage more complex state. Similar to a state hook, a reducer will
+maintain the state across renders and be reinitialized when a component is mounted. However, a
+reducer is better for when state changes require complex transforms to a state model or when state
+logic needs to be abstracted out of a component module.
+
+Under the hood, a reducer hook is a lightweight [Gleam
+Actor](https://hexdocs.pm/gleam_otp/0.1.3/gleam/otp/actor) OTP process (i.e. gen_server) and changes
+to the state (messages sent via dispatch) result in a re-render of the view.
+
+For when an Elm or Redux architecture is preferred, a reducer hook should be used.
+
+```gleam
+type Model =
+  Int
+
+type Msg {
+  Increment
+  Decrement
+  SetCount(Int)
+  Reset
+}
+
+fn update(_model: Model, msg: Msg) -> Model {
+  case msg {
+    Increment -> {
+      model + 1
+    }
+    Decrement -> {
+      model - 1
+    }
+    SetCount(count) -> count
+    Reset -> 0
+  }
+}
+```
+
+The current model along with a dispatch function are provided. The model is initialized to the value
+provided and can be updated by calling the dispatch function with a message.
+
+```gleam
+use ctx, count, dispatch <- reducer(ctx, 0, update)
+```
+
+Reducer hooks allow state management to be refactored out of the component file and into a separate
+module. This can be useful for complex state management logic or message types that are shared
+across multiple components.
+
+## Handler
+
+Handler hooks are used to create event handlers, They take a function and return an
+IdentifiableCallback. The IdentifiableCallback can be passed to an event handler attribute and
+ensures that event id's do not change across renders resulting in unnecessary diff patching. The
+callback will be called when the event is triggered and provide an optional CallbackParam depending
+on the event type.
+
+```gleam
+use ctx, increment <- handler(ctx, fn(_) {
+  dispatch(Increment)
+})
+```
+
+## Effect
+
+Effect hooks are used to perform side-effects. They take a function that is called on mount and when
+the trigger value changes. They can also specify an optional cleanup function as a return value.
+
+```gleam
+use ctx <- effect(
+  ctx,
+  fn(_) {
+    // Perform side-effects here
+
+    // Return a cleanup function if necessary
+    Some(fn(_) {
+      // Cleanup side-effects here
+    })
+  },
+  WithDeps([dep(some_value)]),
+)
+```
+
+The `WithDeps` trigger is used to specify a list of dependencies that will cause the effect function
+to be called again when any of the dependencies change. If an empty list is provided, the effect
+function will only be called on mount.
+
+## Memo
+
+Memo hooks are used to memoize a computed value. They take a function and a list of dependencies and
+return a memoized value. The memoized value will only be re-evaluated when the dependencies change.
+
+```gleam
+use ctx, memoized_value <- memo(ctx, fn() { expensive_fn() }, WithDeps([dep(some_value)]))
+```
+
+## Callback
+
+Callback hooks are used to memoize a function. They take a function and a list of dependencies and
+return a memoized function. The memoized function will only be re-evaluated when the dependencies
+change.
+
+```gleam
+use ctx, memoized_fn <- callback(ctx, some_fn, WithDeps([dep(some_value)]))
+```
+
+## Provider
+
+Provider hooks are used to access some data from a parent or ancestor component in the UI tree. The
+hook takes a provider key and returns the value provided by the ancestor. It is useful for providing
+global state or some slice of data to a component without having to pass it down through the
+component tree, sometimes known as "prop drilling".
+
+This hook is conceptually similar to the `useContext` hook in React.
+
+```gleam
+use ctx, current_user <- provider(ctx, "user")
+```
+
+Because the provider key is a global identifier, it is important to use a unique key to avoid
+collisions with other providers. The key should be a string that is unique to the data being
+provided and if used in a library then it is recommened that it be namespaced to avoid conflicts
+with other keys within the application.
+
+## Client
+
+Client hooks are a special type of hook that enable a component to implement logic on the client.
+
+We can expand the `display` component to accept another optional prop called `on_reset` which will reset
+the count and re-render the component when the `display` component is double-clicked.
+
+```gleam
+pub type DisplayProps {
+  DisplayProps(count: Int, on_reset: Option(fn() -> Nil))
+}
+
+pub fn display(ctx: Context, props: DisplayProps) {
+  let DisplayProps(count: count, on_reset: on_reset) = props
+
+  use ctx, doubleclick_client, _doubleclick_client_dispatch <- client(
+    ctx,
+    "DoubleClick",
+    Some(fn(msg, _payload, _dispatch) {
+      case msg {
+        "doubleclick" -> {
+          case on_reset {
+            Some(on_reset) -> on_reset()
+            None -> Nil
+          }
+        }
+        _ -> Nil
+      }
+    }),
+  )
+
+  render(
+    ctx,
+    span(
+      [
+        doubleclick_client(),
+        class(
+          "p-1 px-2 w-10 bg-white dark:bg-gray-900 border-t border-b dark:border-gray-500 align-center text-center",
+        ),
+      ],
+      [text(int.to_string(count))],
+    ),
+  )
+}
+```
+
+We also need to implement some JavaScript to handle the double-click event on the client and send a
+message to the server.
+
+```javascript
+import { connect } from 'sprocket-js';
+
+const hooks = {
+  DoubleClick: {
+    mounted({ el, pushEvent }) {
+      el.addEventListener('dblclick', () => {
+        pushEvent('doubleclick', {});
+      });
+    },
+  },
+};
+
+...
+
+connect(livePath, {
+  csrfToken,
+  hooks,
+});
+```
+
+<.counter_with_reset_example />
+
+## Custom Hooks
+
+Hooks can be combined to create custom hooks. For example, we can refactor our doubleclick client
+hook logic to create a reusable custom hook.
+
+```gleam
+pub fn doubleclick(ctx: Context, on_doubleclick: fn() -> Nil, cb) {
+  use ctx, handle_doubleclick, _doubleclick_client_dispatch <- client(
+    ctx,
+    "DoubleClick",
+    Some(fn(msg, _payload, _dispatch) {
+      case msg {
+        "doubleclick" -> {
+          on_doubleclick()
+        }
+        _ -> Nil
+      }
+    }),
+  )
+
+  cb(ctx, handle_doubleclick)
+}
+```
+
+To use the `doubleclick` hook, we can call it within a component as we normally would a native hook
+
+```gleam
+pub fn display(ctx: Context, props: DisplayProps) {
+  let DisplayProps(count: count, on_reset: on_reset) = props
+
+  use ctx, handle_doubleclick <- doubleclick(ctx, fn() { dispatch(Reset) })
+
+  render(
+    ctx,
+    span(
+      [
+        handle_doubleclick(),
+        class(
+          "p-1 px-2 w-10 bg-white dark:bg-gray-900 border-t border-b dark:border-gray-500 align-center text-center",
+        ),
+      ],
+      [text(int.to_string(count))],
+    ),
+  )
+}
+```

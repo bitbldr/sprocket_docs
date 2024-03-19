@@ -87,31 +87,39 @@ fn load_pages() -> OrderedMap(String, Page) {
       let parts_length = list.length(parts)
       case parts_length > 1, list.last(parts) {
         True, Ok("djot") -> {
-          let parts = list.take(parts, parts_length - 1)
+          let filename =
+            list.take(parts, parts_length - 1)
+            |> string.join("")
 
-          Ok(#(string.join(parts, ""), "djot"))
+          let #(index, basename, filename) =
+            filename
+            // check to see if the file has an ordinal idetifier with and underscore
+            |> string.split_once("_")
+            |> result.map(fn(p) {
+              case int.parse(pair.first(p)) {
+                // if the first part is a number, treat as ordinal identifier and just
+                // use the second part as the basename
+                Ok(index) -> #(index, pair.second(p), filename)
+                Error(_) -> #(-1, filename, filename)
+              }
+            })
+            // if the file doesn't have an underscore, use the whole file as the basename
+            |> result.unwrap(#(-1, filename, filename))
+
+          Ok(#(index, basename, "djot", filename))
         }
         _, _ -> Error(Nil)
       }
     }
   })
-  |> list.fold_right(ordered_map.new(), fn(pages, file) {
-    let #(filename, ext) = file
+  |> list.sort(fn(f1, f2) {
+    let #(index1, _, _, _) = f1
+    let #(index2, _, _, _) = f2
 
-    let assert basename =
-      filename
-      // check to see if the file has an ordinal idetifier with and underscore
-      |> string.split_once("_")
-      |> result.map(fn(p) {
-        case int.parse(pair.first(p)) {
-          // if the first part is a number, treat as ordinal identifier and just
-          // use the second part as the basename
-          Ok(_) -> pair.second(p)
-          Error(_) -> filename
-        }
-      })
-      // if the file doesn't have an underscore, use the whole file as the basename
-      |> result.unwrap(filename)
+    int.compare(index1, index2)
+  })
+  |> list.fold(ordered_map.new(), fn(pages, file) {
+    let #(_index, basename, ext, filename) = file
 
     case simplifile.read(pages_directory <> "/" <> filename <> "." <> ext) {
       Ok(content) -> {

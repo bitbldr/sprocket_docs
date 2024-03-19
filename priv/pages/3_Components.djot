@@ -1,0 +1,447 @@
+# Components
+
+Components are the fundamental building blocks that encapsulate markup and functionality into
+independent and composable pieces. This page will explore some key concepts of components and
+demonstrate how to use them to build rich user interfaces.
+
+## Stateful Components
+
+A Stateful Component is a function that takes a context and props as arguments and returns a list of
+child elements. These components may also utilize hooks to manage events, state and effects. Let's
+take a look at an example component.
+
+We're going to create a simple component called `example_button` that takes an optional label and
+renders a button. This guide will use Tailwind CSS to style components, but you can use any classes
+or style framework you prefer. 
+
+```gleam
+import gleam/option.{None, Option, Some}
+import sprocket/context.{Context}
+import sprocket/component.{render}
+import sprocket/html/elements.{button, text}
+import sprocket/html/attributes.{class}
+
+pub type ExampleButtonProps {
+  ExampleButtonProps(label: Option(String))
+}
+
+pub fn example_button(ctx: Context, props: ExampleButtonProps) {
+  let ExampleButtonProps(label) = props
+
+  render(
+    ctx,
+    button(
+      [class(\"p-2 bg-blue-500 hover:bg-blue-600 active:bg-blue-700 text-white rounded\")],
+      [
+        text(case label {
+          Some(label) -> label
+          None -> \"Click me!\"
+        }),
+      ],
+    ),
+  )
+}
+```
+
+As you can see, we've defined our component and it's prop types. The component takes context and
+props as arguments and renders a button. If no label is specified, the button will render with the
+default label of "Click me!".
+
+Because Gleam is statically typed, our component is guaranteed to receive the correct props. We can
+be confident that our component will render as expected without having to worry about a large
+category of runtime errors related to missing or incorrect props.
+
+To use this new component in a parent view, we can simply pass it into the `component` function
+along with the props we want to pass in. Let's take a look at an example of a page view component
+that uses the button component we defined above.
+
+```gleam
+pub type PageViewProps {
+  PageViewProps
+}
+
+pub fn page_view(ctx: Context, _props: PageViewProps) {
+  render(
+    ctx,
+    div(
+      [],
+      [
+        component(
+          example_button,
+          ExampleButtonProps(label: None),
+        ),
+      ],
+    ),
+  )
+}
+```
+
+Here is our rendered component:
+
+<.example_button />
+
+That's looking pretty good, now let's customize the label to our button. We can do that by passing
+in a label prop to our component.
+
+```gleam
+component(
+  example_button,
+  ExampleButtonProps(label: Some(\"Add to Cart\")),
+),
+```
+
+<.example_button label="Add to Cart" />
+
+Excellent! Now our button has a proper label.
+
+But our humble button isn't very interesting yet. Let's say we want to add some functionality to our
+button. We can do that by implementing some events and state management via hooks.",
+
+We'll cover events, state management and hooks more in-depth a bit later. For now, we'll just add a
+simple state hook and handler hook to our button component which will toggle the label when the
+button is clicked. We'll call our new component `toggle_button` and instead of just taking a string
+label prop, we'll give more control to the parent component by introducing in a prop called
+`render_label` which we'll define as a function that takes the current state of the toggle and
+renders the content of the button.
+
+```gleam
+import sprocket/context.{Context, Element, WithDeps, dep}
+import sprocket/component.{render}
+import sprocket/html/elements.{button}
+import sprocket/html/attributes.{class, on_click}
+import sprocket/hooks.{handler, state}
+
+pub type ToggleButtonProps {
+  ToggleButtonProps(render_label: fn(Bool) -> Element)
+}
+
+pub fn toggle_button(ctx: Context, props: ToggleButtonProps) {
+  let ToggleButtonProps(render_label) = props
+
+  // add a state hook to track the active state, we'll cover hooks in more detail later
+  use ctx, is_active, set_active <- state(ctx, False)
+
+  // add a handler hook to toggle the active state
+  use ctx, toggle_active <- handler(
+    ctx,
+    fn(_) {
+      set_active(!is_active)
+      Nil
+    },
+  )
+
+  render(
+    ctx,
+    button(
+      [
+        class(case is_active {
+          True ->
+            \"rounded-lg text-white px-3 py-2 bg-green-700 hover:bg-green-800 active:bg-green-900\"
+          False ->
+            \"rounded-lg text-white px-3 py-2 bg-blue-500 hover:bg-blue-600 active:bg-blue-700\"
+        }),
+        on_click(toggle_active),
+      ],
+      [render_label(is_active)],
+    ),
+  )
+}
+```
+
+We've added a `state` hook to track the active state of our button and a `handler` hook to toggle
+the active state when the button is clicked. We've also added a `render_label` prop to our component
+to allow us to customize the label of our toggle button depending on whether the toggle is active or
+inactive.
+
+Now let's use our new component in a parent view.
+
+```gleam
+pub type PageViewProps {
+  PageViewProps
+}
+
+pub fn page_view(ctx: Context, _props: PageViewProps) {
+  render(
+    ctx,
+    div(
+      [],
+      [
+        component(
+          toggle_button,
+          ToggleButtonProps(render_label: fn(toggle) {
+            case toggle {
+              True ->
+                span(
+                  [],
+                  [
+                    i([class(\"fa-solid fa-check mr-2\")], []),
+                    text(\"Added to Cart!\"),
+                  ],
+                )
+              False ->
+                span(
+                  [],
+                  [
+                    i([class(\"fa-solid fa-cart-shopping mr-2\")], []),
+                    text(\"Add to Cart\"),
+                  ],
+                )
+            }
+          }),
+        ),
+      ],
+    ),
+  )
+}
+```
+
+Here is our rendered stateful component:
+
+<.toggle_button_with_render_label />
+
+## Stateless Functional Components
+
+Not every component will require state management or hooks. In these cases a stateless functional
+component can be used. Stateless functional components are just regular functions that encapsulate
+markup and functionality into independent and composable pieces. The function is called directly
+from the render function (opposed to using a `component` wrapper as seen previously with stateful
+components). Let's look at an example of a stateless functional component that renders a product
+card.
+
+```gleam
+type Product {
+  Product(
+    id: Int,
+    name: String,
+    description: String,
+    img_url: String,
+    qty: String,
+    price: Float,
+  )
+}
+
+pub fn product_card(product: Product, actions: Option(List(Element)) {
+  let Product(
+    name: name,
+    description: description,
+    img_url: img_url,
+    qty: qty,
+    price: price,
+    ..,
+  ) = product
+
+  div(
+    [
+      class(
+        \"flex flex-col lg:flex-row bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700\",
+      ),
+    ],
+    [
+      div(
+        [class(\"h-64 lg:w-1/3 overflow-hidden rounded-t-lg lg:rounded-tr-none lg:rounded-l-lg\")],
+        [
+          img([
+            class(\"object-cover w-full h-full\"),
+            src(img_url),
+            alt(\"product image\"),
+          ]),
+        ],
+      ),
+      div(
+        [class(\"flex-1 flex flex-col p-5\")],
+        [
+          div(
+            [class(\"flex-1 flex flex-row\")],
+            [
+              div(
+                [class(\"flex-1\")],
+                [
+                  h5_text(
+                    [
+                      class(
+                        \"text-xl font-semibold tracking-tight text-gray-900 dark:text-white\",
+                      ),
+                    ],
+                    name,
+                  ),
+                  div_text([class(\"py-2 text-gray-500\")], description),
+                ],
+              ),
+              div(
+                [],
+                [
+                  div(
+                    [class(\"flex-1 flex flex-col text-right\")],
+                    [
+                      div_text(
+                        [
+                          class(
+                            \"text-xl font-bold text-gray-900 dark:text-white\",
+                          ),
+                        ],
+                        \"$\" <> float.to_string(price),
+                      ),
+                      div_text([class(\"text-sm text-gray-500\")], qty),
+                    ],
+                  ),
+                ],
+              ),
+            ],
+          ),
+          case actions {
+            None -> div([], [])
+            Some(actions) ->
+              div([class(\"flex flex flex-row justify-end\")], actions)
+          },
+        ],
+      ),
+    ],
+  )
+}
+```
+
+To render this component we call it directly from the render function, passing any arguments the
+function takes, which in this case is a `Product` record and an optional list of actions, which we
+will leave as `None` for now.
+
+```gleam
+pub fn product(ctx: Context, _props: ProductProps) {
+  let some_product = 
+    Product(
+      id: 2255,
+      name: \"Bamboo Cutting Board\",
+      description: \"This sustainable bamboo cutting board is perfect for slicing and dicing vegetables, fruits, and meats. The natural antibacterial properties of bamboo ensure a hygienic cooking experience.\",
+      img_url: \"https://images.pexels.com/photos/6489734/pexels-photo-6489734.jpeg\",
+      qty: \"12 x 8 inches\",
+      price: 24.99,
+    )
+
+  render(
+    ctx,
+    div(
+      [class(\"flex flex-col\")],
+      [
+        product_card(some_product, None)
+      ]
+    ),
+  )
+}
+```
+
+<.product_card id="2255" name="Bamboo Cutting Board" description="This sustainable bamboo cutting board is perfect for slicing and dicing vegetables, fruits, and meats. The natural antibacterial properties of bamboo ensure a hygienic cooking experience." img_url="https://images.pexels.com/photos/6489734/pexels-photo-6489734.jpeg" qty="12 x 8 inches" price="24.99" />
+
+You may have noticed that we are using a few functions named after HTML elements such as
+`div` and `img`. These are Stateless Functional Components that are provided by the
+Sprocket HTML module and are used to render HTML elements. You can find a full list of
+available functions in the `sprocket/html` module.
+
+## Components as Building Blocks
+
+Components can be composed together to create rich user interfaces. Let's take a look at an example
+of a view that uses the `toggle_button` and the `product_card` components we defined earlier to
+create a simple product component.
+
+```gleam
+pub fn product(ctx: Context, _props: PageViewProps) {
+  render(
+    ctx,
+    div(
+      [class(\"flex flex-col\")],
+      [
+        product_card(
+          Product(
+            id: 2259,
+            name: \"Organic Aromatherapy Candle\",
+            description: \"Create a fresh ambiance with this organic aromatherapy candle. Hand-poured with pure essential oils, the fresh scent of citrus will brighten up your room.\",
+            img_url: \"https://images.pexels.com/photos/7260249/pexels-photo-7260249.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2\",
+            qty: \"1 candle\",
+            price: 19.99,
+          ),
+          Some([
+            component(
+              toggle_button,
+              ToggleButtonProps(render_label: fn(toggle) {
+                case toggle {
+                  True ->
+                    span(
+                      [],
+                      [
+                        i([class(\"fa-solid fa-check mr-2\")], []),
+                        text(\"Added to Cart!\"),
+                      ],
+                    )
+                  False ->
+                    span(
+                      [],
+                      [
+                        i([class(\"fa-solid fa-cart-shopping mr-2\")], []),
+                        text(\"Add to Cart\"),
+                      ],
+                    )
+                }
+              }),
+            ),
+          ]),
+        ),
+      ],
+    ),
+  )
+}
+```
+
+<.stateful_product_card id="2259" name="Organic Aromatherapy Candle" description="Create a fresh ambiance with this organic aromatherapy candle. Hand-poured with pure essential oils, the fresh scent of citrus will brighten up your room." img_url="https://images.pexels.com/photos/7260249/pexels-photo-7260249.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" qty="1 candle" price="19.99" />
+
+As you can see, we've composed our stateless functional `product_card` component with our stateful
+`toggle_button` component to create a somewhat trivial product listing. But this is the power of
+components. They can be combined to create rich user interfaces.
+
+## Dynamic Components and `keyed`
+
+Components can be conditionally rendered using `case` statements as seen in some of the previous
+examples, but they can also be dynamically rendered as a list of elements using any of Gleam's list
+functions such as `list.map` or `list.filter`.
+
+It's important to use the `keyed` function when rendering elements that may change so that the
+diffing algorithm can keep track of them and their states across renders. Let's take a look at an
+example of a component that renders a list of products, each with their own state.
+
+```gleam
+pub type ProductListProps {
+  ProductListProps(products: List(Product))
+}
+
+pub fn product_list(ctx: Context, props: ProductListProps) {
+  let ProductListProps(products) = props
+
+  // ignore the state management for now, we'll cover that in a later section
+
+  render(
+    ctx,
+    div(
+      [],
+      list.map(
+        products,
+        fn (p) {
+          keyed(p.id, 
+            component(
+              product,
+              ProductProps(product: p),
+            )
+          )
+        },
+      ),
+    ),
+  )
+}
+```
+
+<.product_list_example />
+
+As you can see, we've defined a component that takes a list of products as props, and then renders a
+list of product cards. Each product card has it's own state (a boolean indicating whether an item is
+in the cart or not), and we can filter products from the list by clicking "Not Interested".
+
+Because we are using the `keyed` function, the diffing algorithm can keep track of each product card
+and will reconcile elements that have changed position, keeping their state in-tact. It's important
+to use the `keyed` function anytime you are dynamically rendering elements or a list of elements
+that may change.
