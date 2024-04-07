@@ -100,7 +100,7 @@ pub fn format_utc_timestamp(time: ErlangTimestamp, unit: erlang.TimeUnit) -> Str
 
 We can also use a bit of erlang code here to handle formatting the timestamp, which demonstrates
 how simple it is to call some erlang functionality from Gleam using FFI. Using the `@external`
-directive, we can declare typed erlang interfaces in our Gleam code. In this case, we're calling the
+attribute, we can declare typed erlang interfaces in our Gleam code. In this case, we're calling the
 `format_utc_timestamp` function defined in our `print_time` module. This function takes an erlang
 timestamp and a time unit and returns a formatted string. The erlang code for this module is shown
 below.

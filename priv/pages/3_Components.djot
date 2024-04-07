@@ -443,5 +443,5 @@ in the cart or not), and we can filter products from the list by clicking "Not I
 
 Because we are using the `keyed` function, the diffing algorithm can keep track of each product card
 and will reconcile elements that have changed position, keeping their state in-tact. It's important
-to use the `keyed` function anytime you are dynamically rendering elements or a list of elements
+to use the `keyed` function whenever you are dynamically rendering elements or a list of elements
 that may change.

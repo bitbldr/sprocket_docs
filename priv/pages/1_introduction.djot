@@ -1,11 +1,11 @@
 # Introduction
 
 Welcome to the official documentation for Sprocket, a real-time server-side component library for
-Gleam! In this guide, we'll cover the core concepts of Sprocket, but some prerequisite knowledge of
-Gleam is recommended. Gleam is a type-safe functional language designed to harness the power of the
-Erlang Beam virtual machine. Whether you are a Gleam enthusiast or new to this exciting language,
-this documentation will serve as your roadmap to building highly scalable, robust, and efficient
-server-side component views for your web application.
+Gleam! In this guide, we'll cover the core concepts of Sprocket, but some [prerequisite knowledge of
+Gleam](https://tour.gleam.run) is recommended. Gleam is a type-safe functional language designed to
+harness the power of the Erlang Beam virtual machine. Whether you are a Gleam enthusiast or new to
+this exciting language, this documentation will serve as your roadmap to building highly scalable,
+robust, and efficient server-side component views for your web application.
 
 _*Fun fact:* Sprocket is named after the humble bicycle gear that enables the wheels to spin
 effortlessly! Also, this documentation is completely powered by it!_
