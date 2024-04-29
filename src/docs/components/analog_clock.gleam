@@ -95,7 +95,6 @@ pub fn analog_clock(ctx: Context, _props: AnalogClockProps) {
         height("100px"),
         view_box("0 0 384 384"),
         xml_space("preserve"),
-        transform("scale(0.25)"),
       ],
       [
         path(
