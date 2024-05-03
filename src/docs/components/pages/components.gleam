@@ -593,7 +593,7 @@ pub fn components_page(ctx: Context, _props: ComponentsPageProps) {
         text("It's important to use "),
         code_text([], "keyed"),
         text(
-          " when rendering elements that may change so that the diffing algorithm can keep track of them and thier states across renders. Let's
+          " when rendering elements that may change so that the diffing algorithm can keep track of them and their states across renders. Let's
                 take a look at an example of a component that renders a list of products, each with their own state.",
         ),
       ]),

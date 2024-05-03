@@ -10,7 +10,7 @@ robust, and efficient server-side component views for your web application.
 _*Fun fact:* Sprocket is named after the humble bicycle gear that enables the wheels to spin
 effortlessly! Also, this documentation is completely powered by it!_
 
-::: text-yellow-800 bg-yellow-50 dark:bg-gray-800 dark:text-yellow-300
+::: alert-warning
 🚧 *Important Note:* Sprocket is under heavy development and this documentation is a work in
 progress! Please proceed with caution as things are likely to change. 🚧
 :::

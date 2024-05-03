@@ -28,7 +28,7 @@ Understanding the `use` keyword and how higher order functions work in Gleam is 
 understand the hook syntax. Check out the [official Gleam documentation on use
 expressions](https://gleam.run/book/tour/use.html) for more information.
 
-::: text-blue-800 bg-blue-50 dark:bg-gray-800 dark:text-blue-300
+::: alert-info
 *Note:* Hooks must be called in exactly the same order on every render and should be defined at the
 top of a component body. This means hooks cannot be called conditionally or within loops or nested
 functions.

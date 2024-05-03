@@ -1,5 +1,4 @@
-// Cloned from https://github.com/lpil/jot/blob/main/src/jot.gleam and modified to
-// support sprocket components
+// TODO: collapse adjacent text nodes
 
 import gleam/io
 import gleam/dict.{type Dict}
@@ -37,12 +36,17 @@ pub type Container {
     language: Option(String),
     content: String,
   )
+  FencedDiv(attributes: Dict(String, String), content: List(Container))
+  Blockquote(List(Container))
   Component(name: String, props: List(#(String, String)))
 }
 
 pub type Inline {
   Text(String)
   Link(content: List(Inline), destination: Destination)
+  Strong(List(Inline))
+  Emphasis(List(Inline))
+  Verbatim(String)
 }
 
 pub type Destination {
@@ -140,6 +144,21 @@ fn parse_document(
       }
     }
 
+    [":", ..in2] -> {
+      case parse_fenced_div(in2, attrs, 1) {
+        None -> {
+          let #(paragraph, in) = parse_paragraph(in, attrs)
+          parse_document(in, refs, [paragraph, ..ast], dict.new())
+        }
+        Some(#(div, in)) -> parse_document(in, refs, [div, ..ast], dict.new())
+      }
+    }
+
+    [">", ..in2] -> {
+      let #(blockquote, in) = parse_blockquote(in2)
+      parse_document(in, refs, [blockquote, ..ast], dict.new())
+    }
+
     ["<", ..] -> {
       case parse_component(in) {
         None -> {
@@ -224,6 +243,102 @@ fn parse_component_prop_value(
     ["\"", ..in] -> #(key, value, in)
     [" ", ..in] -> #(key, value, in)
     [c, ..in] -> parse_component_prop_value(in, key, value <> c)
+  }
+}
+
+fn parse_blockquote(in: Chars) -> #(Container, Chars) {
+  let in = drop_spaces(in)
+
+  let #(inner_content, in) = take_until_blockquote_end(in, [])
+
+  let containers =
+    inner_content
+    |> parse_document(dict.new(), [], dict.new())
+    |> fn(d: Document) { d.content }
+
+  #(Blockquote(containers), in)
+}
+
+fn take_until_blockquote_end(in: Chars, acc: Chars) -> #(Chars, Chars) {
+  case in {
+    [] -> #(list.reverse(acc), [])
+    ["\n", "\n", ..rest] -> #(list.reverse(acc), rest)
+    [c, ..rest] -> take_until_blockquote_end(rest, [c, ..acc])
+  }
+}
+
+fn parse_fenced_div(
+  in: Chars,
+  attrs: Dict(String, String),
+  count: Int,
+) -> Option(#(Container, Chars)) {
+  case in {
+    [] -> None
+    [":", ..in] -> parse_fenced_div(in, attrs, count + 1)
+    [_, ..] if count >= 3 -> {
+      let #(maybe_class_name, in) = case parse_class_name(in, "") {
+        None -> #(None, in)
+        Some(#(class_name, in)) -> #(Some(class_name), in)
+      }
+
+      use #(inner_content, in) <- option.then(
+        take_until_fenced_div_end(in, count, 0, []),
+      )
+
+      let containers =
+        inner_content
+        |> parse_document(dict.new(), [], dict.new())
+        |> fn(d: Document) { d.content }
+
+      case maybe_class_name {
+        None -> Some(#(FencedDiv(attrs, containers), in))
+        Some(class_name) -> {
+          let attrs = add_attribute(attrs, "class", class_name)
+          Some(#(FencedDiv(attrs, containers), in))
+        }
+      }
+    }
+    _ -> None
+  }
+}
+
+fn parse_class_name(in: Chars, acc: String) -> Option(#(String, Chars)) {
+  case in {
+    [] -> None
+    [" ", ..in] -> parse_class_name(in, acc)
+    ["\n", ..] if acc == "" -> None
+    ["\n", ..in] -> Some(#(acc, in))
+    [c, ..in] -> parse_class_name(in, acc <> c)
+  }
+}
+
+fn take_until_fenced_div_end(
+  in: Chars,
+  count: Int,
+  running_count: Int,
+  acc: Chars,
+) -> Option(#(Chars, Chars)) {
+  case in {
+    [] -> None
+    ["\n", ..in] if count == running_count -> Some(#(list.reverse(acc), in))
+
+    // TODO: decide whether to continue if content exists on the same line as the closing fence
+    _ if count == running_count ->
+      Some(#(list.reverse(acc), collect_remaining_fence(in)))
+
+    // count down until we reach the same number of fence delimiters as the opening fence
+    [":", ..in] -> take_until_fenced_div_end(in, count, running_count + 1, acc)
+
+    // collect inner content as acc
+    [c, ..rest] -> take_until_fenced_div_end(rest, count, 0, [c, ..acc])
+  }
+}
+
+fn collect_remaining_fence(in: Chars) -> Chars {
+  case in {
+    [] -> []
+    ["\n", ..rest] -> rest
+    [_, ..rest] -> collect_remaining_fence(rest)
   }
 }
 
@@ -503,30 +618,165 @@ fn take_heading_chars_newline_hash(
   }
 }
 
+type InlineParser =
+  fn(Chars, String, List(Inline)) -> Option(#(List(Inline), Chars))
+
+// takes a list of parsers and returns the first successfully parsed result
+fn parse_any(
+  in: Chars,
+  text: String,
+  acc: List(Inline),
+  of parsers: List(InlineParser),
+) -> Option(#(List(Inline), Chars)) {
+  list.fold_until(parsers, None, fn(_, f) {
+    case f(in, text, acc) {
+      None -> list.Continue(None)
+      parsed -> list.Stop(parsed)
+    }
+  })
+}
+
 fn parse_inline(in: Chars, text: String, acc: List(Inline)) -> List(Inline) {
   case in {
     [] if text == "" -> list.reverse(acc)
     [] -> parse_inline([], "", [Text(text), ..acc])
-    ["[", ..rest] -> {
-      case parse_link(rest) {
-        None -> parse_inline(rest, text <> "[", acc)
-        Some(#(link, in)) -> parse_inline(in, "", [link, Text(text), ..acc])
+    [c, ..rest] ->
+      case
+        parse_any(in, text, acc, of: [
+          link,
+          emphasis("*"),
+          emphasis("_"),
+          verbatim,
+        ])
+      {
+        // Some(#(inline, in)) -> parse_inline(in, "", [inline, Text(text), ..acc])
+        Some(#(parsed, in)) -> parse_inline(in, "", parsed)
+        None -> parse_inline(rest, text <> c, acc)
       }
-    }
-    [c, ..rest] -> parse_inline(rest, text <> c, acc)
   }
 }
 
-fn parse_link(in: Chars) -> Option(#(Inline, Chars)) {
-  case take_link_chars(in, []) {
-    // This wasn't a link, it was just a `[` in the text
-    None -> None
-
-    Some(#(inline_in, ref, in)) -> {
-      let inline = parse_inline(inline_in, "", [])
-      let link = Link(inline, ref)
-      Some(#(link, in))
+fn parse_until_closing(
+  delim: String,
+  in: Chars,
+  text: String,
+  prev: String,
+  acc: List(Inline),
+) -> Option(#(List(Inline), Chars)) {
+  case in {
+    [] -> None
+    [c, ..rest] if c == delim -> {
+      case is_whitespace(prev) {
+        True -> None
+        False -> {
+          case text {
+            "" ->
+              Some(#(
+                acc
+                |> list.reverse,
+                rest,
+              ))
+            _ -> {
+              Some(#(
+                [Text(text), ..acc]
+                |> list.reverse,
+                rest,
+              ))
+            }
+          }
+        }
+      }
     }
+    [c, ..rest] ->
+      case
+        parse_any(in, text, acc, of: [
+          link,
+          emphasis("*"),
+          emphasis("_"),
+          verbatim,
+        ])
+      {
+        Some(#(parsed, in)) -> parse_until_closing(delim, in, "", c, parsed)
+        None -> parse_until_closing(delim, rest, text <> c, c, acc)
+      }
+  }
+}
+
+fn take_until_forced_closing(
+  delim: String,
+  in: Chars,
+  acc: Chars,
+) -> Option(#(Chars, Chars)) {
+  case in {
+    [] -> None
+    [c, ..rest] -> take_until_forced_closing(delim, rest, [c, ..acc])
+  }
+}
+
+fn take_until_closing(
+  delim: String,
+  in: Chars,
+  acc: Chars,
+  verbatim: Bool,
+) -> Option(#(Chars, Chars)) {
+  case verbatim, in {
+    _, [] -> None
+    True, [c, ..rest] -> {
+      case c {
+        "`" -> take_until_closing(delim, rest, [c, ..acc], False)
+        _ -> take_until_closing(delim, rest, [c, ..acc], True)
+      }
+    }
+    _, [c, ..rest] if c == "`" ->
+      take_until_closing(delim, rest, [c, ..acc], True)
+    _, [c, ..rest] if c == delim -> {
+      let prev = case acc {
+        [] -> ""
+        [c, ..] -> c
+      }
+
+      case is_whitespace(prev) || is_escape(prev) {
+        True -> take_until_closing(delim, rest, [c, ..acc], False)
+        False -> Some(#(list.reverse(acc), rest))
+      }
+    }
+    _, [c, ..rest] -> take_until_closing(delim, rest, [c, ..acc], False)
+  }
+}
+
+fn take_until_last(
+  delim: String,
+  in: Chars,
+  acc: Chars,
+  result: Option(#(Chars, Chars)),
+) -> Option(#(Chars, Chars)) {
+  case in {
+    [] -> result
+    [c, ..rest] if c == delim ->
+      take_until_last(delim, rest, [c, ..acc], Some(#(acc, rest)))
+    [c, ..rest] -> take_until_last(delim, rest, [c, ..acc], result)
+  }
+}
+
+fn link(
+  in: Chars,
+  text: String,
+  acc: List(Inline),
+) -> Option(#(List(Inline), Chars)) {
+  case in {
+    [] -> None
+    ["[", ..rest] -> {
+      case take_link_chars(rest, []) {
+        None -> None
+        Some(#(inline_in, ref, in)) -> {
+          let inline = parse_inline(inline_in, "", [])
+          let link = Link(inline, ref)
+
+          Some(#([link, Text(text), ..acc], in))
+        }
+      }
+    }
+    [c, ..rest] -> link(rest, text <> c, acc)
   }
 }
 
@@ -568,6 +818,119 @@ fn take_link_chars_destination(
   }
 }
 
+// parse strong or regular emphasis where em is either "*" or "_"
+fn emphasis(em: String) -> InlineParser {
+  fn(in: Chars, text: String, acc: List(Inline)) -> Option(
+    #(List(Inline), Chars),
+  ) {
+    case in {
+      [] -> None
+      [c, ..rest] if c == em -> {
+        // ensure the next character is non-whitespace
+        let next_is_whitespace = case rest {
+          [] -> False
+          [next_c, ..] -> is_whitespace(next_c)
+        }
+
+        case next_is_whitespace {
+          True -> None
+
+          // False ->
+          //   case parse_until_closing(em, rest, "", "", []) {
+          //     Some(#(parsed, in)) -> {
+          //       let emphasis =
+          //         parsed
+          //         |> container_for_emphasis(em)
+          //       Some(#([emphasis, Text(text), ..acc], in))
+          //     }
+          //     None -> None
+          //   }
+          False ->
+            case take_until_closing(em, rest, [], False) {
+              Some(#(inline_in, in)) -> {
+                let parsed =
+                  inline_in
+                  |> parse_inline("", [])
+
+                let emphasis =
+                  parsed
+                  |> container_for_emphasis(em)
+
+                Some(#([emphasis, Text(text), ..acc], in))
+              }
+              None -> None
+            }
+        }
+      }
+      [_, ..] -> None
+    }
+  }
+}
+
+fn is_whitespace(c: String) -> Bool {
+  c == " " || c == "\n" || c == "\t"
+}
+
+fn is_escape(c: String) -> Bool {
+  c == "\\"
+}
+
+fn container_for_emphasis(c: String) {
+  case c {
+    "*" -> Strong
+    "_" -> Emphasis
+    _ -> {
+      io.print_error("Unknown emphasis character: " <> c)
+      panic
+    }
+  }
+}
+
+fn verbatim(
+  in: Chars,
+  text: String,
+  acc: List(Inline),
+) -> Option(#(List(Inline), Chars)) {
+  case in {
+    ["`", ..rest] -> {
+      case take_verbatim_chars(rest, 1, None) {
+        Some(#(verbatim, in)) ->
+          Some(#([Verbatim(verbatim), Text(text), ..acc], in))
+        None -> None
+      }
+    }
+    _ -> None
+  }
+}
+
+fn take_verbatim_chars(
+  in: Chars,
+  count: Int,
+  acc: Option(List(String)),
+) -> Option(#(String, Chars)) {
+  case in {
+    [] -> None
+    ["`", ..rest] if acc == None -> take_verbatim_chars(rest, count + 1, acc)
+    ["`", ..rest] if count > 1 -> take_verbatim_chars(rest, count - 1, acc)
+    ["`", ..rest] -> {
+      let result =
+        acc
+        |> option.unwrap([])
+        |> list.reverse
+        |> string.join("")
+
+      Some(#(result, rest))
+    }
+    [c, ..rest] ->
+      take_verbatim_chars(
+        rest,
+        count,
+        option.map(acc, fn(acc) { [c, ..acc] })
+        |> option.or(Some([c])),
+      )
+  }
+}
+
 fn heading_level(in: Chars, level: Int) -> Option(#(Int, Chars)) {
   case in {
     ["#", ..rest] -> heading_level(rest, level + 1)
@@ -589,6 +952,15 @@ fn take_inline_text(inlines: List(Inline), acc: String) -> String {
           let acc = take_inline_text(nested, acc)
           take_inline_text(rest, acc)
         }
+        Strong(nested) -> {
+          let acc = take_inline_text(nested, acc)
+          take_inline_text(rest, acc)
+        }
+        Emphasis(nested) -> {
+          let acc = take_inline_text(nested, acc)
+          take_inline_text(rest, acc)
+        }
+        Verbatim(_) -> take_inline_text(rest, acc)
       }
   }
 }
@@ -673,6 +1045,32 @@ fn container_to_html(
       |> close_tag(tag)
     }
 
+    FencedDiv(attrs, content) -> {
+      html
+      |> open_tag("div", attrs)
+      |> string.append("\n")
+      |> string.append(containers_to_html(
+        content,
+        refs,
+        render_component_html,
+        "",
+      ))
+      |> close_tag("div")
+    }
+
+    Blockquote(content) -> {
+      html
+      |> open_tag("blockquote", dict.new())
+      |> string.append("\n")
+      |> string.append(containers_to_html(
+        content,
+        refs,
+        render_component_html,
+        "",
+      ))
+      |> close_tag("blockquote")
+    }
+
     Component(name, props) -> {
       case render_component_html(name, props) {
         Ok(component_html) -> {
@@ -740,6 +1138,19 @@ fn inline_to_html(html: String, inline: Inline, refs: Refs) -> String {
       |> inlines_to_html(text, refs)
       |> close_tag("a")
     }
+    Strong(inlines) -> {
+      html
+      |> open_tag("strong", dict.new())
+      |> inlines_to_html(inlines, refs)
+      |> close_tag("strong")
+    }
+    Emphasis(inlines) -> {
+      html
+      |> open_tag("em", dict.new())
+      |> inlines_to_html(inlines, refs)
+      |> close_tag("em")
+    }
+    Verbatim(text) -> html <> "<code>" <> text <> "</code>"
   }
 }
 

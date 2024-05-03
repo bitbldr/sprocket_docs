@@ -18,7 +18,7 @@ This method is the easiest way to get started.
 
 1. Clone the starter repository from GitHub
 
-```bash
+``` bash
 # Clone the starter repository from GitHub
 git clone https://github.com/bitbldr/sprocket_starter.git
 
@@ -28,14 +28,14 @@ cd sprocket_starter
 
 2. Install dependencies
 
-```bash
+``` bash
 # Install dependencies
 yarn
 ```
 
 3. Start the server
 
-```bash
+``` bash
 # Start the server
 yarn watch
 ```
@@ -55,7 +55,7 @@ gleam add sprocket
 
 2. Add client-side dependencies with the following commands
 
-```bash
+``` bash
 # Initialize a new NodeJS project, if you don't already have one
 npm init -y
 
@@ -66,7 +66,7 @@ npm install sprocket-js
 3. Sprocket needs to be initialized by the client in order to establish a persistent connection to
 the server. Add the following contents to your client entrypoint file (e.g. app.js)
 
-```typescript
+``` typescript
 import { connect } from "sprocket-js";
 
 const hooks = {};
