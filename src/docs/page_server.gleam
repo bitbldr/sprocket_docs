@@ -7,7 +7,7 @@ import gleam/function
 import gleam/otp/actor.{Spec}
 import gleam/erlang/process.{type Subject}
 import simplifile
-import docs/djot
+import djot
 import docs/utils/common.{priv_directory}
 import docs/page_route.{type PageRoute, PageRoute}
 import docs/utils/ordered_map.{type OrderedMap}

@@ -32,6 +32,8 @@ gleam_crypto = "~> 0.4"
 gleam_otp = "~> 0.7"
 ids = "~> 0.10"
 simplifile = "~> 1.5"
+filepath = "~> 1.0"
+pears = "~> 0.3"
 
 [dev-dependencies]
 gleeunit = "~> 1.0"
