@@ -29,24 +29,24 @@ built on a solid foundation that enables scalable and fault-tolerant application
 
 ## Key Features
 
-* *Real-time Components:* Build scalable real-time server-rendered applications by designing modular
+*Real-time Components:* Build scalable real-time server-rendered applications by designing modular
 and reusable components with Sprocket's declarative approach.
 
-* *Type-Safety:* Gleam's static typing guarantees that your code is free of runtime errors while
+*Type-Safety:* Gleam's static typing guarantees that your code is free of runtime errors while
 making it easier to reason about complex systems and
 
-* *Concurrency:* Sprocket harnesses the power of the Erlang Beam VM, providing lightweight processes
+*Concurrency:* Sprocket harnesses the power of the Erlang Beam VM, providing lightweight processes
 and easy-to-use abstractions for concurrent programming.
 
-* *Fault-Tolerance:* Battle-tested fault-tolerance mechanisms ensure that your applications are
+*Fault-Tolerance:* Battle-tested fault-tolerance mechanisms ensure that your applications are
 resilient even under adverse conditions.
 
-* *Interoperability:* Seamlessly plug-in to Erlang/Elixir's exisitng libraries with Gleam's first
+*Interoperability:* Seamlessly plug-in to Erlang/Elixir's exisitng libraries with Gleam's first
 class FFI.
 
-* *Scalability:* Easily scale your application thanks to the Erlang Beam VM's distributed nature.
+*Scalability:* Easily scale your application thanks to the Erlang Beam VM's distributed nature.
 
-* *Open Source:* Sprocket is completely open-source and free to use. Contributions are welcome and
+*Open Source:* Sprocket is completely open-source and free to use. Contributions are welcome and
 and encouraged! 
 
 ## Ready to get started?

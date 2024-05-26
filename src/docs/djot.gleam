@@ -4,8 +4,8 @@ import gleam/io
 import gleam/dict.{type Dict}
 import gleam/int
 import gleam/list
-import gleam/string
 import gleam/option.{type Option, None, Some}
+import gleam/string
 
 pub type Document {
   Document(content: List(Container), references: Dict(String, String))
@@ -36,6 +36,7 @@ pub type Container {
     language: Option(String),
     content: String,
   )
+  RawBlock(format: String, content: String)
   FencedDiv(attributes: Dict(String, String), content: List(Container))
   Blockquote(List(Container))
   Component(name: String, props: List(#(String, String)))
@@ -44,9 +45,10 @@ pub type Container {
 pub type Inline {
   Text(String)
   Link(content: List(Inline), destination: Destination)
-  Strong(List(Inline))
-  Emphasis(List(Inline))
-  Verbatim(String)
+  Image(content: List(Inline), destination: Destination)
+  Emphasis(content: List(Inline))
+  Strong(content: List(Inline))
+  Code(content: String)
 }
 
 pub type Destination {
@@ -63,14 +65,23 @@ type Refs =
 type ComponentRenderer =
   fn(String, List(#(String, String))) -> Result(String, Nil)
 
-// TODO: document
+/// Convert a string of Djot into a string of HTML.
+///
+/// If you want to have more control over the HTML generated you can use the
+/// `parse` function to convert Djot to a tree of records instead. You can then
+/// traverse this tree and turn it into HTML yourself.
+///
 pub fn to_html(djot: String, render_component_html: ComponentRenderer) -> String {
   djot
   |> parse
   |> document_to_html(render_component_html)
 }
 
-// TODO: document
+/// Convert a string of Djot into a tree of records.
+///
+/// This may be useful when you want more control over the HTML to be converted
+/// to, or you wish to convert Djot to some other format.
+///
 pub fn parse(djot: String) -> Document {
   djot
   |> string.replace("\r\n", "\n")
@@ -347,23 +358,55 @@ fn parse_codeblock(
   attrs: Dict(String, String),
   delim: String,
 ) -> Option(#(Container, Chars)) {
-  use #(language, count, in) <- option.then(parse_codeblock_start(in, delim, 1))
+  use #(language, count, in, raw) <- option.then(parse_codeblock_start(
+    in,
+    delim,
+    1,
+  ))
   let #(content, in) = parse_codeblock_content(in, delim, count, "")
-  Some(#(Codeblock(attrs, language, content), in))
+
+  case raw {
+    True -> {
+      let format = case language {
+        Some(lang) -> lang
+        None -> ""
+      }
+
+      Some(#(RawBlock(format, content), in))
+    }
+    False -> {
+      Some(#(Codeblock(attrs, language, content), in))
+    }
+  }
 }
 
 fn parse_codeblock_start(
   in: Chars,
   delim: String,
   count: Int,
-) -> Option(#(Option(String), Int, Chars)) {
+) -> Option(#(Option(String), Int, Chars, Bool)) {
   case in {
     [c, ..in] if c == delim -> parse_codeblock_start(in, delim, count + 1)
-    ["\n", ..in] if count >= 3 -> Some(#(None, count, in))
+    ["\n", ..in] if count >= 3 -> Some(#(None, count, in, False))
     [_, ..] if count >= 3 -> {
       let in = drop_spaces(in)
-      let #(language, in) = parse_codeblock_language(in, "")
-      Some(#(language, count, in))
+      use #(language, in) <- option.map(parse_codeblock_language(in, ""))
+
+      let maybe_raw_format =
+        option.then(language, fn(lang) {
+          case string.first(lang) {
+            Ok("=") -> Some(string.drop_left(lang, 1))
+            _ -> None
+          }
+        })
+
+      case maybe_raw_format {
+        Some(format) -> {
+          // raw
+          #(Some(format), count, in, True)
+        }
+        None -> #(language, count, in, False)
+      }
     }
     _ -> None
   }
@@ -407,11 +450,14 @@ fn parse_codeblock_end(in: Chars, delim: String, count: Int) -> Option(#(Chars))
 fn parse_codeblock_language(
   in: Chars,
   language: String,
-) -> #(Option(String), Chars) {
+) -> Option(#(Option(String), Chars)) {
   case in {
-    [] -> #(None, in)
-    ["\n", ..in] if language == "" -> #(None, in)
-    ["\n", ..in] -> #(Some(language), in)
+    // A language specifier cannot contain a backtick
+    ["`", ..] -> None
+
+    [] -> Some(#(None, in))
+    ["\n", ..in] if language == "" -> Some(#(None, in))
+    ["\n", ..in] -> Some(#(Some(language), in))
     [c, ..in] -> parse_codeblock_language(in, language <> c)
   }
 }
@@ -419,7 +465,7 @@ fn parse_codeblock_language(
 fn parse_ref_def(in: Chars, id: String) -> Option(#(String, String, Chars)) {
   case in {
     ["]", ":", ..in] -> parse_ref_value(in, id, "")
-    [] | ["]", ..] -> None
+    [] | ["]", ..] | ["\n", ..] -> None
     [c, ..in] -> parse_ref_def(in, id <> c)
   }
 }
@@ -431,6 +477,7 @@ fn parse_ref_value(
 ) -> Option(#(String, String, Chars)) {
   case in {
     [] -> Some(#(id, string.trim(url), []))
+    ["\n", " ", ..in] -> parse_ref_value(drop_spaces(in), id, url)
     ["\n", ..in] -> Some(#(id, string.trim(url), in))
     [c, ..in] -> parse_ref_value(in, id, url <> c)
   }
@@ -618,87 +665,163 @@ fn take_heading_chars_newline_hash(
   }
 }
 
-type InlineParser =
-  fn(Chars, String, List(Inline)) -> Option(#(List(Inline), Chars))
-
-// takes a list of parsers and returns the first successfully parsed result
-fn parse_any(
-  in: Chars,
-  text: String,
-  acc: List(Inline),
-  of parsers: List(InlineParser),
-) -> Option(#(List(Inline), Chars)) {
-  list.fold_until(parsers, None, fn(_, f) {
-    case f(in, text, acc) {
-      None -> list.Continue(None)
-      parsed -> list.Stop(parsed)
-    }
-  })
-}
-
 fn parse_inline(in: Chars, text: String, acc: List(Inline)) -> List(Inline) {
   case in {
     [] if text == "" -> list.reverse(acc)
     [] -> parse_inline([], "", [Text(text), ..acc])
-    [c, ..rest] ->
-      case
-        parse_any(in, text, acc, of: [
-          link,
-          emphasis("*"),
-          emphasis("_"),
-          verbatim,
-        ])
-      {
-        // Some(#(inline, in)) -> parse_inline(in, "", [inline, Text(text), ..acc])
-        Some(#(parsed, in)) -> parse_inline(in, "", parsed)
-        None -> parse_inline(rest, text <> c, acc)
+
+    // Emphasis and strong
+    ["_", c, ..rest] if c != " " && c != "\t" && c != "\n" -> {
+      let rest = [c, ..rest]
+      case parse_emphasis(rest, "_") {
+        None -> parse_inline(rest, text <> "_", acc)
+        Some(#(inner, in)) ->
+          parse_inline(in, "", [Emphasis(inner), Text(text), ..acc])
       }
+    }
+    ["*", c, ..rest] if c != " " && c != "\t" && c != "\n" -> {
+      let rest = [c, ..rest]
+      case parse_emphasis(rest, "*") {
+        None -> parse_inline(rest, text <> "*", acc)
+        Some(#(inner, in)) ->
+          parse_inline(in, "", [Strong(inner), Text(text), ..acc])
+      }
+    }
+
+    // Link and image
+    ["[", ..rest] -> {
+      case parse_link(rest, Link) {
+        None -> parse_inline(rest, text <> "[", acc)
+        Some(#(link, in)) -> parse_inline(in, "", [link, Text(text), ..acc])
+      }
+    }
+    ["!", "[", ..rest] -> {
+      case parse_link(rest, Image) {
+        None -> parse_inline(rest, text <> "![", acc)
+        Some(#(image, in)) -> parse_inline(in, "", [image, Text(text), ..acc])
+      }
+    }
+
+    // Code
+    ["`", ..rest] -> {
+      let #(code, in) = parse_code(rest, 1)
+      parse_inline(in, "", [code, Text(text), ..acc])
+    }
+
+    [c, ..rest] -> parse_inline(rest, text <> c, acc)
   }
 }
 
-fn parse_until_closing(
-  delim: String,
-  in: Chars,
-  text: String,
-  prev: String,
-  acc: List(Inline),
-) -> Option(#(List(Inline), Chars)) {
+fn parse_code(in: Chars, count: Int) -> #(Inline, Chars) {
   case in {
-    [] -> None
-    [c, ..rest] if c == delim -> {
-      case is_whitespace(prev) {
-        True -> None
-        False -> {
-          case text {
-            "" ->
-              Some(#(
-                acc
-                |> list.reverse,
-                rest,
-              ))
-            _ -> {
-              Some(#(
-                [Text(text), ..acc]
-                |> list.reverse,
-                rest,
-              ))
-            }
-          }
-        }
+    ["`", ..in] -> parse_code(in, count + 1)
+    _ -> {
+      let #(content, in) = parse_code_content(in, count, "")
+
+      // If the string has a single space at the end then a backtick we are
+      // supposed to not include that space. This is so inline code can start
+      // with a backtick.
+      let content = case string.starts_with(content, " `") {
+        True -> string.trim_left(content)
+        False -> content
+      }
+      let content = case string.ends_with(content, "` ") {
+        True -> string.trim_right(content)
+        False -> content
+      }
+      #(Code(content), in)
+    }
+  }
+}
+
+fn parse_code_content(
+  in: Chars,
+  count: Int,
+  content: String,
+) -> #(String, Chars) {
+  case in {
+    [] -> #(content, in)
+    ["`", ..in] -> {
+      let #(done, content, in) = parse_code_end(in, count, 1, content)
+      case done {
+        True -> #(content, in)
+        False -> parse_code_content(in, count, content)
       }
     }
-    [c, ..rest] ->
-      case
-        parse_any(in, text, acc, of: [
-          link,
-          emphasis("*"),
-          emphasis("_"),
-          verbatim,
-        ])
-      {
-        Some(#(parsed, in)) -> parse_until_closing(delim, in, "", c, parsed)
-        None -> parse_until_closing(delim, rest, text <> c, c, acc)
+    [c, ..in] -> parse_code_content(in, count, content <> c)
+  }
+}
+
+fn parse_code_end(
+  in: Chars,
+  limit: Int,
+  count: Int,
+  content: String,
+) -> #(Bool, String, Chars) {
+  case in {
+    [] -> #(True, content, in)
+    ["`", ..in] -> parse_code_end(in, limit, count + 1, content)
+    [_, ..] if limit == count -> #(True, content, in)
+    [_, ..] -> #(False, content <> string.repeat("`", count), in)
+  }
+}
+
+fn parse_emphasis(in: Chars, close: String) -> Option(#(List(Inline), Chars)) {
+  case take_emphasis_chars(in, close, []) {
+    None -> None
+
+    Some(#(inline_in, in)) -> {
+      let inline = parse_inline(inline_in, "", [])
+      Some(#(inline, in))
+    }
+  }
+}
+
+fn take_emphasis_chars(
+  in: Chars,
+  close: String,
+  acc: Chars,
+) -> Option(#(Chars, Chars)) {
+  case in {
+    [] -> None
+
+    // Inline code overrides emphasis
+    ["`", ..] -> None
+
+    // The close is not a close if it is preceeded by whitespace
+    ["\t", c, ..in] if c == close ->
+      take_emphasis_chars(in, close, [" ", c, ..acc])
+    ["\n", c, ..in] if c == close ->
+      take_emphasis_chars(in, close, [" ", c, ..acc])
+    [" ", c, ..in] if c == close ->
+      take_emphasis_chars(in, close, [" ", c, ..acc])
+
+    [c, ..in] if c == close -> {
+      case list.reverse(acc) {
+        [] -> None
+        acc -> Some(#(acc, in))
       }
+    }
+    [c, ..rest] -> take_emphasis_chars(rest, close, [c, ..acc])
+  }
+}
+
+fn parse_link(
+  in: Chars,
+  to_inline: fn(List(Inline), Destination) -> Inline,
+) -> Option(#(Inline, Chars)) {
+  case take_link_chars(in, []) {
+    // This wasn't a link, it was just a `[` in the text
+    None -> None
+
+    Some(#(inline_in, ref, in)) -> {
+      let inline = parse_inline(inline_in, "", [])
+      let ref = case ref {
+        Reference("") -> Reference(take_inline_text(inline, ""))
+        ref -> ref
+      }
+      Some(#(to_inline(inline, ref), in))
+    }
   }
 }
 
@@ -812,58 +935,12 @@ fn take_link_chars_destination(
     [")", ..in] if is_url -> Some(#(inline_in, Url(acc), in))
     ["]", ..in] if !is_url -> Some(#(inline_in, Reference(acc), in))
 
-    ["\n", ..rest] -> take_link_chars_destination(rest, is_url, inline_in, acc)
+    ["\n", ..rest] if is_url ->
+      take_link_chars_destination(rest, is_url, inline_in, acc)
+    ["\n", ..rest] if !is_url ->
+      take_link_chars_destination(rest, is_url, inline_in, acc <> " ")
     [c, ..rest] ->
       take_link_chars_destination(rest, is_url, inline_in, acc <> c)
-  }
-}
-
-// parse strong or regular emphasis where em is either "*" or "_"
-fn emphasis(em: String) -> InlineParser {
-  fn(in: Chars, text: String, acc: List(Inline)) -> Option(
-    #(List(Inline), Chars),
-  ) {
-    case in {
-      [] -> None
-      [c, ..rest] if c == em -> {
-        // ensure the next character is non-whitespace
-        let next_is_whitespace = case rest {
-          [] -> False
-          [next_c, ..] -> is_whitespace(next_c)
-        }
-
-        case next_is_whitespace {
-          True -> None
-
-          // False ->
-          //   case parse_until_closing(em, rest, "", "", []) {
-          //     Some(#(parsed, in)) -> {
-          //       let emphasis =
-          //         parsed
-          //         |> container_for_emphasis(em)
-          //       Some(#([emphasis, Text(text), ..acc], in))
-          //     }
-          //     None -> None
-          //   }
-          False ->
-            case take_until_closing(em, rest, [], False) {
-              Some(#(inline_in, in)) -> {
-                let parsed =
-                  inline_in
-                  |> parse_inline("", [])
-
-                let emphasis =
-                  parsed
-                  |> container_for_emphasis(em)
-
-                Some(#([emphasis, Text(text), ..acc], in))
-              }
-              None -> None
-            }
-        }
-      }
-      [_, ..] -> None
-    }
   }
 }
 
@@ -873,62 +950,6 @@ fn is_whitespace(c: String) -> Bool {
 
 fn is_escape(c: String) -> Bool {
   c == "\\"
-}
-
-fn container_for_emphasis(c: String) {
-  case c {
-    "*" -> Strong
-    "_" -> Emphasis
-    _ -> {
-      io.print_error("Unknown emphasis character: " <> c)
-      panic
-    }
-  }
-}
-
-fn verbatim(
-  in: Chars,
-  text: String,
-  acc: List(Inline),
-) -> Option(#(List(Inline), Chars)) {
-  case in {
-    ["`", ..rest] -> {
-      case take_verbatim_chars(rest, 1, None) {
-        Some(#(verbatim, in)) ->
-          Some(#([Verbatim(verbatim), Text(text), ..acc], in))
-        None -> None
-      }
-    }
-    _ -> None
-  }
-}
-
-fn take_verbatim_chars(
-  in: Chars,
-  count: Int,
-  acc: Option(List(String)),
-) -> Option(#(String, Chars)) {
-  case in {
-    [] -> None
-    ["`", ..rest] if acc == None -> take_verbatim_chars(rest, count + 1, acc)
-    ["`", ..rest] if count > 1 -> take_verbatim_chars(rest, count - 1, acc)
-    ["`", ..rest] -> {
-      let result =
-        acc
-        |> option.unwrap([])
-        |> list.reverse
-        |> string.join("")
-
-      Some(#(result, rest))
-    }
-    [c, ..rest] ->
-      take_verbatim_chars(
-        rest,
-        count,
-        option.map(acc, fn(acc) { [c, ..acc] })
-        |> option.or(Some([c])),
-      )
-  }
 }
 
 fn heading_level(in: Chars, level: Int) -> Option(#(Int, Chars)) {
@@ -947,20 +968,13 @@ fn take_inline_text(inlines: List(Inline), acc: String) -> String {
     [] -> acc
     [first, ..rest] ->
       case first {
-        Text(text) -> take_inline_text(rest, acc <> text)
-        Link(nested, _) -> {
+        Text(text) | Code(text) -> take_inline_text(rest, acc <> text)
+        Strong(inlines) | Emphasis(inlines) ->
+          take_inline_text(list.append(inlines, rest), acc)
+        Link(nested, _) | Image(nested, _) -> {
           let acc = take_inline_text(nested, acc)
           take_inline_text(rest, acc)
         }
-        Strong(nested) -> {
-          let acc = take_inline_text(nested, acc)
-          take_inline_text(rest, acc)
-        }
-        Emphasis(nested) -> {
-          let acc = take_inline_text(nested, acc)
-          take_inline_text(rest, acc)
-        }
-        Verbatim(_) -> take_inline_text(rest, acc)
       }
   }
 }
@@ -982,7 +996,8 @@ fn take_paragraph_chars(in: Chars, acc: Chars) -> #(Chars, Chars) {
   }
 }
 
-// TODO: document
+/// Convert a document tree into a string of HTML.
+///
 pub fn document_to_html(
   document: Document,
   render_component_html: ComponentRenderer,
@@ -1022,6 +1037,7 @@ fn container_to_html(
       |> open_tag("p", attrs)
       |> inlines_to_html(inlines, refs)
       |> close_tag("p")
+      |> string.append("\n")
     }
 
     Codeblock(attrs, language, content) -> {
@@ -1035,6 +1051,7 @@ fn container_to_html(
       |> string.append(content)
       |> close_tag("code")
       |> close_tag("pre")
+      |> string.append("\n")
     }
 
     Heading(attrs, level, inlines) -> {
@@ -1043,6 +1060,7 @@ fn container_to_html(
       |> open_tag(tag, attrs)
       |> inlines_to_html(inlines, refs)
       |> close_tag(tag)
+      |> string.append("\n")
     }
 
     FencedDiv(attrs, content) -> {
@@ -1056,6 +1074,7 @@ fn container_to_html(
         "",
       ))
       |> close_tag("div")
+      |> string.append("\n")
     }
 
     Blockquote(content) -> {
@@ -1069,12 +1088,21 @@ fn container_to_html(
         "",
       ))
       |> close_tag("blockquote")
+      |> string.append("\n")
     }
+
+    RawBlock(format, content) ->
+      case format {
+        "html" ->
+          html
+          |> string.append(content)
+        _ -> html
+      }
 
     Component(name, props) -> {
       case render_component_html(name, props) {
         Ok(component_html) -> {
-          html <> wrap_component_html(name, component_html, props)
+          html <> wrap_component_html(name, component_html, props) <> "\n"
         }
         Error(_) -> {
           io.println_error("Component renderer not found: " <> name)
@@ -1084,7 +1112,6 @@ fn container_to_html(
       }
     }
   }
-  <> "\n"
 }
 
 fn open_tag(
@@ -1132,12 +1159,6 @@ fn inlines_to_html(html: String, inlines: List(Inline), refs: Refs) -> String {
 fn inline_to_html(html: String, inline: Inline, refs: Refs) -> String {
   case inline {
     Text(text) -> html <> text
-    Link(text, destination) -> {
-      html
-      |> open_tag("a", destination_attribute(destination, refs))
-      |> inlines_to_html(text, refs)
-      |> close_tag("a")
-    }
     Strong(inlines) -> {
       html
       |> open_tag("strong", dict.new())
@@ -1150,20 +1171,40 @@ fn inline_to_html(html: String, inline: Inline, refs: Refs) -> String {
       |> inlines_to_html(inlines, refs)
       |> close_tag("em")
     }
-    Verbatim(text) -> html <> "<code>" <> text <> "</code>"
+    Link(text, destination) -> {
+      html
+      |> open_tag("a", destination_attribute("href", destination, refs))
+      |> inlines_to_html(text, refs)
+      |> close_tag("a")
+    }
+    Image(text, destination) -> {
+      html
+      |> open_tag(
+        "img",
+        destination_attribute("src", destination, refs)
+        |> dict.insert("alt", take_inline_text(text, "")),
+      )
+    }
+    Code(content) -> {
+      html
+      |> open_tag("code", dict.new())
+      |> string.append(content)
+      |> close_tag("code")
+    }
   }
 }
 
 fn destination_attribute(
+  key: String,
   destination: Destination,
   refs: Refs,
 ) -> Dict(String, String) {
   let dict = dict.new()
   case destination {
-    Url(url) -> dict.insert(dict, "href", url)
+    Url(url) -> dict.insert(dict, key, url)
     Reference(id) ->
       case dict.get(refs, id) {
-        Ok(url) -> dict.insert(dict, "href", url)
+        Ok(url) -> dict.insert(dict, key, url)
         Error(Nil) -> dict
       }
   }
