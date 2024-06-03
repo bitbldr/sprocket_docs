@@ -10,11 +10,6 @@ robust, and efficient server-side component views for your web application.
 _*Fun fact:* Sprocket is named after the humble bicycle gear that enables the wheels to spin
 effortlessly! Also, this documentation is completely powered by it!_
 
-::: alert-warning
-🚧 *Important Note:* Sprocket is under heavy development and this documentation is a work in
-progress! Please proceed with caution as things are likely to change. 🚧
-:::
-
 ## Why Another Component Library?
 
 Sprocket is designed around a collection of functional patterns that empower developers to build
