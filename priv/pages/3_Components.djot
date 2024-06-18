@@ -14,7 +14,7 @@ We're going to create a simple component called `example_button` that takes an o
 renders a button. This guide will use Tailwind CSS to style components, but you can use any classes
 or style framework you prefer. 
 
-```gleam
+<.codeblock language="gleam">
 import gleam/option.{None, Option, Some}
 import sprocket/context.{Context}
 import sprocket/component.{render}
@@ -31,17 +31,17 @@ pub fn example_button(ctx: Context, props: ExampleButtonProps) {
   render(
     ctx,
     button(
-      [class(\"p-2 bg-blue-500 hover:bg-blue-600 active:bg-blue-700 text-white rounded\")],
+      [class("p-2 bg-blue-500 hover:bg-blue-600 active:bg-blue-700 text-white rounded")],
       [
         text(case label {
           Some(label) -> label
-          None -> \"Click me!\"
+          None -> "Click me!"
         }),
       ],
     ),
   )
 }
-```
+</.codeblock>
 
 As you can see, we've defined our component and it's prop types. The component takes context and
 props as arguments and renders a button. If no label is specified, the button will render with the
@@ -55,7 +55,7 @@ To use this new component in a parent view, we can simply pass it into the `comp
 along with the props we want to pass in. Let's take a look at an example of a page view component
 that uses the button component we defined above.
 
-```gleam
+<.codeblock language="gleam">
 pub type PageViewProps {
   PageViewProps
 }
@@ -74,7 +74,7 @@ pub fn page_view(ctx: Context, _props: PageViewProps) {
     ),
   )
 }
-```
+</.codeblock>
 
 Here is our rendered component:
 
@@ -83,12 +83,12 @@ Here is our rendered component:
 That's looking pretty good, now let's customize the label to our button. We can do that by passing
 in a label prop to our component.
 
-```gleam
+<.codeblock language="gleam">
 component(
   example_button,
-  ExampleButtonProps(label: Some(\"Add to Cart\")),
+  ExampleButtonProps(label: Some("Add to Cart")),
 ),
-```
+</.codeblock>
 
 <.example_button label="Add to Cart" />
 
@@ -104,7 +104,7 @@ label prop, we'll give more control to the parent component by introducing in a 
 `render_label` which we'll define as a function that takes the current state of the toggle and
 renders the content of the button.
 
-```gleam
+<.codeblock language="gleam">
 import sprocket/context.{Context, Element, WithDeps, dep}
 import sprocket/component.{render}
 import sprocket/html/elements.{button}
@@ -136,9 +136,9 @@ pub fn toggle_button(ctx: Context, props: ToggleButtonProps) {
       [
         class(case is_active {
           True ->
-            \"rounded-lg text-white px-3 py-2 bg-green-700 hover:bg-green-800 active:bg-green-900\"
+            "rounded-lg text-white px-3 py-2 bg-green-700 hover:bg-green-800 active:bg-green-900"
           False ->
-            \"rounded-lg text-white px-3 py-2 bg-blue-500 hover:bg-blue-600 active:bg-blue-700\"
+            "rounded-lg text-white px-3 py-2 bg-blue-500 hover:bg-blue-600 active:bg-blue-700"
         }),
         on_click(toggle_active),
       ],
@@ -146,7 +146,7 @@ pub fn toggle_button(ctx: Context, props: ToggleButtonProps) {
     ),
   )
 }
-```
+</.codeblock>
 
 We've added a `state` hook to track the active state of our button and a `handler` hook to toggle
 the active state when the button is clicked. We've also added a `render_label` prop to our component
@@ -155,7 +155,7 @@ inactive.
 
 Now let's use our new component in a parent view.
 
-```gleam
+<.codeblock language="gleam">
 pub type PageViewProps {
   PageViewProps
 }
@@ -174,16 +174,16 @@ pub fn page_view(ctx: Context, _props: PageViewProps) {
                 span(
                   [],
                   [
-                    i([class(\"fa-solid fa-check mr-2\")], []),
-                    text(\"Added to Cart!\"),
+                    i([class("fa-solid fa-check mr-2")], []),
+                    text("Added to Cart!"),
                   ],
                 )
               False ->
                 span(
                   [],
                   [
-                    i([class(\"fa-solid fa-cart-shopping mr-2\")], []),
-                    text(\"Add to Cart\"),
+                    i([class("fa-solid fa-cart-shopping mr-2")], []),
+                    text("Add to Cart"),
                   ],
                 )
             }
@@ -193,7 +193,7 @@ pub fn page_view(ctx: Context, _props: PageViewProps) {
     ),
   )
 }
-```
+</.codeblock>
 
 Here is our rendered stateful component:
 
@@ -208,7 +208,7 @@ from the render function (opposed to using a `component` wrapper as seen previou
 components). Let's look at an example of a stateless functional component that renders a product
 card.
 
-```gleam
+<.codeblock language="gleam">
 type Product {
   Product(
     id: Int,
@@ -233,55 +233,55 @@ pub fn product_card(product: Product, actions: Option(List(Element)) {
   div(
     [
       class(
-        \"flex flex-col lg:flex-row bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700\",
+        "flex flex-col lg:flex-row bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700",
       ),
     ],
     [
       div(
-        [class(\"h-64 lg:w-1/3 overflow-hidden rounded-t-lg lg:rounded-tr-none lg:rounded-l-lg\")],
+        [class("h-64 lg:w-1/3 overflow-hidden rounded-t-lg lg:rounded-tr-none lg:rounded-l-lg")],
         [
           img([
-            class(\"object-cover w-full h-full\"),
+            class("object-cover w-full h-full"),
             src(img_url),
-            alt(\"product image\"),
+            alt("product image"),
           ]),
         ],
       ),
       div(
-        [class(\"flex-1 flex flex-col p-5\")],
+        [class("flex-1 flex flex-col p-5")],
         [
           div(
-            [class(\"flex-1 flex flex-row\")],
+            [class("flex-1 flex flex-row")],
             [
               div(
-                [class(\"flex-1\")],
+                [class("flex-1")],
                 [
                   h5_text(
                     [
                       class(
-                        \"text-xl font-semibold tracking-tight text-gray-900 dark:text-white\",
+                        "text-xl font-semibold tracking-tight text-gray-900 dark:text-white",
                       ),
                     ],
                     name,
                   ),
-                  div_text([class(\"py-2 text-gray-500\")], description),
+                  div_text([class("py-2 text-gray-500")], description),
                 ],
               ),
               div(
                 [],
                 [
                   div(
-                    [class(\"flex-1 flex flex-col text-right\")],
+                    [class("flex-1 flex flex-col text-right")],
                     [
                       div_text(
                         [
                           class(
-                            \"text-xl font-bold text-gray-900 dark:text-white\",
+                            "text-xl font-bold text-gray-900 dark:text-white",
                           ),
                         ],
-                        \"$\" <> float.to_string(price),
+                        "$" <> float.to_string(price),
                       ),
-                      div_text([class(\"text-sm text-gray-500\")], qty),
+                      div_text([class("text-sm text-gray-500")], qty),
                     ],
                   ),
                 ],
@@ -291,42 +291,42 @@ pub fn product_card(product: Product, actions: Option(List(Element)) {
           case actions {
             None -> div([], [])
             Some(actions) ->
-              div([class(\"flex flex flex-row justify-end\")], actions)
+              div([class("flex flex flex-row justify-end")], actions)
           },
         ],
       ),
     ],
   )
 }
-```
+</.codeblock>
 
 To render this component we call it directly from the render function, passing any arguments the
 function takes, which in this case is a `Product` record and an optional list of actions, which we
 will leave as `None` for now.
 
-```gleam
+<.codeblock language="gleam">
 pub fn product(ctx: Context, _props: ProductProps) {
   let some_product = 
     Product(
       id: 2255,
-      name: \"Bamboo Cutting Board\",
-      description: \"This sustainable bamboo cutting board is perfect for slicing and dicing vegetables, fruits, and meats. The natural antibacterial properties of bamboo ensure a hygienic cooking experience.\",
-      img_url: \"https://images.pexels.com/photos/6489734/pexels-photo-6489734.jpeg\",
-      qty: \"12 x 8 inches\",
+      name: "Bamboo Cutting Board",
+      description: "This sustainable bamboo cutting board is perfect for slicing and dicing vegetables, fruits, and meats. The natural antibacterial properties of bamboo ensure a hygienic cooking experience.",
+      img_url: "https://images.pexels.com/photos/6489734/pexels-photo-6489734.jpeg",
+      qty: "12 x 8 inches",
       price: 24.99,
     )
 
   render(
     ctx,
     div(
-      [class(\"flex flex-col\")],
+      [class("flex flex-col")],
       [
         product_card(some_product, None)
       ]
     ),
   )
 }
-```
+</.codeblock>
 
 <.product_card id="2255" name="Bamboo Cutting Board" description="This sustainable bamboo cutting board is perfect for slicing and dicing vegetables, fruits, and meats. The natural antibacterial properties of bamboo ensure a hygienic cooking experience." img_url="https://images.pexels.com/photos/6489734/pexels-photo-6489734.jpeg" qty="12 x 8 inches" price="24.99" />
 
@@ -341,20 +341,20 @@ Components can be composed together to create rich user interfaces. Let's take a
 of a view that uses the `toggle_button` and the `product_card` components we defined earlier to
 create a simple product component.
 
-```gleam
+<.codeblock language="gleam">
 pub fn product(ctx: Context, _props: PageViewProps) {
   render(
     ctx,
     div(
-      [class(\"flex flex-col\")],
+      [class("flex flex-col")],
       [
         product_card(
           Product(
             id: 2259,
-            name: \"Organic Aromatherapy Candle\",
-            description: \"Create a fresh ambiance with this organic aromatherapy candle. Hand-poured with pure essential oils, the fresh scent of citrus will brighten up your room.\",
-            img_url: \"https://images.pexels.com/photos/7260249/pexels-photo-7260249.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2\",
-            qty: \"1 candle\",
+            name: "Organic Aromatherapy Candle",
+            description: "Create a fresh ambiance with this organic aromatherapy candle. Hand-poured with pure essential oils, the fresh scent of citrus will brighten up your room.",
+            img_url: "https://images.pexels.com/photos/7260249/pexels-photo-7260249.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+            qty: "1 candle",
             price: 19.99,
           ),
           Some([
@@ -366,16 +366,16 @@ pub fn product(ctx: Context, _props: PageViewProps) {
                     span(
                       [],
                       [
-                        i([class(\"fa-solid fa-check mr-2\")], []),
-                        text(\"Added to Cart!\"),
+                        i([class("fa-solid fa-check mr-2")], []),
+                        text("Added to Cart!"),
                       ],
                     )
                   False ->
                     span(
                       [],
                       [
-                        i([class(\"fa-solid fa-cart-shopping mr-2\")], []),
-                        text(\"Add to Cart\"),
+                        i([class("fa-solid fa-cart-shopping mr-2")], []),
+                        text("Add to Cart"),
                       ],
                     )
                 }
@@ -387,7 +387,7 @@ pub fn product(ctx: Context, _props: PageViewProps) {
     ),
   )
 }
-```
+</.codeblock>
 
 <.stateful_product_card id="2259" name="Organic Aromatherapy Candle" description="Create a fresh ambiance with this organic aromatherapy candle. Hand-poured with pure essential oils, the fresh scent of citrus will brighten up your room." img_url="https://images.pexels.com/photos/7260249/pexels-photo-7260249.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" qty="1 candle" price="19.99" />
 
@@ -405,7 +405,7 @@ It's important to use the `keyed` function when rendering elements that may chan
 diffing algorithm can keep track of them and their states across renders. Let's take a look at an
 example of a component that renders a list of products, each with their own state.
 
-```gleam
+<.codeblock language="gleam">
 pub type ProductListProps {
   ProductListProps(products: List(Product))
 }
@@ -433,7 +433,7 @@ pub fn product_list(ctx: Context, props: ProductListProps) {
     ),
   )
 }
-```
+</.codeblock>
 
 <.product_list_example />
 

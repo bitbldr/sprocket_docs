@@ -1,4 +1,5 @@
-import { connect } from "sprocket-js";
+// import { connect } from "sprocket-js";
+import { connect } from "../../../sprocket/client/src/sprocket";
 
 window.addEventListener("DOMContentLoaded", () => {
   const csrfToken = document

@@ -1,12 +1,38 @@
 import gleam/string
 import gleam/list
+import gleam/dict
 import gleam/int
-import gleam/option.{None}
+import gleam/option.{type Option, None, Some}
+import gleam/result
+import sprocket.{type PropList}
 import sprocket/context.{type Context}
 import sprocket/component.{render}
 import sprocket/html/elements.{code_text, div, ignore, pre}
 import sprocket/html/attributes.{class}
 import sprocket/hooks.{client}
+
+pub fn props_from(attrs: Option(PropList)) {
+  case attrs {
+    None -> CodeBlockProps("", "")
+    Some(attrs) -> {
+      let attrs =
+        attrs
+        |> dict.from_list()
+
+      let language =
+        attrs
+        |> dict.get("language")
+        |> result.unwrap("")
+
+      let body =
+        attrs
+        |> dict.get("inner_html")
+        |> result.unwrap("")
+
+      CodeBlockProps(language, body)
+    }
+  }
+}
 
 pub type CodeBlockProps {
   CodeBlockProps(language: String, body: String)

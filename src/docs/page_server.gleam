@@ -2,6 +2,7 @@ import gleam/int
 import gleam/string
 import gleam/list
 import gleam/pair
+import gleam/option.{Some}
 import gleam/result
 import gleam/function
 import gleam/otp/actor.{Spec}
@@ -123,7 +124,10 @@ fn load_pages() -> OrderedMap(String, Page) {
 
     case simplifile.read(pages_directory <> "/" <> filename <> "." <> ext) {
       Ok(content) -> {
-        let html = djot.to_html(content, render_component_html)
+        let html =
+          djot.to_html(content, fn(name, props) {
+            render_component_html(name, Some(props))
+          })
 
         let uri = urlify(basename)
 

@@ -6,12 +6,6 @@ Examples Page
 
 `code text`
 
-```mylang
-func say-hello(nm) {
-    print("hello ${nm}!");
-}
-```
-
 here is a rendered standalone component
 
 <.counter_example initial="100" />

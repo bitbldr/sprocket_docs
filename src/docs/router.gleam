@@ -18,8 +18,8 @@ import docs/app_context.{type AppContext}
 import docs/controllers/standalone.{standalone}
 import docs/layouts/page_layout.{page_layout}
 import docs/components/page.{PageProps, page}
-import docs/registry.{get_component_with_props}
-import mist_sprocket.{component, view}
+import docs/registry.{component_router}
+import mist_sprocket.{view}
 
 pub fn router(app: AppContext) {
   fn(request: Request(Connection)) -> Response(ResponseData) {
@@ -28,12 +28,8 @@ pub fn router(app: AppContext) {
     case request.method, request.path_segments(request) {
       Get, ["standalone"] -> standalone(request, app)
       Get, ["components", name, "connect"] -> {
-        let default_props =
-          request.get_query(request)
-          |> result.unwrap([])
-
-        case get_component_with_props(name, default_props) {
-          Ok(#(c, p)) -> component(request, c, p, app.validate_csrf, None)
+        case component_router(request, app.validate_csrf, name) {
+          Ok(response) -> response
 
           Error(_) ->
             not_found()
@@ -46,7 +42,7 @@ pub fn router(app: AppContext) {
           request,
           page_layout("Sprocket Docs", csrf.generate(app.secret_key_base)),
           page,
-          PageProps(app, path: request.path),
+          fn(_) { PageProps(app, path: request.path) },
           app.validate_csrf,
           None,
         )

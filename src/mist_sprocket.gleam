@@ -1,5 +1,5 @@
 import gleam/io
-import gleam/option.{type Option, Some}
+import gleam/option.{type Option, None, Some}
 import gleam/list
 import gleam/result
 import gleam/bytes_builder.{type BytesBuilder}
@@ -9,26 +9,26 @@ import gleam/http/request.{type Request}
 import gleam/http/response.{type Response}
 import mist.{type Connection, type ResponseData}
 import sprocket.{
-  type CSRFValidator, type Sprocket, type SprocketOpts, Empty, Joined, render,
+  type CSRFValidator, type PropList, type Sprocket, type SprocketOpts, Empty,
+  Joined, render,
 }
 import sprocket/renderers/html.{html_renderer}
 import sprocket/component as sprocket_component
 import sprocket/context.{type Element, type FunctionalComponent}
 import sprocket/internal/logger
 
-type State {
-  State(spkt: Sprocket)
+type State(p) {
+  State(spkt: Sprocket(p))
 }
 
 pub fn component(
   req: Request(Connection),
   view: FunctionalComponent(p),
-  props: p,
+  initial_props: fn(Option(PropList)) -> p,
   csrf_validator: CSRFValidator,
   opts: Option(SprocketOpts),
 ) -> Response(ResponseData) {
   let selector = process.new_selector()
-  let rendered_el = sprocket_component.component(view, props)
 
   // if the request path ends with "connect", then start a websocket connection
   case list.last(request.path_segments(req)) {
@@ -37,13 +37,18 @@ pub fn component(
         request: req,
         on_init: fn(conn) {
           #(
-            State(sprocket.new(rendered_el, sender(conn), csrf_validator, opts)),
+            State(sprocket.new(
+              view,
+              initial_props,
+              sender(conn),
+              csrf_validator,
+              opts,
+            )),
             Some(selector),
           )
         },
         on_close: fn(state) {
           let _ = sprocket.cleanup(state.spkt)
-
           Nil
         },
         handler: handle_ws_message,
@@ -51,7 +56,9 @@ pub fn component(
     }
 
     _ -> {
-      let body = render(rendered_el, html_renderer())
+      let el = sprocket_component.component(view, initial_props(None))
+
+      let body = render(el, html_renderer())
 
       response.new(200)
       |> response.set_body(body)
@@ -66,12 +73,11 @@ pub fn view(
   req: Request(Connection),
   layout: fn(Element) -> Element,
   view: FunctionalComponent(p),
-  props: p,
+  initial_props: fn(Option(PropList)) -> p,
   csrf_validator: CSRFValidator,
   opts: Option(SprocketOpts),
 ) -> Response(ResponseData) {
   let selector = process.new_selector()
-  let rendered_el = sprocket_component.component(view, props)
 
   // if the request path ends with "connect", then start a websocket connection
   case list.last(request.path_segments(req)) {
@@ -80,20 +86,27 @@ pub fn view(
         request: req,
         on_init: fn(conn) {
           #(
-            State(sprocket.new(rendered_el, sender(conn), csrf_validator, opts)),
+            State(sprocket.new(
+              view,
+              initial_props,
+              sender(conn),
+              csrf_validator,
+              opts,
+            )),
             Some(selector),
           )
         },
         on_close: fn(state) {
           let _ = sprocket.cleanup(state.spkt)
-
           Nil
         },
         handler: handle_ws_message,
       )
     }
     _ -> {
-      let body = render(layout(rendered_el), html_renderer())
+      let el = sprocket_component.component(view, initial_props(None))
+
+      let body = render(layout(el), html_renderer())
 
       response.new(200)
       |> response.set_body(body)

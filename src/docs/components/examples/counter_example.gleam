@@ -2,34 +2,40 @@ import gleam/int
 import gleam/result
 import gleam/string
 import gleam/dict
+import gleam/option.{type Option, None, Some}
 import sprocket/context.{type Context}
 import sprocket/component.{component, render}
 import docs/components/common.{example}
 import docs/components/events_counter.{CounterProps, counter}
 
-pub fn props_for_counter_example(props: List(#(String, String))) {
-  let props =
-    props
-    |> dict.from_list()
+pub fn props_from(attrs: Option(List(#(String, String)))) {
+  case attrs {
+    None -> CounterExampleProps(initial: 0, enable_reset: False)
+    Some(attrs) -> {
+      let attrs =
+        attrs
+        |> dict.from_list()
 
-  let enable_reset =
-    props
-    |> dict.get("enable_reset")
-    |> result.map(fn(enable_reset) {
-      case string.lowercase(enable_reset) {
-        "true" -> True
-        _ -> False
-      }
-    })
-    |> result.unwrap(False)
+      let enable_reset =
+        attrs
+        |> dict.get("enable_reset")
+        |> result.map(fn(enable_reset) {
+          case string.lowercase(enable_reset) {
+            "true" -> True
+            _ -> False
+          }
+        })
+        |> result.unwrap(False)
 
-  let initial =
-    props
-    |> dict.get("initial")
-    |> result.try(int.parse)
-    |> result.unwrap(0)
+      let initial =
+        attrs
+        |> dict.get("initial")
+        |> result.try(int.parse)
+        |> result.unwrap(0)
 
-  CounterExampleProps(initial: initial, enable_reset: enable_reset)
+      CounterExampleProps(initial: initial, enable_reset: enable_reset)
+    }
+  }
 }
 
 pub type CounterExampleProps {

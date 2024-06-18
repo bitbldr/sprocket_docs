@@ -15,7 +15,7 @@ components are clicked, they call the `on_click` event handler that was passed t
 The `counter` component then increments its `count` state and re-renders. The `display` component is
 also re-rendered because its `count` prop has changed.
 
-```gleam
+<.codeblock language="gleam">
 import gleam/int import gleam/option.{None, Option, Some}
 import sprocket/context.{Context, WithDeps, dep}
 import sprocket/hooks.{reducer, handler}
@@ -113,7 +113,7 @@ pub fn display(ctx: Context, props: DisplayProps) {
     ),
   )
 }
-```
+</.codeblock>
 
 <.props_and_events_counter_example />
 

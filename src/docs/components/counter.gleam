@@ -2,7 +2,7 @@ import gleam/io
 import gleam/int
 import gleam/string
 import gleam/option.{type Option, None}
-import sprocket/context.{type Context, WithDeps, dep}
+import sprocket/context.{type Context, dep}
 import sprocket/component.{render}
 import sprocket/hooks.{effect, handler, reducer}
 import sprocket/html/elements.{button, div, span, text}
@@ -40,7 +40,7 @@ pub fn counter(ctx: Context, props: CounterProps) {
       io.println(string.append("Count: ", int.to_string(count)))
       None
     },
-    WithDeps([dep(count)]),
+    [dep(count)],
   )
 
   // Define event handlers

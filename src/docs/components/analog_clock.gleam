@@ -2,7 +2,7 @@ import gleam/int
 import gleam/float
 import gleam/erlang
 import gleam/option.{Some}
-import sprocket/context.{type Context, WithDeps, dep}
+import sprocket/context.{type Context, dep}
 import sprocket/component.{render}
 import sprocket/hooks.{effect, reducer}
 import sprocket/html/attributes.{xmlns, xmlns_xlink}
@@ -48,16 +48,13 @@ pub fn analog_clock(ctx: Context, _props: AnalogClockProps) {
     ctx,
     fn() {
       let interval_duration = 1000
-
       let update_time = fn() {
         dispatch(UpdateTime(erlang.system_time(erlang.Second)))
       }
-
       let cancel = interval(interval_duration, update_time)
-
       Some(fn() { cancel() })
     },
-    WithDeps([dep(time)]),
+    [dep(time)],
   )
 
   let #(hours, minutes, seconds) = clock_time(time)

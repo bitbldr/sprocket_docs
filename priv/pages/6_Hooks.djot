@@ -10,7 +10,7 @@ used within the component. Internally, these function's can 'hook' into the comp
 using this context and create the basis for stateful logic. For example, the `state` hook provides a
 state variable and a setter function.
 
-```gleam
+<.codeblock language="gleam">
 pub fn example(ctx: Context, _props: ExampleProps) {
 
   use ctx, count, set_count <- state(ctx, 0)
@@ -22,7 +22,7 @@ pub fn example(ctx: Context, _props: ExampleProps) {
     ])
   )
 }
-```
+</.codeblock>
 
 Understanding the `use` keyword and how higher order functions work in Gleam is necessary to fully
 understand the hook syntax. Check out the [official Gleam documentation on use
@@ -37,9 +37,9 @@ functions.
 Sprocket provides a common set of native hooks that can be imported from the `sprocket/hooks`
 module.
 
-```gleam
+<.codeblock language="gleam">
 import sprocket/hooks.{state, reducer, handler, effect, memo, callback, channel, provider, client}
-```
+</.codeblock>
 
 We'll go over each of the native hooks and how to use them and also cover how to create custom
 hooks.
@@ -51,9 +51,9 @@ setter function are provided to the component. State is initialized to the value
 updated by calling the setter function with the new value. State is maintained across renders but is
 reinitialized when a component is unmounted and remounted.
 
-```gleam
+<.codeblock language="gleam">
 use ctx, count, set_count <- state(ctx, 0)
-```
+</.codeblock>
 
 ## Reducer
 
@@ -68,7 +68,7 @@ to the state (messages sent via dispatch) result in a re-render of the view.
 
 For when an Elm or Redux architecture is preferred, a reducer hook should be used.
 
-```gleam
+<.codeblock language="gleam">
 type Model =
   Int
 
@@ -91,14 +91,14 @@ fn update(_model: Model, msg: Msg) -> Model {
     Reset -> 0
   }
 }
-```
+</.codeblock>
 
 The current model along with a dispatch function are provided. The model is initialized to the value
 provided and can be updated by calling the dispatch function with a message.
 
-```gleam
+<.codeblock language="gleam">
 use ctx, count, dispatch <- reducer(ctx, 0, update)
-```
+</.codeblock>
 
 Reducer hooks allow state management to be refactored out of the component file and into a separate
 module. This can be useful for complex state management logic or message types that are shared
@@ -112,18 +112,18 @@ ensures that event id's do not change across renders resulting in unnecessary di
 callback will be called when the event is triggered and provide an optional CallbackParam depending
 on the event type.
 
-```gleam
+<.codeblock language="gleam">
 use ctx, increment <- handler(ctx, fn(_) {
   dispatch(Increment)
 })
-```
+</.codeblock>
 
 ## Effect
 
 Effect hooks are used to perform side-effects. They take a function that is called on mount and when
 the trigger value changes. They can also specify an optional cleanup function as a return value.
 
-```gleam
+<.codeblock language="gleam">
 use ctx <- effect(
   ctx,
   fn(_) {
@@ -136,7 +136,7 @@ use ctx <- effect(
   },
   WithDeps([dep(some_value)]),
 )
-```
+</.codeblock>
 
 The `WithDeps` trigger is used to specify a list of dependencies that will cause the effect function
 to be called again when any of the dependencies change. If an empty list is provided, the effect
@@ -147,9 +147,9 @@ function will only be called on mount.
 Memo hooks are used to memoize a computed value. They take a function and a list of dependencies and
 return a memoized value. The memoized value will only be re-evaluated when the dependencies change.
 
-```gleam
+<.codeblock language="gleam">
 use ctx, memoized_value <- memo(ctx, fn() { expensive_fn() }, WithDeps([dep(some_value)]))
-```
+</.codeblock>
 
 ## Callback
 
@@ -157,9 +157,9 @@ Callback hooks are used to memoize a function. They take a function and a list o
 return a memoized function. The memoized function will only be re-evaluated when the dependencies
 change.
 
-```gleam
+<.codeblock language="gleam">
 use ctx, memoized_fn <- callback(ctx, some_fn, WithDeps([dep(some_value)]))
-```
+</.codeblock>
 
 ## Provider
 
@@ -170,9 +170,9 @@ component tree, sometimes known as "prop drilling".
 
 This hook is conceptually similar to the `useContext` hook in React.
 
-```gleam
+<.codeblock language="gleam">
 use ctx, current_user <- provider(ctx, "user")
-```
+</.codeblock>
 
 Because the provider key is a global identifier, it is important to use a unique key to avoid
 collisions with other providers. The key should be a string that is unique to the data being
@@ -186,7 +186,7 @@ Client hooks are a special type of hook that enable a component to implement log
 We can expand the `display` component to accept another optional prop called `on_reset` which will reset
 the count and re-render the component when the `display` component is double-clicked.
 
-```gleam
+<.codeblock language="gleam">
 pub type DisplayProps {
   DisplayProps(count: Int, on_reset: Option(fn() -> Nil))
 }
@@ -223,12 +223,12 @@ pub fn display(ctx: Context, props: DisplayProps) {
     ),
   )
 }
-```
+</.codeblock>
 
 We also need to implement some JavaScript to handle the double-click event on the client and send a
 message to the server.
 
-```javascript
+<.codeblock language="javascript">
 import { connect } from 'sprocket-js';
 
 const hooks = {
@@ -247,7 +247,7 @@ connect(livePath, {
   csrfToken,
   hooks,
 });
-```
+</.codeblock>
 
 <.counter_with_reset_example />
 
@@ -256,7 +256,7 @@ connect(livePath, {
 Hooks can be combined to create custom hooks. For example, we can refactor our doubleclick client
 hook logic to create a reusable custom hook.
 
-```gleam
+<.codeblock language="gleam">
 pub fn doubleclick(ctx: Context, on_doubleclick: fn() -> Nil, cb) {
   use ctx, handle_doubleclick, _doubleclick_client_dispatch <- client(
     ctx,
@@ -273,11 +273,11 @@ pub fn doubleclick(ctx: Context, on_doubleclick: fn() -> Nil, cb) {
 
   cb(ctx, handle_doubleclick)
 }
-```
+</.codeblock>
 
 To use the `doubleclick` hook, we can call it within a component as we normally would a native hook
 
-```gleam
+<.codeblock language="gleam">
 pub fn display(ctx: Context, props: DisplayProps) {
   let DisplayProps(count: count, on_reset: on_reset) = props
 
@@ -296,4 +296,4 @@ pub fn display(ctx: Context, props: DisplayProps) {
     ),
   )
 }
-```
+</.codeblock>

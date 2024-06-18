@@ -57,7 +57,7 @@ pub fn page(ctx: Context, props: PageProps) {
       |> list.map(fn(page_route) { KeyedItem(page_route.uri, page_route) })
       |> ordered_map.from_list()
     },
-    context.OnMount,
+    [],
   )
 
   use ctx, load_components_client, _ <- client(ctx, "LoadComponents", None)

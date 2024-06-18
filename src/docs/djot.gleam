@@ -6,6 +6,7 @@ import gleam/int
 import gleam/list
 import gleam/option.{type Option, None, Some}
 import gleam/string
+import docs/utils/common.{escape_html}
 
 pub type Document {
   Document(content: List(Container), references: Dict(String, String))
@@ -101,6 +102,16 @@ fn drop_spaces(in: Chars) -> Chars {
   case in {
     [] -> []
     [" ", ..rest] -> drop_spaces(rest)
+    [c, ..rest] -> [c, ..rest]
+  }
+}
+
+fn drop_whitespace(in: Chars) -> Chars {
+  case in {
+    [] -> []
+    [" ", ..rest] -> drop_whitespace(rest)
+    ["\n", ..rest] -> drop_whitespace(rest)
+    ["\t", ..rest] -> drop_whitespace(rest)
     [c, ..rest] -> [c, ..rest]
   }
 }
@@ -204,7 +215,8 @@ fn parse_component(in: Chars) -> Option(#(Container, Chars)) {
 fn parse_component_name(in: Chars, name: String) -> #(String, Chars) {
   case in {
     [] -> #(name, [])
-    [" ", ..in] -> #(name, in)
+    [" ", ..] -> #(name, in)
+    [">", ..] -> #(name, in)
     [c, ..in] -> parse_component_name(in, name <> c)
   }
 }
@@ -216,11 +228,15 @@ fn parse_component_props(
   case in {
     [] -> #(props, [])
     ["/", ">", ..in] -> #(props, in)
-    [">", ..] -> {
-      io.println_error(
-        "Unexpected '>' in component props. Expected '/>' or ' '.",
-      )
-      panic
+    [">", ..in] -> {
+      // If component has a body, parse the body as a string and add it to the
+      // list of props as "inner_html"
+      let in = drop_whitespace(in)
+
+      case parse_component_body(in, None) {
+        None -> #(props, [])
+        Some(#(inner_html, in)) -> #([#("inner_html", inner_html), ..props], in)
+      }
     }
     [" ", ..in] -> parse_component_props(in, props)
     _ -> {
@@ -254,6 +270,26 @@ fn parse_component_prop_value(
     ["\"", ..in] -> #(key, value, in)
     [" ", ..in] -> #(key, value, in)
     [c, ..in] -> parse_component_prop_value(in, key, value <> c)
+  }
+}
+
+fn parse_component_body(
+  in: Chars,
+  acc: Option(String),
+) -> Option(#(String, Chars)) {
+  case in {
+    [] -> None
+    ["<", "/", ".", ..in] -> {
+      let in = drop_spaces(in)
+      let #(_name, in) = parse_component_name(in, "")
+      let in = drop_spaces(in)
+
+      case in {
+        [">", ..in] -> Some(#(option.unwrap(acc, ""), in))
+        _ -> None
+      }
+    }
+    [c, ..in] -> parse_component_body(in, Some(option.unwrap(acc, "") <> c))
   }
 }
 
@@ -1134,6 +1170,7 @@ fn wrap_component_html(
 ) -> String {
   let data_props =
     props
+    // |> list.filter(fn(prop) { prop.0 != "inner_html" })
     |> list.map(fn(prop) {
       let #(k, v) = prop
       #("data-prop-" <> k, v)
@@ -1215,6 +1252,6 @@ fn attributes_to_html(html: String, attributes: Dict(String, String)) -> String 
   |> dict.to_list
   |> list.sort(fn(a, b) { string.compare(a.0, b.0) })
   |> list.fold(html, fn(html, pair) {
-    html <> " " <> pair.0 <> "=\"" <> pair.1 <> "\""
+    html <> " " <> escape_html(pair.0) <> "=\"" <> escape_html(pair.1) <> "\""
   })
 }
