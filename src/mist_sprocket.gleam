@@ -1,21 +1,25 @@
-import gleam/io
-import gleam/option.{type Option, None, Some}
-import gleam/list
-import gleam/result
 import gleam/bytes_builder.{type BytesBuilder}
-import gleam/otp/actor
 import gleam/erlang/process
+import gleam/function
 import gleam/http/request.{type Request}
 import gleam/http/response.{type Response}
-import mist.{type Connection, type ResponseData}
+import gleam/io
+import gleam/list
+import gleam/option.{type Option, None, Some}
+import gleam/otp/actor
+import gleam/result
+import mist.{
+  type Connection, type ResponseData, type WebsocketConnection,
+  type WebsocketMessage,
+}
 import sprocket.{
   type CSRFValidator, type PropList, type Sprocket, type SprocketOpts, Empty,
   Joined, render,
 }
-import sprocket/renderers/html.{html_renderer}
 import sprocket/component as sprocket_component
 import sprocket/context.{type Element, type FunctionalComponent}
 import sprocket/internal/logger
+import sprocket/renderers/html.{html_renderer}
 
 type State(p) {
   State(spkt: Sprocket(p))
@@ -28,19 +32,22 @@ pub fn component(
   csrf_validator: CSRFValidator,
   opts: Option(SprocketOpts),
 ) -> Response(ResponseData) {
-  let selector = process.new_selector()
+  let self = process.new_subject()
+  let selector =
+    process.new_selector()
+    |> process.selecting(self, function.identity)
 
   // if the request path ends with "connect", then start a websocket connection
   case list.last(request.path_segments(req)) {
     Ok("connect") -> {
       mist.websocket(
         request: req,
-        on_init: fn(conn) {
+        on_init: fn(_conn) {
           #(
             State(sprocket.new(
               view,
               initial_props,
-              sender(conn),
+              fn(msg) { process.send(self, msg) |> Ok },
               csrf_validator,
               opts,
             )),
@@ -77,19 +84,26 @@ pub fn view(
   csrf_validator: CSRFValidator,
   opts: Option(SprocketOpts),
 ) -> Response(ResponseData) {
-  let selector = process.new_selector()
+  let self = process.new_subject()
+  let selector =
+    process.new_selector()
+    |> process.selecting(self, function.identity)
 
   // if the request path ends with "connect", then start a websocket connection
   case list.last(request.path_segments(req)) {
     Ok("connect") -> {
       mist.websocket(
         request: req,
-        on_init: fn(conn) {
+        on_init: fn(_conn) {
           #(
             State(sprocket.new(
               view,
               initial_props,
-              sender(conn),
+              // sender(self),
+              fn(msg) {
+                io.debug("sending message to websocket")
+                process.send(self, msg) |> Ok
+              },
               csrf_validator,
               opts,
             )),
@@ -122,7 +136,11 @@ fn mist_response(response: Response(BytesBuilder)) -> Response(ResponseData) {
   |> response.set_body(mist.Bytes(response.body))
 }
 
-fn handle_ws_message(state, _conn, message) {
+fn handle_ws_message(
+  state: State(a),
+  conn: WebsocketConnection,
+  message: WebsocketMessage(String),
+) {
   let State(spkt) = state
 
   case message {
@@ -146,6 +164,19 @@ fn handle_ws_message(state, _conn, message) {
         }
       }
     }
+
+    mist.Custom(msg) -> {
+      let assert Ok(_) =
+        mist.send_text_frame(conn, msg)
+        |> result.map_error(fn(reason) {
+          logger.error("failed to send websocket message: " <> msg)
+          io.debug(reason)
+
+          Nil
+        })
+
+      actor.continue(state)
+    }
     mist.Closed | mist.Shutdown -> {
       actor.Stop(process.Normal)
     }
@@ -155,17 +186,5 @@ fn handle_ws_message(state, _conn, message) {
 
       actor.continue(state)
     }
-  }
-}
-
-fn sender(conn) {
-  fn(msg) {
-    mist.send_text_frame(conn, msg)
-    |> result.map_error(fn(reason) {
-      logger.error("failed to send websocket message: " <> msg)
-      io.debug(reason)
-
-      Nil
-    })
   }
 }

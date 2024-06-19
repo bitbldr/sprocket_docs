@@ -1,9 +1,9 @@
-import sprocket/context.{type Context}
-import sprocket/component.{component, render}
-import sprocket/html/elements.{article, code_text, h1, h2, p, text}
-import docs/components/hello_button.{HelloButtonProps, hello_button}
-import docs/components/common.{example}
 import docs/components/codeblock.{CodeBlockProps, codeblock}
+import docs/components/common.{example}
+import docs/components/hello_button.{HelloButtonProps, hello_button}
+import sprocket/component.{component, render}
+import sprocket/context.{type Context}
+import sprocket/html/elements.{article, code_text, h1, h2, p, text}
 
 pub type StateManagementPageProps {
   StateManagementPageProps

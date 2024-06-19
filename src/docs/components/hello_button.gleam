@@ -1,12 +1,13 @@
+import docs/utils/list.{element_at} as _
 import gleam/int
 import gleam/list
-import gleam/pair
 import gleam/option.{type Option, None, Some}
-import sprocket/context.{type Context}
+import gleam/pair
 import sprocket/component.{render}
+import sprocket/context.{type Context}
 import sprocket/hooks.{handler, reducer}
-import sprocket/html/elements.{button, div, span, text}
 import sprocket/html/attributes.{class, on_click}
+import sprocket/html/elements.{button, div, span, text}
 
 type Model {
   Model(selection: Option(Int), options: List(HelloOption))
@@ -45,7 +46,7 @@ pub fn hello_button(ctx: Context, _props: HelloButtonProps) {
   let hello =
     selection
     |> option.map(fn(i) {
-      list.at(options, i)
+      element_at(options, i, 0)
       |> option.from_result()
     })
     |> option.flatten()

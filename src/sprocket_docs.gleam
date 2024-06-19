@@ -1,14 +1,14 @@
-import gleam/int
-import gleam/string
-import gleam/result
+import docs/app_context.{AppContext}
+import docs/page_server
+import docs/router
+import docs/utils/common
+import docs/utils/logger
 import gleam/erlang/os
 import gleam/erlang/process
+import gleam/int
+import gleam/result
+import gleam/string
 import mist
-import docs/router
-import docs/app_context.{AppContext}
-import docs/utils/logger
-import docs/utils/common
-import docs/page_server
 
 pub fn main() {
   logger.configure_backend(logger.Info)
@@ -22,10 +22,11 @@ pub fn main() {
 
   let assert Ok(page_server) = page_server.start()
 
-  router.stack(AppContext(secret_key_base, validate_csrf, page_server))
-  |> mist.new
-  |> mist.port(port)
-  |> mist.start_http
+  let assert Ok(_) =
+    router.stack(AppContext(secret_key_base, validate_csrf, page_server))
+    |> mist.new
+    |> mist.port(port)
+    |> mist.start_http
 
   string.concat(["Listening on localhost:", int.to_string(port), " ✨"])
   |> logger.info
