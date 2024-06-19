@@ -7,7 +7,6 @@ import gleam/erlang/os
 import gleam/erlang/process
 import gleam/int
 import gleam/result
-import gleam/string
 import mist
 
 pub fn main() {
@@ -27,9 +26,6 @@ pub fn main() {
     |> mist.new
     |> mist.port(port)
     |> mist.start_http
-
-  string.concat(["Listening on localhost:", int.to_string(port), " ✨"])
-  |> logger.info
 
   process.sleep_forever()
 }
