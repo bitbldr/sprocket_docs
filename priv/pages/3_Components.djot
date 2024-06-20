@@ -78,7 +78,7 @@ pub fn page_view(ctx: Context, _props: PageViewProps) {
 
 Here is our rendered component:
 
-<.example_button />
+<.button_example />
 
 That's looking pretty good, now let's customize the label to our button. We can do that by passing
 in a label prop to our component.
@@ -90,7 +90,7 @@ component(
 ),
 </.codeblock>
 
-<.example_button label="Add to Cart" />
+<.button_example label="Add to Cart" />
 
 Excellent! Now our button has a proper label.
 

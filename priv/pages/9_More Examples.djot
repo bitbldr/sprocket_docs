@@ -8,4 +8,4 @@ Examples Page
 
 here is a rendered standalone component
 
-<.counter_example initial="100" />
+<.counter initial="100" />

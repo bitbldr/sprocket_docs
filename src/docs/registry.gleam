@@ -1,12 +1,16 @@
-import gleam/option.{type Option, None}
-import gleam/http/request.{type Request}
-import mist.{type Connection}
-import sprocket.{type CSRFValidator, render}
-import sprocket/renderers/html.{html_renderer}
-import sprocket/component.{component}
-import mist_sprocket
-import docs/components/examples/counter_example.{counter_example}
 import docs/components/codeblock.{codeblock}
+import docs/components/examples/button_example.{button_example}
+import docs/components/examples/counter_example.{counter_example}
+import docs/components/examples/toggle_button_with_render_label.{
+  toggle_button_with_render_label,
+}
+import gleam/http/request.{type Request}
+import gleam/option.{type Option, None}
+import mist.{type Connection}
+import mist_sprocket
+import sprocket.{type CSRFValidator, render}
+import sprocket/component.{component}
+import sprocket/renderers/html.{html_renderer}
 
 pub fn render_component_html(
   name: String,
@@ -24,6 +28,20 @@ pub fn render_component_html(
       attrs
       |> counter_example.props_from()
       |> component(counter_example, _)
+      |> render(html_renderer())
+      |> Ok
+    }
+    "button_example" -> {
+      attrs
+      |> button_example.props_from()
+      |> component(button_example, _)
+      |> render(html_renderer())
+      |> Ok
+    }
+    "toggle_button_with_render_label" -> {
+      attrs
+      |> toggle_button_with_render_label.props_from()
+      |> component(toggle_button_with_render_label, _)
       |> render(html_renderer())
       |> Ok
     }
@@ -53,6 +71,28 @@ pub fn component_router(
         request,
         counter_example,
         counter_example.props_from,
+        validate_csrf,
+        None,
+      )
+      |> Ok
+    }
+
+    "button_example" -> {
+      mist_sprocket.component(
+        request,
+        button_example,
+        button_example.props_from,
+        validate_csrf,
+        None,
+      )
+      |> Ok
+    }
+
+    "toggle_button_with_render_label" -> {
+      mist_sprocket.component(
+        request,
+        toggle_button_with_render_label,
+        toggle_button_with_render_label.props_from,
         validate_csrf,
         None,
       )

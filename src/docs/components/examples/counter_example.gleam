@@ -1,12 +1,12 @@
-import gleam/int
-import gleam/result
-import gleam/string
-import gleam/dict
-import gleam/option.{type Option, None, Some}
-import sprocket/context.{type Context}
-import sprocket/component.{component, render}
 import docs/components/common.{example}
 import docs/components/events_counter.{CounterProps, counter}
+import gleam/dict
+import gleam/int
+import gleam/option.{type Option, None, Some}
+import gleam/result
+import gleam/string
+import sprocket/component.{component, render}
+import sprocket/context.{type Context}
 
 pub fn props_from(attrs: Option(List(#(String, String)))) {
   case attrs {

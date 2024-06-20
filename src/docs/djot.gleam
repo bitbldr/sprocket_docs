@@ -1,12 +1,12 @@
 // TODO: collapse adjacent text nodes
 
-import gleam/io
+import docs/utils/common.{escape_html}
 import gleam/dict.{type Dict}
 import gleam/int
+import gleam/io
 import gleam/list
 import gleam/option.{type Option, None, Some}
 import gleam/string
-import docs/utils/common.{escape_html}
 
 pub type Document {
   Document(content: List(Container), references: Dict(String, String))
@@ -267,9 +267,20 @@ fn parse_component_prop_value(
 ) -> #(String, String, Chars) {
   case in {
     [] -> #(key, value, [])
-    ["\"", ..in] -> #(key, value, in)
-    [" ", ..in] -> #(key, value, in)
+    ["\"", ..in] -> {
+      case is_escaped(value) {
+        True -> parse_component_prop_value(in, key, value <> "\"")
+        False -> #(key, value, in)
+      }
+    }
     [c, ..in] -> parse_component_prop_value(in, key, value <> c)
+  }
+}
+
+fn is_escaped(value: String) -> Bool {
+  case string.last(value) {
+    Ok("\\") -> True
+    _ -> False
   }
 }
 
@@ -1219,7 +1230,7 @@ fn inline_to_html(html: String, inline: Inline, refs: Refs) -> String {
       |> open_tag(
         "img",
         destination_attribute("src", destination, refs)
-        |> dict.insert("alt", take_inline_text(text, "")),
+          |> dict.insert("alt", take_inline_text(text, "")),
       )
     }
     Code(content) -> {
