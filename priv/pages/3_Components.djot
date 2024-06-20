@@ -105,7 +105,7 @@ label prop, we'll give more control to the parent component by introducing in a 
 renders the content of the button.
 
 <.codeblock language="gleam">
-import sprocket/context.{Context, Element, WithDeps, dep}
+import sprocket/context.{Context, Element, dep}
 import sprocket/component.{render}
 import sprocket/html/elements.{button}
 import sprocket/html/attributes.{class, on_click}
@@ -328,7 +328,7 @@ pub fn product(ctx: Context, _props: ProductProps) {
 }
 </.codeblock>
 
-<.product_card id="2255" name="Bamboo Cutting Board" description="This sustainable bamboo cutting board is perfect for slicing and dicing vegetables, fruits, and meats. The natural antibacterial properties of bamboo ensure a hygienic cooking experience." img_url="https://images.pexels.com/photos/6489734/pexels-photo-6489734.jpeg" qty="12 x 8 inches" price="24.99" />
+<.product_card_example id="2255" name="Bamboo Cutting Board" description="This sustainable bamboo cutting board is perfect for slicing and dicing vegetables, fruits, and meats. The natural antibacterial properties of bamboo ensure a hygienic cooking experience." img_url="https://images.pexels.com/photos/6489734/pexels-photo-6489734.jpeg" qty="12 x 8 inches" price="24.99" />
 
 You may have noticed that we are using a few functions named after HTML elements such as
 `div` and `img`. These are Stateless Functional Components that are provided by the
@@ -389,7 +389,7 @@ pub fn product(ctx: Context, _props: PageViewProps) {
 }
 </.codeblock>
 
-<.stateful_product_card id="2259" name="Organic Aromatherapy Candle" description="Create a fresh ambiance with this organic aromatherapy candle. Hand-poured with pure essential oils, the fresh scent of citrus will brighten up your room." img_url="https://images.pexels.com/photos/7260249/pexels-photo-7260249.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" qty="1 candle" price="19.99" />
+<.stateful_product_card_example id="2259" name="Organic Aromatherapy Candle" description="Create a fresh ambiance with this organic aromatherapy candle. Hand-poured with pure essential oils, the fresh scent of citrus will brighten up your room." img_url="https://images.pexels.com/photos/7260249/pexels-photo-7260249.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" qty="1 candle" price="19.99" />
 
 As you can see, we've composed our stateless functional `product_card` component with our stateful
 `toggle_button` component to create a somewhat trivial product listing. But this is the power of

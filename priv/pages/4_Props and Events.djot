@@ -17,7 +17,7 @@ also re-rendered because its `count` prop has changed.
 
 <.codeblock language="gleam">
 import gleam/int import gleam/option.{None, Option, Some}
-import sprocket/context.{Context, WithDeps, dep}
+import sprocket/context.{Context, dep}
 import sprocket/hooks.{reducer, handler}
 import sprocket/component.{component, render}
 import sprocket/html/elements.{div, span, text}

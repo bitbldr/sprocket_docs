@@ -134,11 +134,11 @@ use ctx <- effect(
       // Cleanup side-effects here
     })
   },
-  WithDeps([dep(some_value)]),
+  [dep(some_value)],
 )
 </.codeblock>
 
-The `WithDeps` trigger is used to specify a list of dependencies that will cause the effect function
+The `effect` hook takes a list of dependencies that will cause the effect function
 to be called again when any of the dependencies change. If an empty list is provided, the effect
 function will only be called on mount.
 
@@ -148,7 +148,7 @@ Memo hooks are used to memoize a computed value. They take a function and a list
 return a memoized value. The memoized value will only be re-evaluated when the dependencies change.
 
 <.codeblock language="gleam">
-use ctx, memoized_value <- memo(ctx, fn() { expensive_fn() }, WithDeps([dep(some_value)]))
+use ctx, memoized_value <- memo(ctx, fn() { expensive_fn() }, [dep(some_value)])
 </.codeblock>
 
 ## Callback
@@ -158,7 +158,7 @@ return a memoized function. The memoized function will only be re-evaluated when
 change.
 
 <.codeblock language="gleam">
-use ctx, memoized_fn <- callback(ctx, some_fn, WithDeps([dep(some_value)]))
+use ctx, memoized_fn <- callback(ctx, some_fn, [dep(some_value)])
 </.codeblock>
 
 ## Provider
@@ -249,7 +249,7 @@ connect(livePath, {
 });
 </.codeblock>
 
-<.counter_with_reset_example />
+<.counter_example initial="0" enable_reset="true" />
 
 ## Custom Hooks
 

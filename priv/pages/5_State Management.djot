@@ -84,7 +84,7 @@ import gleam/int
 import gleam/list
 import gleam/pair
 import gleam/option.{None, Option, Some}
-import sprocket/context.{Context, WithDeps}
+import sprocket/context.{Context}
 import sprocket/component.{render}
 import sprocket/hooks.{State, reducer, handler}
 import sprocket/html/elements.{button, div, span, text}

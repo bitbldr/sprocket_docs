@@ -1,4 +1,5 @@
-// TODO: collapse adjacent text nodes
+// forked from https://github.com/lpil/jot, customized to support sprocket component markup
+// formatted as <.somecomponent some="prop" />
 
 import docs/utils/common.{escape_html}
 import gleam/dict.{type Dict}
