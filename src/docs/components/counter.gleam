@@ -1,12 +1,14 @@
-import gleam/io
+import gleam/dict
 import gleam/int
+import gleam/io
+import gleam/option.{type Option, None, Some}
+import gleam/result
 import gleam/string
-import gleam/option.{type Option, None}
-import sprocket/context.{type Context, dep}
 import sprocket/component.{render}
+import sprocket/context.{type Context, dep}
 import sprocket/hooks.{effect, handler, reducer}
-import sprocket/html/elements.{button, div, span, text}
 import sprocket/html/attributes.{class, on_click}
+import sprocket/html/elements.{button, div, span, text}
 
 type Model =
   Int
@@ -82,4 +84,23 @@ pub fn counter(ctx: Context, props: CounterProps) {
       ),
     ]),
   )
+}
+
+pub fn props_from(attrs: Option(List(#(String, String)))) {
+  case attrs {
+    None -> CounterProps(initial: None)
+    Some(attrs) -> {
+      let attrs =
+        attrs
+        |> dict.from_list()
+
+      let initial =
+        attrs
+        |> dict.get("initial")
+        |> result.try(int.parse)
+        |> option.from_result
+
+      CounterProps(initial: initial)
+    }
+  }
 }

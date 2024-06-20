@@ -1,3 +1,11 @@
 # Under the hood
 
 COMING SOON
+
+## Standalone Components
+
+Components can be mounted as standalone without the need for the entire application, or even the
+originator of the page to be a sprocket application. This is useful for integrating sprocket into existing
+applications, or for creating standalone components that can be used in multiple applications.
+
+[Example page with standalone component](/standalone)

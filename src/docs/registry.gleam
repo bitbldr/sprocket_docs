@@ -1,4 +1,5 @@
 import docs/components/codeblock.{codeblock}
+import docs/components/counter.{counter}
 import docs/components/examples/button_example.{button_example}
 import docs/components/examples/clock_example.{clock_example}
 import docs/components/examples/counter_example.{counter_example}
@@ -31,6 +32,14 @@ pub fn render_component_html(
       attrs
       |> codeblock.props_from()
       |> component(codeblock, _)
+      |> render(html_renderer())
+      |> Ok
+    }
+
+    "counter" -> {
+      attrs
+      |> counter.props_from()
+      |> component(counter, _)
       |> render(html_renderer())
       |> Ok
     }
@@ -122,6 +131,17 @@ pub fn component_router(
         request,
         codeblock,
         codeblock.props_from,
+        validate_csrf,
+        None,
+      )
+      |> Ok
+    }
+
+    "counter" -> {
+      mist_sprocket.component(
+        request,
+        counter,
+        counter.props_from,
         validate_csrf,
         None,
       )

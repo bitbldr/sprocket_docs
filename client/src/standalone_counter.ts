@@ -10,11 +10,13 @@ window.addEventListener("DOMContentLoaded", () => {
     connect("/components/counter/connect", {
       csrfToken,
       targetEl: document.getElementById("counter") as Element,
+      initialProps: { initial: "100" },
     });
 
     connect("/components/counter/connect", {
       csrfToken,
       targetEl: document.getElementById("no-first-paint-counter") as Element,
+      initialProps: { initial: "100" },
     });
   } else {
     console.error("Missing CSRF token");

@@ -1,15 +1,15 @@
-import gleam/bytes_builder
-import gleam/option.{Some}
-import gleam/http/request.{type Request}
-import gleam/http/response.{type Response}
-import mist.{type Connection, type ResponseData}
-import sprocket.{render}
-import sprocket/renderers/html.{html_renderer}
-import sprocket/component.{component}
-import docs/components/counter.{CounterProps, counter}
 import docs/app_context.{type AppContext}
+import docs/components/counter.{CounterProps, counter}
 import docs/utils/common.{mist_response}
 import docs/utils/csrf
+import gleam/bytes_builder
+import gleam/http/request.{type Request}
+import gleam/http/response.{type Response}
+import gleam/option.{Some}
+import mist.{type Connection, type ResponseData}
+import sprocket.{render}
+import sprocket/component.{component}
+import sprocket/renderers/html.{html_renderer}
 
 pub fn standalone(
   _req: Request(Connection),
@@ -47,9 +47,10 @@ window.addEventListener('DOMContentLoaded', () => {
     ?.getAttribute('content');
 
   if (csrfToken) {
-    connect('/counter/live', {
+    connect('/counter/connect', {
       csrfToken,
       targetEl: document.getElementById('counter') as Element,
+      initialProps: { initial: '100' },
     });
   } else {
     console.error('Missing CSRF token');
@@ -76,7 +77,7 @@ window.addEventListener('DOMContentLoaded', () => {
     </p>
     <script src=\"/standalone_counter.js\"></script>
     <p>
-      <a href=\"/\">Back to the home page</a>
+      <a href=\"/under-the-hood\">Return to Docs</a>
     </p>
   </body>
 </html>
