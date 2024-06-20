@@ -120,8 +120,16 @@ use ctx, increment <- handler(ctx, fn(_) {
 
 ## Effect
 
-Effect hooks are used to perform side-effects. They take a function that is called on mount and when
-the trigger value changes. They can also specify an optional cleanup function as a return value.
+Effect hooks are used to perform side-effects. They take a function that is always called once on
+mount and subsequently whenever any dependency in the specified list of dependencies change. They
+can also specify an optional cleanup function as a return value which will be called when the
+component is unmounted. This is useful for managing subscriptions, timers, or other side-effects.
+All dependencies must be converted to a dependency type using the `dep` function. This is necessary
+for the homogeneous list.
+
+To only run the effect function on mount, provide an empty list of dependencies.
+
+To run the effect function on every render, provide a single-element list with the Context: `[dep(ctx)]`.
 
 <.codeblock language="gleam">
 use ctx <- effect(
