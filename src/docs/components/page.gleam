@@ -1,22 +1,22 @@
-import gleam/list
-import gleam/option.{None}
-import sprocket/context.{type Context, provider}
-import sprocket/component.{component, render}
-import sprocket/html/elements.{div, ignore, raw}
-import sprocket/html/attributes.{class, id}
-import sprocket/hooks.{client, memo, reducer} as _
-import docs/utils/ordered_map.{KeyedItem}
+import docs/app_context.{type AppContext}
 import docs/components/header.{HeaderProps, MenuItem, header}
+import docs/components/pages/not_found.{NotFoundPageProps, not_found_page}
+import docs/components/prev_next_nav.{PrevNextNavProps, prev_next_nav}
 import docs/components/responsive_drawer.{
   ResponsiveDrawerProps, responsive_drawer,
 }
-import docs/components/pages/not_found.{NotFoundPageProps, not_found_page}
 import docs/components/sidebar.{SidebarProps, sidebar}
-import docs/components/prev_next_nav.{PrevNextNavProps, prev_next_nav}
-import docs/theme.{type DarkMode, type Theme, Auto, Theme}
-import docs/page_server
-import docs/app_context.{type AppContext}
 import docs/page_route
+import docs/page_server
+import docs/theme.{type DarkMode, type Theme, Auto, Theme}
+import docs/utils/ordered_map.{KeyedItem}
+import gleam/list
+import gleam/option.{None}
+import sprocket/component.{component, render}
+import sprocket/context.{type Context, provider}
+import sprocket/hooks.{client, memo, reducer} as _
+import sprocket/html/attributes.{class, id}
+import sprocket/html/elements.{div, ignore, raw}
 
 type Model {
   Model(mode: DarkMode)

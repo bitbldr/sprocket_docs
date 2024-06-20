@@ -1,9 +1,9 @@
 import gleam/option.{Some}
-import sprocket/context.{type Context, type Element}
 import sprocket/component.{render}
+import sprocket/context.{type Context, type Element}
 import sprocket/hooks.{handler, reducer}
-import sprocket/html/elements.{aside, button, div, i}
 import sprocket/html/attributes.{class, classes, on_click}
+import sprocket/html/elements.{aside, button, div, i}
 
 type Model {
   Model(show: Bool)

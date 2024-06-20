@@ -1,6 +1,6 @@
-import gleam/string
 import gleam/list
 import gleam/result
+import gleam/string
 
 pub type Page {
   Page(title: String, route: PageRoute)

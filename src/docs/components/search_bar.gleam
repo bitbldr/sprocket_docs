@@ -1,9 +1,9 @@
 import gleam/option.{Some}
-import sprocket/context.{type Context, CallbackString}
 import sprocket/component.{render}
+import sprocket/context.{type Context, CallbackString}
 import sprocket/hooks.{handler, reducer}
-import sprocket/html/elements.{input}
 import sprocket/html/attributes.{class, input_type, on_input, placeholder, value}
+import sprocket/html/elements.{input}
 
 type Model {
   Model(query: String)

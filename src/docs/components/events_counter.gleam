@@ -1,10 +1,10 @@
 import gleam/int
 import gleam/option.{type Option, None, Some}
-import sprocket/context.{type Context}
 import sprocket/component.{component, render}
+import sprocket/context.{type Context}
 import sprocket/hooks.{client, handler, reducer}
-import sprocket/html/elements.{button_text, div, span, text}
 import sprocket/html/attributes.{class, classes, on_click}
+import sprocket/html/elements.{button_text, div, span, text}
 
 type Model =
   Int

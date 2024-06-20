@@ -1,11 +1,11 @@
-import gleam/option.{Some}
-import gleam/dynamic
-import sprocket/context.{type Context, type Element} as _
-import sprocket/component.{render}
-import sprocket/hooks.{client, handler, provider, state}
-import sprocket/html/elements.{button, div, i}
-import sprocket/html/attributes.{class, classes, on_click}
 import docs/theme.{type DarkMode, Auto, Dark, Light, Theme}
+import gleam/dynamic
+import gleam/option.{Some}
+import sprocket/component.{render}
+import sprocket/context.{type Context, type Element} as _
+import sprocket/hooks.{client, handler, provider, state}
+import sprocket/html/attributes.{class, classes, on_click}
+import sprocket/html/elements.{button, div, i}
 
 pub type DarkModeToggleProps {
   DarkModeToggleProps

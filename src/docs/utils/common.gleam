@@ -1,11 +1,11 @@
+import gleam/bit_array
+import gleam/bytes_builder.{type BytesBuilder}
+import gleam/crypto
+import gleam/http/response.{type Response}
 import gleam/list
 import gleam/option.{type Option, None, Some}
-import gleam/bytes_builder.{type BytesBuilder}
-import gleam/http/response.{type Response}
-import gleam/string_builder
-import gleam/crypto
 import gleam/string
-import gleam/bit_array
+import gleam/string_builder
 import mist.{type ResponseData}
 
 /// Maybe return Some element if the condition is true

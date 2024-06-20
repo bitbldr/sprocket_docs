@@ -1,16 +1,16 @@
-import gleam/int
-import gleam/float
 import gleam/erlang
+import gleam/float
+import gleam/int
 import gleam/option.{Some}
-import sprocket/context.{type Context, dep}
 import sprocket/component.{render}
+import sprocket/context.{type Context, dep}
 import sprocket/hooks.{effect, reducer}
 import sprocket/html/attributes.{xmlns, xmlns_xlink}
-import sprocket/html/svg/elements.{circle, g, line, path, svg}
 import sprocket/html/svg/attributes.{
   class, cx, cy, d, fill, height, id, r, stroke, stroke_miterlimit, stroke_width,
   transform, version, view_box, width, x, x1, x2, xml_space, y, y1, y2,
 } as _svg_attributes
+import sprocket/html/svg/elements.{circle, g, line, path, svg}
 import sprocket/internal/utils/timer.{interval}
 
 type Model {

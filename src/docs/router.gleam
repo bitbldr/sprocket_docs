@@ -1,24 +1,24 @@
-import gleam/bytes_builder.{type BytesBuilder}
-import gleam/string
-import gleam/option.{None}
+import docs/app_context.{type AppContext}
+import docs/components/page.{PageProps, page}
+import docs/controllers/standalone.{standalone}
+import docs/layouts/page_layout.{page_layout}
+import docs/log_requests
+import docs/registry.{component_router}
+import docs/static
+import docs/utils/common.{mist_response}
+import docs/utils/csrf
+import docs/utils/logger
 import gleam/bit_array
-import gleam/result
+import gleam/bytes_builder.{type BytesBuilder}
 import gleam/erlang
 import gleam/http.{Get}
 import gleam/http/request.{type Request}
 import gleam/http/response.{type Response}
-import mist.{type Connection, type ResponseData}
 import gleam/http/service.{type Service}
-import docs/log_requests
-import docs/static
-import docs/utils/csrf
-import docs/utils/logger
-import docs/utils/common.{mist_response}
-import docs/app_context.{type AppContext}
-import docs/controllers/standalone.{standalone}
-import docs/layouts/page_layout.{page_layout}
-import docs/components/page.{PageProps, page}
-import docs/registry.{component_router}
+import gleam/option.{None}
+import gleam/result
+import gleam/string
+import mist.{type Connection, type ResponseData}
 import mist_sprocket.{view}
 
 pub fn router(app: AppContext) {

@@ -1,10 +1,10 @@
 import gleam/option.{None}
 import sprocket/context.{type Element}
-import sprocket/html/elements.{body, head, html, link, meta, script, title}
 import sprocket/html/attributes.{
   charset, class, content, crossorigin, href, id, integrity, lang, media, name,
   referrerpolicy, rel, src,
 }
+import sprocket/html/elements.{body, head, html, link, meta, script, title}
 
 pub fn page_layout(page_title: String, csrf: String) {
   fn(inner_content: Element) {

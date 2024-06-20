@@ -1,8 +1,8 @@
-import gleam/io
 import gleam/erlang
+import gleam/io
 import gleam/option.{type Option, None, Some}
-import sprocket/context.{type Context, dep}
 import sprocket/component.{render}
+import sprocket/context.{type Context, dep}
 import sprocket/hooks.{effect, reducer}
 import sprocket/html/elements.{fragment, span, text}
 import sprocket/internal/utils/timer.{interval}

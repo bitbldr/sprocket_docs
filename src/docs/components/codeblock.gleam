@@ -1,15 +1,15 @@
-import gleam/string
-import gleam/list
 import gleam/dict
 import gleam/int
+import gleam/list
 import gleam/option.{type Option, None, Some}
 import gleam/result
+import gleam/string
 import sprocket.{type PropList}
-import sprocket/context.{type Context}
 import sprocket/component.{render}
-import sprocket/html/elements.{code_text, div, ignore, pre}
-import sprocket/html/attributes.{class}
+import sprocket/context.{type Context}
 import sprocket/hooks.{client}
+import sprocket/html/attributes.{class}
+import sprocket/html/elements.{code_text, div, ignore, pre}
 
 pub fn props_from(attrs: Option(PropList)) {
   case attrs {

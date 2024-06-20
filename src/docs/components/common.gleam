@@ -1,7 +1,7 @@
 import gleam/option.{Some}
 import sprocket/context.{type Element}
-import sprocket/html/elements.{div}
 import sprocket/html/attributes.{class, classes}
+import sprocket/html/elements.{div}
 
 pub fn example(children: List(Element)) -> Element {
   div(

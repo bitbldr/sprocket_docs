@@ -1,18 +1,18 @@
-import gleam/int
-import gleam/string
-import gleam/list
-import gleam/pair
-import gleam/option.{Some}
-import gleam/result
-import gleam/function
-import gleam/otp/actor.{Spec}
-import gleam/erlang/process.{type Subject}
-import simplifile
 import docs/djot
-import docs/utils/common.{priv_directory}
 import docs/page_route.{type PageRoute, PageRoute}
-import docs/utils/ordered_map.{type OrderedMap}
 import docs/registry.{render_component_html}
+import docs/utils/common.{priv_directory}
+import docs/utils/ordered_map.{type OrderedMap}
+import gleam/erlang/process.{type Subject}
+import gleam/function
+import gleam/int
+import gleam/list
+import gleam/option.{Some}
+import gleam/otp/actor.{Spec}
+import gleam/pair
+import gleam/result
+import gleam/string
+import simplifile
 
 const call_timeout = 5000
 

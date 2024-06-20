@@ -1,10 +1,10 @@
+import docs/components/dark_mode_toggle.{DarkModeToggleProps, dark_mode_toggle}
 import gleam/list
 import gleam/string
-import sprocket/context.{type Context}
 import sprocket/component.{component, render}
-import sprocket/html/elements.{a, div, i, span, text}
+import sprocket/context.{type Context}
 import sprocket/html/attributes.{class, href}
-import docs/components/dark_mode_toggle.{DarkModeToggleProps, dark_mode_toggle}
+import sprocket/html/elements.{a, div, i, span, text}
 
 pub type MenuItem {
   MenuItem(label: String, href: String)

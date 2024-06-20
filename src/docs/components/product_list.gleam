@@ -1,14 +1,14 @@
+import gleam/float
 import gleam/int
 import gleam/list
-import gleam/float
 import gleam/option.{type Option, None, Some}
-import sprocket/context.{type Context, type Element}
 import sprocket/component.{component, render}
+import sprocket/context.{type Context, type Element}
 import sprocket/hooks.{handler, reducer, state}
+import sprocket/html/attributes.{alt, class, on_click, role, src}
 import sprocket/html/elements.{
   button, button_text, div, div_text, h5_text, i, img, keyed, li, text, ul,
 }
-import sprocket/html/attributes.{alt, class, on_click, role, src}
 
 pub type Product {
   Product(
@@ -188,23 +188,23 @@ pub fn product_list(ctx: Context, props: ProductListProps) {
       ul(
         [role("list"), class("flex flex-col")],
         products
-        |> list.filter_map(fn(p) {
-          case list.contains(hidden, p.id) {
-            True -> Error(Nil)
-            False ->
-              Ok(keyed(
-                int.to_string(p.id),
-                li([class("py-3 mr-4")], [
-                  component(
-                    product,
-                    ProductProps(product: p, on_hide: fn(_) {
-                      dispatch(Hide(p.id))
-                    }),
-                  ),
-                ]),
-              ))
-          }
-        }),
+          |> list.filter_map(fn(p) {
+            case list.contains(hidden, p.id) {
+              True -> Error(Nil)
+              False ->
+                Ok(keyed(
+                  int.to_string(p.id),
+                  li([class("py-3 mr-4")], [
+                    component(
+                      product,
+                      ProductProps(product: p, on_hide: fn(_) {
+                        dispatch(Hide(p.id))
+                      }),
+                    ),
+                  ]),
+                ))
+            }
+          }),
       ),
       ..case list.is_empty(hidden) {
         True -> []
