@@ -18,7 +18,7 @@ COPY . .
 # install gleam deps
 RUN gleam deps download
 
-# # install node deps
+# build gleam app
 RUN yarn build
 
 # # build release

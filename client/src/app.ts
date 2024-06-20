@@ -1,5 +1,4 @@
-// import { connect } from "sprocket-js";
-import { connect } from "../../../sprocket/client/src/sprocket";
+import { connect } from "sprocket-js";
 import { DoubleClick } from "./hooks/double_click";
 import { DarkMode } from "./hooks/dark_mode";
 import { CodeBlock } from "./hooks/codeblock";
