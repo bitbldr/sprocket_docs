@@ -2,7 +2,6 @@ import docs/utils/list.{element_at} as _
 import gleam/int
 import gleam/list
 import gleam/option.{type Option, None, Some}
-import gleam/pair
 import sprocket/component.{render}
 import sprocket/context.{type Context}
 import sprocket/hooks.{handler, reducer}
@@ -66,8 +65,8 @@ pub fn hello_button(ctx: Context, _props: HelloButtonProps) {
       ..case hello {
         None -> []
         Some(hello) -> [
-          span([class("ml-2")], [text(pair.second(hello))]),
-          span([class("ml-2 text-gray-400 bold")], [text(pair.first(hello))]),
+          span([class("ml-2")], [text(hello.1)]),
+          span([class("ml-2 text-gray-400 bold")], [text(hello.0)]),
         ]
       }
     ]),
