@@ -41,7 +41,7 @@ pub type CodeBlockProps {
 pub fn codeblock(ctx: Context, props: CodeBlockProps) {
   let CodeBlockProps(language, body) = props
 
-  use ctx, code_block_client, _send_codeblock_client <- client(
+  use ctx, client_code_block, _dispatch_client_send_codeblock <- client(
     ctx,
     "CodeBlock",
     None,
@@ -54,7 +54,7 @@ pub fn codeblock(ctx: Context, props: CodeBlockProps) {
         pre([], [
           code_text(
             [
-              code_block_client(),
+              client_code_block(),
               class("language-" <> language <> " rounded-lg"),
             ],
             process_code(body),
