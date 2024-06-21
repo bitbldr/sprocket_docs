@@ -82,7 +82,6 @@ clicked. Let's put it all together:
 <.codeblock language="gleam">
 import gleam/int
 import gleam/list
-import gleam/pair
 import gleam/option.{None, Option, Some}
 import sprocket/context.{Context}
 import sprocket/component.{render}
@@ -147,10 +146,10 @@ pub fn hello_button(ctx: Context, _props: HelloButtonProps) {
         ..case hello {
           None -> []
           Some(hello) -> [
-            span([class("ml-2")], [text(pair.second(hello))]),
+            span([class("ml-2")], [text(hello.1)]),
             span(
               [class("ml-2 text-gray-400 bold")],
-              [text(pair.first(hello))],
+              [text(hello.0)],
             ),
           ]
         }
