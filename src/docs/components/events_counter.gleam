@@ -101,7 +101,7 @@ pub type DisplayProps {
 pub fn display(ctx: Context, props: DisplayProps) {
   let DisplayProps(count: count, on_reset: on_reset) = props
 
-  use ctx, doubleclick_client, _doubleclick_client_dispatch <- client(
+  use ctx, client_doubleclick, _dispatch_client_doubleclick <- client(
     ctx,
     "DoubleClick",
     Some(fn(msg, _payload, _dispatch) {
@@ -121,7 +121,7 @@ pub fn display(ctx: Context, props: DisplayProps) {
     ctx,
     span(
       [
-        doubleclick_client(),
+        client_doubleclick(),
         class(
           "p-1 px-2 w-10 bg-white dark:bg-gray-900 border-t border-b dark:border-gray-500 align-center text-center select-none",
         ),
