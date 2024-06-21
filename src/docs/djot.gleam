@@ -232,7 +232,7 @@ fn parse_component_props(
     [">", ..in] -> {
       // If component has a body, parse the body as a string and add it to the
       // list of props as "inner_html"
-      let in = drop_whitespace(in)
+      let in = drop_lines(in)
 
       case parse_component_body(in, None) {
         None -> #(props, [])
@@ -297,7 +297,7 @@ fn parse_component_body(
       let in = drop_spaces(in)
 
       case in {
-        [">", ..in] -> Some(#(option.unwrap(acc, ""), in))
+        [">", ..in] -> option.map(acc, fn(a) { #(a, in) })
         _ -> None
       }
     }
