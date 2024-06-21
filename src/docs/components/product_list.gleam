@@ -189,22 +189,22 @@ pub fn product_list(ctx: Context, props: ProductListProps) {
         [role("list"), class("flex flex-col")],
         products
           |> list.filter_map(fn(p) {
-            case list.contains(hidden, p.id) {
-              True -> Error(Nil)
-              False ->
-                Ok(keyed(
-                  int.to_string(p.id),
-                  li([class("py-3 mr-4")], [
-                    component(
-                      product,
-                      ProductProps(product: p, on_hide: fn(_) {
-                        dispatch(Hide(p.id))
-                      }),
-                    ),
-                  ]),
-                ))
-            }
-          }),
+          case list.contains(hidden, p.id) {
+            True -> Error(Nil)
+            False ->
+              Ok(keyed(
+                int.to_string(p.id),
+                li([class("py-3 mr-4")], [
+                  component(
+                    product,
+                    ProductProps(product: p, on_hide: fn(_) {
+                      dispatch(Hide(p.id))
+                    }),
+                  ),
+                ]),
+              ))
+          }
+        }),
       ),
       ..case list.is_empty(hidden) {
         True -> []

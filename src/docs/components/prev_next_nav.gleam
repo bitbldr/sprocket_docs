@@ -52,26 +52,26 @@ fn link(ctx: Context, props: PageLinkProps) {
     ctx,
     page
       |> result.map(fn(page) {
-        let title = page.title
-        let href = page_route.href(page)
-        let is_active = page.uri == active
+      let title = page.title
+      let href = page_route.href(page)
+      let is_active = page.uri == active
 
-        a(
-          [
-            classes([
-              Some(
-                "block py-1.5 px-2 text-blue-500 hover:text-blue-600 active:text-blue-700 no-underline hover:!underline",
-              ),
-              maybe(is_active, "font-bold"),
-            ]),
-            attributes.href(href),
-          ],
-          case next_or_prev {
-            Next -> [text(title), next_or_prev_icon(Next)]
-            Prev -> [next_or_prev_icon(Prev), text(title)]
-          },
-        )
-      })
+      a(
+        [
+          classes([
+            Some(
+              "block py-1.5 px-2 text-blue-500 hover:text-blue-600 active:text-blue-700 no-underline hover:!underline",
+            ),
+            maybe(is_active, "font-bold"),
+          ]),
+          attributes.href(href),
+        ],
+        case next_or_prev {
+          Next -> [text(title), next_or_prev_icon(Next)]
+          Prev -> [next_or_prev_icon(Prev), text(title)]
+        },
+      )
+    })
       |> result.unwrap(fragment([])),
   )
 }
