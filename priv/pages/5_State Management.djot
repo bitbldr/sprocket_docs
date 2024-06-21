@@ -68,7 +68,7 @@ when the button is clicked. It's important that we create an `IdentifiableHandle
 preventing a new id being created and sent to the client on every render.
 
 <.codeblock language="gleam">
-use ctx, on_hello_button <- handler(
+use ctx, say_hello <- handler(
   ctx,
   fn(_) { dispatch(SayHello) },
 )
@@ -118,7 +118,7 @@ pub fn hello_button(ctx: Context, _props: HelloButtonProps) {
     update,
   )
 
-  use ctx, on_hello_button <- handler(
+  use ctx, say_hello <- handler(
     ctx,
     fn(_) { dispatch(SayHello) },
   )
@@ -140,7 +140,7 @@ pub fn hello_button(ctx: Context, _props: HelloButtonProps) {
         button(
           [
             class("p-2 bg-blue-500 hover:bg-blue-600 active:bg-blue-700 text-white rounded"),
-            on_click(on_hello_button),
+            on_click(say_hello),
           ],
           [text("Say Hello!")],
         ),
