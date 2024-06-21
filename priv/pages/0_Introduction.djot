@@ -22,25 +22,24 @@ built on a solid foundation that enables scalable and fault-tolerant application
 
 ## Key Features
 
-*Real-time Components:* Build scalable real-time server-rendered applications by designing modular
-and reusable components with Sprocket's declarative approach.
+*Real-time Components*: Build real-time server-rendered live views using declarative components
+and familiar state management patterns.
 
-*Type-Safety:* Gleam's static typing guarantees that your code is free of runtime errors while
-making it easier to reason about complex systems and
+*Type-Safety*: Gleam's static type system gives you peace of mind that your code is free of a large
+category of runtime errors and provides a powerful tool for refactoring and maintaining your
+codebase.
 
-*Concurrency:* Sprocket harnesses the power of the Erlang Beam VM, providing lightweight processes
-and easy-to-use abstractions for concurrent programming.
+*Concurrency*: Sprocket harnesses the power of the Erlang Beam VM to provide lightweight processes and easy-to-use
+abstractions for concurrent programming. 
 
-*Fault-Tolerance:* Battle-tested fault-tolerance mechanisms ensure that your applications are
-resilient even under adverse conditions.
+*Fault-Tolerance*: Battle-tested fault-tolerance mechanisms ensure that your applications are resilient even under
+adverse conditions. 
 
-*Interoperability:* Seamlessly plug-in to Erlang/Elixir's exisitng libraries with Gleam's first
-class FFI.
+*Interoperability*: Seamlessly plug-in to Erlang/Elixir's ecosystem of existing libraries with Gleam's first class FFI.
 
-*Scalability:* Easily scale your application thanks to the Erlang Beam VM's distributed nature.
+*Scalable*:  The Erlang Beam VM's distributed nature enables you to scale your applications with ease.
 
-*Open Source:* Sprocket is completely open-source and free to use. Contributions are welcome and
-and encouraged! 
+*Open Source*: Sprocket is completely open-source and free to use. Contributions are welcome and encouraged!
 
 ## Ready to get started?
 
