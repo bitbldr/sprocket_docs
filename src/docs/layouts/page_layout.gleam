@@ -1,4 +1,4 @@
-import gleam/option.{None}
+import gleam/option.{None, Some}
 import sprocket/context.{type Element}
 import sprocket/html/attributes.{
   charset, class, content, crossorigin, href, id, integrity, lang, media, name,
@@ -65,6 +65,16 @@ pub fn page_layout(page_title: String, csrf: String) {
           None,
         ),
         script([src("https://gleam.run/javascript/highlightjs-gleam.js")], None),
+        script(
+          [],
+          Some(
+            "
+            if (localStorage.getItem('theme') === 'dark') {
+              document.getElementsByTagName( 'html' )[0].classList.add('dark');
+            }
+            ",
+          ),
+        ),
       ]),
       body(
         [
