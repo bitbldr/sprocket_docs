@@ -6,8 +6,10 @@ let systemDarkModeListener: EventListener;
 
 const addSystemDarkModeListener = (fn: (mode: "light" | "dark") => void) => {
   systemDarkModeListener = (event: any) => {
-    event.matches ? fn("dark") : fn("light");
+    if (event.matches && localStorage.theme !== "light") fn("dark");
+    if (!event.matches && localStorage.theme !== "dark") fn("light");
   };
+
   window
     .matchMedia("(prefers-color-scheme: dark)")
     .addEventListener("change", systemDarkModeListener);

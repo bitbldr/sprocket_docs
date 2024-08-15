@@ -70,8 +70,9 @@ pub fn page_layout(page_title: String, csrf: String) {
           Some(
             "
             if (
-              (window.matchMedia &&
-                window.matchMedia('(prefers-color-scheme: dark)').matches)
+              (window.matchMedia
+                && window.matchMedia('(prefers-color-scheme: dark)').matches
+                && localStorage.getItem('theme') !== 'light')
               || localStorage.getItem('theme') === 'dark'
             ) document.getElementsByTagName('html')[0].classList.add('dark');
             ",
