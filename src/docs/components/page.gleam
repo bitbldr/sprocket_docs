@@ -92,7 +92,7 @@ pub fn page(ctx: Context, props: PageProps) {
             [
               case page_content {
                 Ok(page_server.Page(_, _, html)) ->
-                  div([load_components_client()], [ignore(raw("div", html))])
+                  div([load_components_client()], [ignore(raw("div", [], html))])
                 _ -> component(not_found_page, NotFoundPageProps)
               },
               component(
