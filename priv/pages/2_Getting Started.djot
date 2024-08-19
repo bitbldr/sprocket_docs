@@ -80,7 +80,7 @@ window.addEventListener("DOMContentLoaded", () => {
     let livePath =
       window.location.pathname === "/"
         ? "/live"
-        : window.location.pathname.split("/").concat("live").join("/");
+        : window.location.pathname.split("/").concat("connect").join("/");
 
     connect(livePath, {
       csrfToken,

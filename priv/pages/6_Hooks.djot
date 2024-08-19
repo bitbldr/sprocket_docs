@@ -241,7 +241,7 @@ import { connect } from 'sprocket-js';
 
 const hooks = {
   DoubleClick: {
-    mounted({ el, pushEvent }) {
+    create({ el, pushEvent }) {
       el.addEventListener('dblclick', () => {
         pushEvent('doubleclick', {});
       });
