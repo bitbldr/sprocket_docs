@@ -95,7 +95,7 @@ component(
 Excellent! Now our button has a proper label.
 
 But our humble button isn't very interesting yet. Let's say we want to add some functionality to our
-button. We can do that by implementing some events and state management via hooks.",
+button. We can do that by implementing some events and state management via hooks.
 
 We'll cover events, state management and hooks more in-depth a bit later. For now, we'll just add a
 simple state hook and handler hook to our button component which will toggle the label when the
