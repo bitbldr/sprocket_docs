@@ -55,8 +55,8 @@ pub fn product_card(product: Product, actions: Option(List(Element))) {
           ]),
         ],
       ),
-      div([class("flex-1 flex flex-col p-5")], [
-        div([class("flex-1 flex flex-row")], [
+      div([class("flex-1 flex flex-col p-5 gap-3")], [
+        div([class("flex-1 flex flex-col sm:flex-row")], [
           div([class("flex-1")], [
             h5_text(
               [
@@ -81,7 +81,10 @@ pub fn product_card(product: Product, actions: Option(List(Element))) {
         case actions {
           None -> div([], [])
           Some(actions) ->
-            div([class("flex flex flex-row justify-end")], actions)
+            div(
+              [class("flex flex-col-reverse sm:flex-row justify-end")],
+              actions,
+            )
         },
       ]),
     ],
@@ -189,22 +192,22 @@ pub fn product_list(ctx: Context, props: ProductListProps) {
         [role("list"), class("flex flex-col")],
         products
           |> list.filter_map(fn(p) {
-          case list.contains(hidden, p.id) {
-            True -> Error(Nil)
-            False ->
-              Ok(keyed(
-                int.to_string(p.id),
-                li([class("py-3 mr-4")], [
-                  component(
-                    product,
-                    ProductProps(product: p, on_hide: fn(_) {
-                      dispatch(Hide(p.id))
-                    }),
-                  ),
-                ]),
-              ))
-          }
-        }),
+            case list.contains(hidden, p.id) {
+              True -> Error(Nil)
+              False ->
+                Ok(keyed(
+                  int.to_string(p.id),
+                  li([class("py-3 mr-4")], [
+                    component(
+                      product,
+                      ProductProps(product: p, on_hide: fn(_) {
+                        dispatch(Hide(p.id))
+                      }),
+                    ),
+                  ]),
+                ))
+            }
+          }),
       ),
       ..case list.is_empty(hidden) {
         True -> []
