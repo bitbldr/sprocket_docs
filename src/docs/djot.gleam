@@ -1,13 +1,13 @@
 // forked from https://github.com/lpil/jot, customized to support sprocket component markup
 // formatted as <.somecomponent some="prop" />
 
-import docs/utils/common.{escape_html}
 import gleam/dict.{type Dict}
 import gleam/int
 import gleam/io
 import gleam/list
 import gleam/option.{type Option, None, Some}
 import gleam/string
+import gleam/string_builder
 
 pub type Document {
   Document(content: List(Container), references: Dict(String, String))
@@ -20,7 +20,7 @@ fn add_attribute(
 ) -> Dict(String, String) {
   case key {
     "class" ->
-      dict.update(attributes, key, fn(previous) {
+      dict.upsert(attributes, key, fn(previous) {
         case previous {
           None -> value
           Some(previous) -> previous <> " " <> value
@@ -45,6 +45,7 @@ pub type Container {
 }
 
 pub type Inline {
+  Linebreak
   Text(String)
   Link(content: List(Inline), destination: Destination)
   Image(content: List(Inline), destination: Destination)
@@ -103,16 +104,6 @@ fn drop_spaces(in: Chars) -> Chars {
   case in {
     [] -> []
     [" ", ..rest] -> drop_spaces(rest)
-    [c, ..rest] -> [c, ..rest]
-  }
-}
-
-fn drop_whitespace(in: Chars) -> Chars {
-  case in {
-    [] -> []
-    [" ", ..rest] -> drop_whitespace(rest)
-    ["\n", ..rest] -> drop_whitespace(rest)
-    ["\t", ..rest] -> drop_whitespace(rest)
     [c, ..rest] -> [c, ..rest]
   }
 }
@@ -718,6 +709,53 @@ fn parse_inline(in: Chars, text: String, acc: List(Inline)) -> List(Inline) {
     [] if text == "" -> list.reverse(acc)
     [] -> parse_inline([], "", [Text(text), ..acc])
 
+    // Escapes
+    ["\\", c, ..rest] -> {
+      case c {
+        "\n" -> {
+          parse_inline(rest, "", [Linebreak, Text(text), ..acc])
+        }
+        " " -> {
+          parse_inline(rest, text <> "&nbsp;", acc)
+        }
+        "!"
+        | "\""
+        | "#"
+        | "$"
+        | "%"
+        | "&"
+        | "'"
+        | "("
+        | ")"
+        | "*"
+        | "+"
+        | ","
+        | "-"
+        | "."
+        | "/"
+        | ":"
+        | ";"
+        | "<"
+        | "="
+        | ">"
+        | "?"
+        | "@"
+        | "["
+        | "\\"
+        | "]"
+        | "^"
+        | "_"
+        | "`"
+        | "{"
+        | "|"
+        | "}"
+        | "~" -> {
+          parse_inline(rest, text <> c, acc)
+        }
+        _ -> parse_inline(list.append([c], rest), text <> "\\", acc)
+      }
+    }
+
     // Emphasis and strong
     ["_", c, ..rest] if c != " " && c != "\t" && c != "\n" -> {
       let rest = [c, ..rest]
@@ -1023,6 +1061,9 @@ fn take_inline_text(inlines: List(Inline), acc: String) -> String {
           let acc = take_inline_text(nested, acc)
           take_inline_text(rest, acc)
         }
+        Linebreak -> {
+          take_inline_text(rest, acc)
+        }
       }
   }
 }
@@ -1182,7 +1223,6 @@ fn wrap_component_html(
 ) -> String {
   let data_props =
     props
-    // |> list.filter(fn(prop) { prop.0 != "inner_html" })
     |> list.map(fn(prop) {
       let #(k, v) = prop
       #("data-prop-" <> k, v)
@@ -1207,7 +1247,14 @@ fn inlines_to_html(html: String, inlines: List(Inline), refs: Refs) -> String {
 
 fn inline_to_html(html: String, inline: Inline, refs: Refs) -> String {
   case inline {
-    Text(text) -> html <> text
+    Linebreak -> {
+      html
+      |> open_tag("br", dict.new())
+      |> string.append("\n")
+    }
+    Text(text) -> {
+      html <> text
+    }
     Strong(inlines) -> {
       html
       |> open_tag("strong", dict.new())
@@ -1266,4 +1313,26 @@ fn attributes_to_html(html: String, attributes: Dict(String, String)) -> String 
   |> list.fold(html, fn(html, pair) {
     html <> " " <> escape_html(pair.0) <> "=\"" <> escape_html(pair.1) <> "\""
   })
+}
+
+fn safe_replace_char(key: String) -> String {
+  case key {
+    "&" -> "&amp;"
+    "<" -> "&lt;"
+    ">" -> "&gt;"
+    "\"" -> "&quot;"
+    "'" -> "&#39;"
+    "/" -> "&#x2F;"
+    "`" -> "&#x60;"
+    "=" -> "&#x3D;"
+    _ -> key
+  }
+}
+
+pub fn escape_html(unsafe: String) {
+  string.to_graphemes(unsafe)
+  |> list.fold(string_builder.new(), fn(sb, grapheme) {
+    string_builder.append(sb, safe_replace_char(grapheme))
+  })
+  |> string_builder.to_string
 }
