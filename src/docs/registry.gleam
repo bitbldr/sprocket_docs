@@ -1,5 +1,6 @@
 import docs/components/codeblock.{codeblock}
 import docs/components/counter.{counter}
+import docs/components/examples/analog_clock_example.{analog_clock_example}
 import docs/components/examples/button_example.{button_example}
 import docs/components/examples/clock_example.{clock_example}
 import docs/components/examples/counter_example.{counter_example}
@@ -112,6 +113,14 @@ pub fn render_component_html(
       attrs
       |> clock_example.props_from()
       |> component(clock_example, _)
+      |> render(html_renderer())
+      |> Ok
+    }
+
+    "analog_clock_example" -> {
+      attrs
+      |> analog_clock_example.props_from()
+      |> component(analog_clock_example, _)
       |> render(html_renderer())
       |> Ok
     }
@@ -241,6 +250,17 @@ pub fn component_router(
         request,
         clock_example,
         clock_example.props_from,
+        validate_csrf,
+        None,
+      )
+      |> Ok
+    }
+
+    "analog_clock_example" -> {
+      mist_sprocket.component(
+        request,
+        analog_clock_example,
+        analog_clock_example.props_from,
         validate_csrf,
         None,
       )

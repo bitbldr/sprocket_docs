@@ -66,7 +66,7 @@ pub fn clock(ctx: Context, props: ClockProps) {
       let cancel = interval(interval_duration, update_time)
       Some(fn() { cancel() })
     },
-    [dep(time), dep(time_unit)],
+    [dep(time_unit)],
   )
 
   let current_time = format_utc_timestamp(time, time_unit)
