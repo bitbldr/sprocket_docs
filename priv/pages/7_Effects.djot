@@ -7,7 +7,7 @@ dependencies specified change and can optionally specify a cleanup function.
 Let's take a look at an example of a clock component that uses an effect hook to start a timer and
 update the time every second.
 
-<.codeblock language="gleam">
+```gleam
 import gleam/io
 import gleam/erlang
 import gleam/option.{type Option, None, Some}
@@ -92,7 +92,7 @@ pub fn clock(ctx: Context, props: ClockProps) {
 
 @external(erlang, "print_time", "format_utc_timestamp")
 pub fn format_utc_timestamp(time: ErlangTimestamp, unit: erlang.TimeUnit) -> String
-</.codeblock>
+```
 
 We can also use a bit of erlang code here to handle formatting the timestamp, which demonstrates
 how simple it is to call some erlang functionality from Gleam using FFI. Using the `@external`
@@ -101,7 +101,7 @@ attribute, we can declare typed erlang interfaces in our Gleam code. In this cas
 timestamp and a time unit and returns a formatted string. The erlang code for this module is shown
 below.
 
-<.codeblock language="erlang">
+```erlang
 -module(print_time).
 -export([format_utc_timestamp/2]).
 
@@ -140,7 +140,7 @@ Formatted =
     end,
 
 erlang:iolist_to_binary(Formatted).
-</.codeblock>
+```
 
 <.clock_example />
 

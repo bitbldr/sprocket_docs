@@ -14,7 +14,7 @@ We're going to create a simple component called `example_button` that takes an o
 renders a button. This guide will use Tailwind CSS to style components, but you can use any classes
 or style framework you prefer. 
 
-<.codeblock language="gleam">
+```gleam
 import gleam/option.{None, Option, Some}
 import sprocket/context.{Context}
 import sprocket/component.{render}
@@ -41,7 +41,7 @@ pub fn example_button(ctx: Context, props: ExampleButtonProps) {
     ),
   )
 }
-</.codeblock>
+```
 
 As you can see, we've defined our component and it's prop types. The component takes context and
 props as arguments and renders a button. If no label is specified, the button will render with the
@@ -55,7 +55,7 @@ To use this new component in a parent view, we can simply pass it into the `comp
 along with the props we want to pass in. Let's take a look at an example of a page view component
 that uses the button component we defined above.
 
-<.codeblock language="gleam">
+```gleam
 pub type PageViewProps {
   PageViewProps
 }
@@ -74,7 +74,7 @@ pub fn page_view(ctx: Context, _props: PageViewProps) {
     ),
   )
 }
-</.codeblock>
+```
 
 Here is our rendered component:
 
@@ -83,12 +83,12 @@ Here is our rendered component:
 That's looking pretty good, now let's customize the label to our button. We can do that by passing
 in a label prop to our component.
 
-<.codeblock language="gleam">
+```gleam
 component(
   example_button,
   ExampleButtonProps(label: Some("Add to Cart")),
 ),
-</.codeblock>
+```
 
 <.button_example label="Add to Cart" />
 
@@ -104,7 +104,7 @@ label prop, we'll give more control to the parent component by introducing in a 
 `render_label` which we'll define as a function that takes the current state of the toggle and
 renders the content of the button.
 
-<.codeblock language="gleam">
+```gleam
 import sprocket/context.{Context, Element, dep}
 import sprocket/component.{render}
 import sprocket/html/elements.{button}
@@ -146,7 +146,7 @@ pub fn toggle_button(ctx: Context, props: ToggleButtonProps) {
     ),
   )
 }
-</.codeblock>
+```
 
 We've added a `state` hook to track the active state of our button and a `handler` hook to toggle
 the active state when the button is clicked. We've also added a `render_label` prop to our component
@@ -155,7 +155,7 @@ inactive.
 
 Now let's use our new component in a parent view.
 
-<.codeblock language="gleam">
+```gleam
 pub type PageViewProps {
   PageViewProps
 }
@@ -193,7 +193,7 @@ pub fn page_view(ctx: Context, _props: PageViewProps) {
     ),
   )
 }
-</.codeblock>
+```
 
 Here is our rendered stateful component:
 
@@ -208,7 +208,7 @@ from the render function (opposed to using a `component` wrapper as seen previou
 components). Let's look at an example of a stateless functional component that renders a product
 card.
 
-<.codeblock language="gleam">
+```gleam
 type Product {
   Product(
     id: Int,
@@ -285,13 +285,13 @@ pub fn product_card(product: Product, actions: Option(List(Element))) {
     ],
   )
 }
-</.codeblock>
+```
 
 To render this component we call it directly from the render function, passing any arguments the
 function takes, which in this case is a `Product` record and an optional list of actions, which we
 will leave as `None` for now.
 
-<.codeblock language="gleam">
+```gleam
 pub fn product(ctx: Context, _props: ProductProps) {
   let some_product = 
     Product(
@@ -313,7 +313,7 @@ pub fn product(ctx: Context, _props: ProductProps) {
     ),
   )
 }
-</.codeblock>
+```
 
 <.product_card_example id="2255" name="Bamboo Cutting Board" description="This sustainable bamboo cutting board is perfect for slicing and dicing vegetables, fruits, and meats. The natural antibacterial properties of bamboo ensure a hygienic cooking experience." img_url="https://images.pexels.com/photos/6489734/pexels-photo-6489734.jpeg" qty="12 x 8 inches" price="24.99" />
 
@@ -328,7 +328,7 @@ Components can be composed together to create rich user interfaces. Let's take a
 of a view that uses the `toggle_button` and the `product_card` components we defined earlier to
 create a simple product component.
 
-<.codeblock language="gleam">
+```gleam
 pub fn product(ctx: Context, _props: PageViewProps) {
   render(
     ctx,
@@ -374,7 +374,7 @@ pub fn product(ctx: Context, _props: PageViewProps) {
     ),
   )
 }
-</.codeblock>
+```
 
 <.stateful_product_card_example id="2259" name="Organic Aromatherapy Candle" description="Create a fresh ambiance with this organic aromatherapy candle. Hand-poured with pure essential oils, the fresh scent of citrus will brighten up your room." img_url="https://images.pexels.com/photos/7260249/pexels-photo-7260249.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" qty="1 candle" price="19.99" />
 
@@ -392,7 +392,7 @@ It's important to use the `keyed` function when rendering elements that may chan
 diffing algorithm can keep track of them and their states across renders. Let's take a look at an
 example of a component that renders a list of products, each with their own state.
 
-<.codeblock language="gleam">
+```gleam
 pub type ProductListProps {
   ProductListProps(products: List(Product))
 }
@@ -420,7 +420,7 @@ pub fn product_list(ctx: Context, props: ProductListProps) {
     ),
   )
 }
-</.codeblock>
+```
 
 <.product_list_example />
 

@@ -62,6 +62,8 @@ pub fn page(ctx: Context, props: PageProps) {
 
   use ctx, load_components_client, _ <- client(ctx, "LoadComponents", None)
 
+  use ctx, client_hljs, _dispatch_hljs <- client(ctx, "HighlightJS", None)
+
   render(
     ctx,
     div([id("app")], [
@@ -88,6 +90,7 @@ pub fn page(ctx: Context, props: PageProps) {
               class(
                 "prose dark:prose-invert prose-sm md:prose-base container mx-auto p-12",
               ),
+              client_hljs(),
             ],
             [
               case page_content {

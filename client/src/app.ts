@@ -2,6 +2,7 @@ import { connect } from "sprocket-js";
 import { DoubleClick } from "./hooks/double_click";
 import { DarkMode } from "./hooks/dark_mode";
 import { CodeBlock } from "./hooks/codeblock";
+import { HighlightJS } from "./hooks/hljs";
 import { ClickOutside } from "./hooks/click_outside";
 import { LoadComponents } from "./hooks/load_components";
 
@@ -11,6 +12,7 @@ const hooks = {
   DarkMode,
   ClickOutside,
   LoadComponents,
+  HighlightJS,
 };
 
 window.addEventListener("DOMContentLoaded", () => {

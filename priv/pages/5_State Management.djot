@@ -13,7 +13,7 @@ define a function that updates the state when the button is clicked.
 
 First we define our state struct and message types:
 
-<.codeblock language="gleam">
+```gleam
 type Model {
   Model(selection: Option(Int), options: List(HelloOption))
 }
@@ -22,13 +22,13 @@ type Msg {
   NoOp
   SayHello
 }
-</.codeblock>
+```
 
 Here we're storing a list of options and the index of the selected option in the state.
 
 Next we define our update function:
 
-<.codeblock language="gleam">
+```gleam
 fn update(model: Model, msg: Msg) -> Model {
   case msg {
     NoOp -> model
@@ -36,7 +36,7 @@ fn update(model: Model, msg: Msg) -> Model {
       Model(..model, selection: Some(int.random(0, list.length(model.options))))
   }
 }
-</.codeblock>
+```
 
 An update function takes the current state and a message and returns a new state.
 
@@ -45,13 +45,13 @@ An update function takes the current state and a message and returns a new state
 Let's declare a reducer hook in our component that initializes the state model and uses our update
 function:
 
-<.codeblock language="gleam">
+```gleam
 use ctx, Model(selection: selection, options: options), dispatch <- reducer(
   ctx,
   Model(selection: None, options: hello_options()),
   update,
 )
-</.codeblock>
+```
 
 You can see here we are provided with the current state of the reducer, which we can use in our
 component. Notice, we also are provided with a `dispatch` function from the reducer. The dispatch
@@ -67,19 +67,19 @@ when the button is clicked. It's important that we create an `IdentifiableHandle
 `handler` hook so that we can ensure the id of the handler function is consistent across renders,
 preventing a new id being created and sent to the client on every render.
 
-<.codeblock language="gleam">
+```gleam
 use ctx, say_hello <- handler(
   ctx,
   fn(_) { dispatch(SayHello) },
 )
-</.codeblock>
+```
 
 Putting it all together
 
 We now have all the pieces we need to create a more interesting button that updates whenever it is
 clicked. Let's put it all together:
 
-<.codeblock language="gleam">
+```gleam
 import gleam/int
 import gleam/list
 import gleam/option.{None, Option, Some}
@@ -185,7 +185,7 @@ fn hello_options() -> List(HelloOption) {
     #("Swahili", "Hujambo"),
   ]
 }
-</.codeblock>
+```
 
 <.hello_button_example />
 

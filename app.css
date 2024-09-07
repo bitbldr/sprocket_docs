@@ -15,4 +15,12 @@
   .alert-info {
     @apply text-blue-800 bg-blue-50 dark:bg-gray-800 dark:text-blue-300;
   }
+
+  .prose pre {
+    @apply bg-transparent p-0;
+  }
+
+  .prose pre code {
+    @apply rounded-lg;
+  }
 }

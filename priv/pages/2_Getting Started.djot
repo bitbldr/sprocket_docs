@@ -18,27 +18,27 @@ This method is the easiest way to get started.
 
 1. Clone the starter repository from GitHub
 
-<.codeblock language="bash">
+```bash
 # Clone the starter repository from GitHub
 git clone https://github.com/bitbldr/sprocket_starter.git
 
 # Change into the project directory
 cd sprocket_starter
-</.codeblock>
+```
 
 2. Install dependencies
 
-<.codeblock language="bash">
+```bash
 # Install dependencies
 yarn
-</.codeblock>
+```
 
 3. Start the server
 
-<.codeblock language="bash">
+```bash
 # Start the server
 yarn watch
-</.codeblock>
+```
 
 ### Method 2: Add to existing project
 
@@ -48,25 +48,25 @@ in doubt, refer to the [starter repository on GitHub](https://github.com/bitbldr
 
 1. Add Sprocket as a dependency
 
-<.codeblock language="bash">
+```bash
 # Add Sprocket as a dependency in your gleam.toml
 gleam add sprocket
-</.codeblock>
+```
 
 2. Add client-side dependencies with the following commands
 
-<.codeblock language="bash">
+```bash
 # Initialize a new NodeJS project, if you don't already have one
 npm init -y
 
 # Add sprocket-js as a client dependency
 npm install sprocket-js
-</.codeblock>
+```
 
 3. Sprocket needs to be initialized by the client in order to establish a persistent connection to
 the server. Add the following contents to your client entrypoint file (e.g. app.js)
 
-<.codeblock language="typescript">
+```typescript
 import { connect } from "sprocket-js";
 
 const hooks = {};
@@ -77,12 +77,12 @@ window.addEventListener("DOMContentLoaded", () => {
     ?.getAttribute("content");
 
   if (csrfToken) {
-    let livePath =
+    let connectPath =
       window.location.pathname === "/"
-        ? "/live"
+        ? "/connect"
         : window.location.pathname.split("/").concat("connect").join("/");
 
-    connect(livePath, {
+    connect(connectPath, {
       csrfToken,
       hooks,
       // // Optionally, specify an element to mount to
@@ -92,7 +92,7 @@ window.addEventListener("DOMContentLoaded", () => {
     console.error("Missing CSRF token");
   }
 });
-</.codeblock>
+```
 
 4. Tailwind configuration is a bit involved and is out of scope for this guide. If you wish to
 follow along with the same styles in this documentation, you can install tailwind by following the
