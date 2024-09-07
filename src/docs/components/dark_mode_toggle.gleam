@@ -97,7 +97,7 @@ pub fn dark_mode_toggle(ctx: Context, _props: DarkModeToggleProps) {
                   on_click(set_mode_auto),
                   classes([
                     Some(
-                      "p-2 rounded-l border border-gray-200 hover:bg-gray-100 active:bg-gray-200",
+                      "p-2 rounded-l border border-gray-200 hover:bg-gray-100 active:bg-gray-200 dark:border-gray-700 dark:hover:bg-gray-700 dark:active:bg-gray-600",
                     ),
                     Some(selector_class(Auto, mode)),
                   ]),
@@ -109,7 +109,7 @@ pub fn dark_mode_toggle(ctx: Context, _props: DarkModeToggleProps) {
                   on_click(set_mode_light),
                   classes([
                     Some(
-                      "p-2 border-t border-b border-gray-200 hover:bg-gray-100 active:bg-gray-200",
+                      "p-2 border-t border-b border-gray-200 hover:bg-gray-100 active:bg-gray-200 dark:border-gray-700 dark:hover:bg-gray-700 dark:active:bg-gray-600",
                     ),
                     Some(selector_class(Light, mode)),
                   ]),
@@ -121,7 +121,7 @@ pub fn dark_mode_toggle(ctx: Context, _props: DarkModeToggleProps) {
                   on_click(set_mode_dark),
                   classes([
                     Some(
-                      "p-2 rounded-r border border-gray-200 hover:bg-gray-100 active:bg-gray-200",
+                      "p-2 rounded-r border border-gray-200 hover:bg-gray-100 active:bg-gray-200 dark:border-gray-700 dark:hover:bg-gray-700 dark:active:bg-gray-600",
                     ),
                     Some(selector_class(Dark, mode)),
                   ]),
@@ -132,7 +132,12 @@ pub fn dark_mode_toggle(ctx: Context, _props: DarkModeToggleProps) {
           )
         False ->
           button(
-            [on_click(toggle_open), class("p-2 rounded border border-gray-200")],
+            [
+              on_click(toggle_open),
+              class(
+                "p-2 rounded border border-gray-100 bg-gray-100 hover:bg-gray-200 active:bg-gray-300 dark:border-gray-800 dark:bg-gray-800 dark:hover:bg-gray-700 dark:active:bg-gray-600",
+              ),
+            ],
             [icon(mode)],
           )
       },
@@ -150,7 +155,8 @@ fn icon(mode: DarkMode) -> Element {
 
 fn selector_class(mode: DarkMode, current_mode: DarkMode) -> String {
   case mode == current_mode {
-    True -> "text-gray-200 bg-gray-800 hover:bg-gray-800 active:bg-gray-800"
-    False -> "hover:bg-gray-100 active:bg-gray-200"
+    True -> "bg-gray-100 dark:bg-gray-700"
+    False ->
+      "hover:bg-gray-200 active:bg-gray-300 dark:hover:bg-gray-700 dark:active:bg-gray-600"
   }
 }
