@@ -54,7 +54,7 @@ pub fn clock(ctx: Context, props: ClockProps) {
     time_unit
     |> option.unwrap(erlang.Second)
 
-  // Example effect that has a cleanup function and runs whenever `time` or `time_unit` changes
+  // Example effect that has a cleanup function and runs whenever `time_unit` changes
   use ctx <- effect(
     ctx,
     fn() {
