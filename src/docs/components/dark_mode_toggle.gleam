@@ -4,8 +4,9 @@ import gleam/option.{Some}
 import sprocket/component.{render}
 import sprocket/context.{type Context, type Element} as _
 import sprocket/hooks.{client, handler, provider, state}
-import sprocket/html/attributes.{class, classes, on_click}
+import sprocket/html/attributes.{class, classes}
 import sprocket/html/elements.{button, div, i}
+import sprocket/html/events
 
 pub type DarkModeToggleProps {
   DarkModeToggleProps
@@ -94,7 +95,7 @@ pub fn dark_mode_toggle(ctx: Context, _props: DarkModeToggleProps) {
             [
               button(
                 [
-                  on_click(set_mode_auto),
+                  events.on_click(set_mode_auto),
                   classes([
                     Some(
                       "p-2 rounded-l border border-gray-200 hover:bg-gray-100 active:bg-gray-200 dark:border-gray-700 dark:hover:bg-gray-700 dark:active:bg-gray-600",
@@ -106,7 +107,7 @@ pub fn dark_mode_toggle(ctx: Context, _props: DarkModeToggleProps) {
               ),
               button(
                 [
-                  on_click(set_mode_light),
+                  events.on_click(set_mode_light),
                   classes([
                     Some(
                       "p-2 border-t border-b border-gray-200 hover:bg-gray-100 active:bg-gray-200 dark:border-gray-700 dark:hover:bg-gray-700 dark:active:bg-gray-600",
@@ -118,7 +119,7 @@ pub fn dark_mode_toggle(ctx: Context, _props: DarkModeToggleProps) {
               ),
               button(
                 [
-                  on_click(set_mode_dark),
+                  events.on_click(set_mode_dark),
                   classes([
                     Some(
                       "p-2 rounded-r border border-gray-200 hover:bg-gray-100 active:bg-gray-200 dark:border-gray-700 dark:hover:bg-gray-700 dark:active:bg-gray-600",
@@ -133,7 +134,7 @@ pub fn dark_mode_toggle(ctx: Context, _props: DarkModeToggleProps) {
         False ->
           button(
             [
-              on_click(toggle_open),
+              events.on_click(toggle_open),
               class(
                 "p-2 rounded border border-gray-100 bg-gray-100 hover:bg-gray-200 active:bg-gray-300 dark:border-gray-800 dark:bg-gray-800 dark:hover:bg-gray-700 dark:active:bg-gray-600",
               ),

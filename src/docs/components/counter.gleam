@@ -7,8 +7,9 @@ import gleam/string
 import sprocket/component.{render}
 import sprocket/context.{type Context, dep}
 import sprocket/hooks.{effect, handler, reducer}
-import sprocket/html/attributes.{class, on_click}
+import sprocket/html/attributes.{class}
 import sprocket/html/elements.{button, div, span, text}
+import sprocket/html/events
 
 type Model =
   Int
@@ -17,10 +18,14 @@ type Msg {
   UpdateCounter(Int)
 }
 
-fn update(_model: Model, msg: Msg) -> Model {
+fn init(initial: Int) {
+  #(initial, [])
+}
+
+fn update(_model: Model, msg: Msg) {
   case msg {
     UpdateCounter(count) -> {
-      count
+      #(count, [])
     }
   }
 }
@@ -33,7 +38,11 @@ pub fn counter(ctx: Context, props: CounterProps) {
   let CounterProps(initial) = props
 
   // Define a reducer to handle events and update the state
-  use ctx, count, dispatch <- reducer(ctx, option.unwrap(initial, 0), update)
+  use ctx, count, dispatch <- reducer(
+    ctx,
+    init(option.unwrap(initial, 0)),
+    update,
+  )
 
   // Example effect that runs every time count changes
   use ctx <- effect(
@@ -61,7 +70,7 @@ pub fn counter(ctx: Context, props: CounterProps) {
           class(
             "p-1 px-2 border dark:border-gray-500 rounded-l bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 active:bg-gray-300 dark:active:bg-gray-600",
           ),
-          on_click(decrement),
+          events.on_click(decrement),
         ],
         [text("-")],
       ),
@@ -78,7 +87,7 @@ pub fn counter(ctx: Context, props: CounterProps) {
           class(
             "p-1 px-2 border dark:border-gray-500 rounded-r bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 active:bg-gray-300 dark:active:bg-gray-600",
           ),
-          on_click(increment),
+          events.on_click(increment),
         ],
         [text("+")],
       ),

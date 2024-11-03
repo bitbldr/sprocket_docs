@@ -26,14 +26,14 @@ type Msg {
   SetMode(mode: DarkMode)
 }
 
-fn update(_model: Model, msg: Msg) -> Model {
+fn update(_model: Model, msg: Msg) {
   case msg {
-    SetMode(mode) -> Model(mode: mode)
+    SetMode(mode) -> #(Model(mode: mode), [])
   }
 }
 
-fn initial() -> Model {
-  Model(Auto)
+fn init() {
+  #(Model(Auto), [])
 }
 
 pub type PageProps {
@@ -48,7 +48,7 @@ pub fn page(ctx: Context, props: PageProps) {
 
   let page_content = page_server.get_page(app.page_server, current_page_name)
 
-  use ctx, Model(mode), dispatch <- reducer(ctx, initial(), update)
+  use ctx, Model(mode), dispatch <- reducer(ctx, init(), update)
 
   use ctx, pages <- memo(
     ctx,

@@ -18,16 +18,16 @@ type Msg {
   UpdateTime(ErlangTimestamp)
 }
 
-fn update(model: Model, msg: Msg) -> Model {
+fn update(model: Model, msg: Msg) {
   case msg {
     UpdateTime(time) -> {
-      Model(..model, time: time)
+      #(Model(..model, time: time), [])
     }
   }
 }
 
-fn initial() -> Model {
-  Model(time: erlang.erlang_timestamp(), timezone: "UTC")
+fn init() {
+  #(Model(time: erlang.erlang_timestamp(), timezone: "UTC"), [])
 }
 
 pub type ClockProps {
@@ -38,7 +38,7 @@ pub fn clock(ctx: Context, props: ClockProps) {
   let ClockProps(label, time_unit) = props
 
   // Define a reducer to handle events and update the state
-  use ctx, Model(time: time, ..), dispatch <- reducer(ctx, initial(), update)
+  use ctx, Model(time: time, ..), dispatch <- reducer(ctx, init(), update)
 
   // Example effect with an empty list of dependencies, runs once on mount
   use ctx <- effect(

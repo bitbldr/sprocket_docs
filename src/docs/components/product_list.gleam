@@ -5,10 +5,11 @@ import gleam/option.{type Option, None, Some}
 import sprocket/component.{component, render}
 import sprocket/context.{type Context, type Element}
 import sprocket/hooks.{handler, reducer, state}
-import sprocket/html/attributes.{alt, class, on_click, role, src}
+import sprocket/html/attributes.{alt, class, role, src}
 import sprocket/html/elements.{
   button, button_text, div, div_text, h5_text, i, img, keyed, li, text, ul,
 }
+import sprocket/html/events
 
 pub type Product {
   Product(
@@ -116,7 +117,7 @@ pub fn product(ctx: Context, props: ProductProps) {
             class(
               "text-blue-700 hover:text-blue-800 hover:underline focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:text-blue-600 dark:hover:text-blue-700 dark:focus:ring-blue-800 mr-2",
             ),
-            on_click(on_hide),
+            events.on_click(on_hide),
           ],
           "Not Interested",
         ),
@@ -127,7 +128,7 @@ pub fn product(ctx: Context, props: ProductProps) {
                 class(
                   "text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800",
                 ),
-                on_click(toggle_in_cart),
+                events.on_click(toggle_in_cart),
               ],
               [i([class("fa-solid fa-check mr-2")], []), text("Added to Cart!")],
             ),
@@ -138,7 +139,7 @@ pub fn product(ctx: Context, props: ProductProps) {
                 class(
                   "text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800",
                 ),
-                on_click(toggle_in_cart),
+                events.on_click(toggle_in_cart),
               ],
               [
                 i([class("fa-solid fa-cart-shopping mr-2")], []),
@@ -164,14 +165,14 @@ type Msg {
 
 fn update(model: Model, msg: Msg) {
   case msg {
-    NoOp -> model
-    Hide(id) -> Model(hidden: [id, ..model.hidden])
-    Reset -> Model(hidden: [])
+    NoOp -> #(model, [])
+    Hide(id) -> #(Model(hidden: [id, ..model.hidden]), [])
+    Reset -> #(Model(hidden: []), [])
   }
 }
 
-fn initial() {
-  Model(hidden: [])
+fn init() {
+  #(Model(hidden: []), [])
 }
 
 pub type ProductListProps {
@@ -181,7 +182,7 @@ pub type ProductListProps {
 pub fn product_list(ctx: Context, props: ProductListProps) {
   let ProductListProps(products: products) = props
 
-  use ctx, Model(hidden), dispatch <- reducer(ctx, initial(), update)
+  use ctx, Model(hidden), dispatch <- reducer(ctx, init(), update)
 
   use ctx, reset <- handler(ctx, fn(_) { dispatch(Reset) })
 
@@ -217,7 +218,7 @@ pub fn product_list(ctx: Context, props: ProductListProps) {
               class(
                 "mt-5 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800",
               ),
-              on_click(reset),
+              events.on_click(reset),
             ],
             [
               text("Show Hidden ("),

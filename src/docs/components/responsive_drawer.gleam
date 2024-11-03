@@ -2,8 +2,9 @@ import gleam/option.{Some}
 import sprocket/component.{render}
 import sprocket/context.{type Context, type Element}
 import sprocket/hooks.{handler, reducer}
-import sprocket/html/attributes.{class, classes, on_click}
+import sprocket/html/attributes.{class, classes}
 import sprocket/html/elements.{aside, button, div, i}
+import sprocket/html/events
 
 type Model {
   Model(show: Bool)
@@ -16,17 +17,17 @@ type Msg {
   Toggle
 }
 
-fn update(model: Model, msg: Msg) -> Model {
+fn update(model: Model, msg: Msg) {
   case msg {
-    NoOp -> model
-    Show -> Model(show: True)
-    Hide -> Model(show: False)
-    Toggle -> Model(show: !model.show)
+    NoOp -> #(model, [])
+    Show -> #(Model(show: True), [])
+    Hide -> #(Model(show: False), [])
+    Toggle -> #(Model(show: !model.show), [])
   }
 }
 
-fn initial() -> Model {
-  Model(show: False)
+fn init() {
+  #(Model(show: False), [])
 }
 
 pub type ResponsiveDrawerProps {
@@ -36,7 +37,7 @@ pub type ResponsiveDrawerProps {
 pub fn responsive_drawer(ctx: Context, props) {
   let ResponsiveDrawerProps(drawer: drawer, content: content) = props
 
-  use ctx, Model(show: show), dispatch <- reducer(ctx, initial(), update)
+  use ctx, Model(show: show), dispatch <- reducer(ctx, init(), update)
 
   use ctx, toggle_drawer <- handler(ctx, fn(_) { dispatch(Toggle) })
 
@@ -46,7 +47,7 @@ pub fn responsive_drawer(ctx: Context, props) {
     div(
       [
         class("fixed bg-white/75 dark:bg-black/75 inset-0 z-30"),
-        on_click(hide_drawer),
+        events.on_click(hide_drawer),
       ],
       [],
     )
@@ -80,7 +81,7 @@ pub fn responsive_drawer(ctx: Context, props) {
       div([class("w-0")], [
         button(
           [
-            on_click(toggle_drawer),
+            events.on_click(toggle_drawer),
             class(
               "
                     sticky

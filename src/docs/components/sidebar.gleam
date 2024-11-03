@@ -19,15 +19,15 @@ type Msg {
   SetSearchFilter(Option(String))
 }
 
-fn update(model: Model, msg: Msg) -> Model {
+fn update(model: Model, msg: Msg) {
   case msg {
-    NoOp -> model
-    SetSearchFilter(search_filter) -> Model(search_filter: search_filter)
+    NoOp -> #(model, [])
+    SetSearchFilter(search_filter) -> #(Model(search_filter: search_filter), [])
   }
 }
 
-fn initial() -> Model {
-  Model(search_filter: None)
+fn init() {
+  #(Model(search_filter: None), [])
 }
 
 pub type SidebarProps {
@@ -39,7 +39,7 @@ pub fn sidebar(ctx: Context, props) {
 
   use ctx, Model(search_filter: search_filter), dispatch <- reducer(
     ctx,
-    initial(),
+    init(),
     update,
   )
 

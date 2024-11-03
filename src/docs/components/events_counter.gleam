@@ -3,8 +3,9 @@ import gleam/option.{type Option, None, Some}
 import sprocket/component.{component, render}
 import sprocket/context.{type Context}
 import sprocket/hooks.{client, handler, reducer}
-import sprocket/html/attributes.{class, classes, on_click}
+import sprocket/html/attributes.{class, classes}
 import sprocket/html/elements.{button_text, div, span, text}
+import sprocket/html/events
 
 type Model =
   Int
@@ -14,12 +15,16 @@ type Msg {
   ResetCounter
 }
 
-fn update(_model: Model, msg: Msg) -> Model {
+fn init(initial: Int) {
+  #(initial, [])
+}
+
+fn update(_model: Model, msg: Msg) {
   case msg {
     UpdateCounter(count) -> {
-      count
+      #(count, [])
     }
-    ResetCounter -> 0
+    ResetCounter -> #(0, [])
   }
 }
 
@@ -31,7 +36,7 @@ pub fn counter(ctx: Context, props: CounterProps) {
   let CounterProps(initial: initial, enable_reset: enable_reset) = props
 
   // Define a reducer to handle events and update the state
-  use ctx, count, dispatch <- reducer(ctx, initial, update)
+  use ctx, count, dispatch <- reducer(ctx, init(initial), update)
 
   render(
     ctx,
@@ -81,7 +86,7 @@ pub fn button(ctx: Context, props: ButtonProps) {
     ctx,
     button_text(
       [
-        on_click(handle_click),
+        events.on_click(handle_click),
         classes([
           class,
           Some(

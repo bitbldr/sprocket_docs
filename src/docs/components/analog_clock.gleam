@@ -3,7 +3,7 @@ import gleam/float
 import gleam/int
 import gleam/option.{Some}
 import sprocket/component.{render}
-import sprocket/context.{type Context, dep}
+import sprocket/context.{type Context}
 import sprocket/hooks.{effect, reducer}
 import sprocket/html/attributes.{xmlns, xmlns_xlink}
 import sprocket/html/svg/attributes.{
@@ -21,16 +21,16 @@ type Msg {
   UpdateTime(Int)
 }
 
-fn update(model: Model, msg: Msg) -> Model {
+fn update(model: Model, msg: Msg) {
   case msg {
     UpdateTime(time) -> {
-      Model(..model, time: time)
+      #(Model(..model, time: time), [])
     }
   }
 }
 
-fn initial() -> Model {
-  Model(time: erlang.system_time(erlang.Second), timezone: "UTC")
+fn init() {
+  #(Model(time: erlang.system_time(erlang.Second), timezone: "UTC"), [])
 }
 
 pub type AnalogClockProps {
@@ -41,7 +41,7 @@ pub fn analog_clock(ctx: Context, _props: AnalogClockProps) {
   // let AnalogClockProps() = props
 
   // Define a reducer to handle events and update the state
-  use ctx, Model(time: time, ..), dispatch <- reducer(ctx, initial(), update)
+  use ctx, Model(time: time, ..), dispatch <- reducer(ctx, init(), update)
 
   // Example effect that runs whenever the `time` variable changes and has a cleanup function
   use ctx <- effect(

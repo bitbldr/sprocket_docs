@@ -1,9 +1,10 @@
-import gleam/option.{Some}
+import gleam/option.{None, Some}
 import sprocket/component.{render}
-import sprocket/context.{type Context, CallbackString}
+import sprocket/context.{type Context}
 import sprocket/hooks.{handler, reducer}
-import sprocket/html/attributes.{class, input_type, on_input, placeholder, value}
+import sprocket/html/attributes.{class, input_type, placeholder, value}
 import sprocket/html/elements.{input}
+import sprocket/html/events
 
 type Model {
   Model(query: String)
@@ -14,15 +15,15 @@ type Msg {
   SetQuery(query: String)
 }
 
-fn update(model: Model, msg: Msg) -> Model {
+fn update(model: Model, msg: Msg) {
   case msg {
-    NoOp -> model
-    SetQuery(query) -> Model(query: query)
+    NoOp -> #(model, [])
+    SetQuery(query) -> #(Model(query: query), [])
   }
 }
 
-fn initial() -> Model {
-  Model(query: "")
+fn init() {
+  #(Model(query: ""), [])
 }
 
 pub type SearchBarProps {
@@ -33,13 +34,16 @@ pub fn search_bar(ctx: Context, props) {
   let SearchBarProps(on_search: on_search) = props
 
   // Define a reducer to handle events and update the state
-  use ctx, Model(query: query), dispatch <- reducer(ctx, initial(), update)
+  use ctx, Model(query: query), dispatch <- reducer(ctx, init(), update)
 
-  use ctx, on_input_query <- handler(ctx, fn(value) {
-    let assert Some(CallbackString(value)) = value
-
-    on_search(value)
-    dispatch(SetQuery(value))
+  use ctx, on_input_query <- handler(ctx, fn(e) {
+    case events.decode_target_value(e) {
+      Ok(value) -> {
+        on_search(value)
+        dispatch(SetQuery(value))
+      }
+      Error(_) -> Nil
+    }
   })
 
   render(
@@ -51,7 +55,7 @@ pub fn search_bar(ctx: Context, props) {
       ),
       placeholder("Search..."),
       value(query),
-      on_input(on_input_query),
+      events.on_input(on_input_query),
     ]),
   )
 }

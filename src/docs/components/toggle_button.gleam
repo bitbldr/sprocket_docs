@@ -1,8 +1,9 @@
 import sprocket/component.{render}
 import sprocket/context.{type Context, type Element}
 import sprocket/hooks.{handler, state}
-import sprocket/html/attributes.{class, on_click}
+import sprocket/html/attributes.{class}
 import sprocket/html/elements.{button}
+import sprocket/html/events
 
 pub type ToggleButtonProps {
   ToggleButtonProps(render_label: fn(Bool) -> Element)
@@ -30,7 +31,7 @@ pub fn toggle_button(ctx: Context, props: ToggleButtonProps) {
           False ->
             "rounded-lg text-white px-3 py-2 bg-blue-500 hover:bg-blue-600 active:bg-blue-700"
         }),
-        on_click(toggle_active),
+        events.on_click(toggle_active),
       ],
       [render_label(is_active)],
     ),
