@@ -8,7 +8,6 @@ description = "Documentation for Sprocket, a library for building live views and
 licenses = ["MIT"]
 repository = { type = "github", user = "bitbldr", repo = "sprocket_docs" }
 links = [{ title = "Website", href = "https://sprocket.live" }]
-gleam = ">= 1.0.0"
 
 # Modules that should be considered "internal" and will not be included in
 # generated documentation. Note this currently only affects documentation;
