@@ -1,5 +1,6 @@
 FROM ghcr.io/gleam-lang/gleam:v1.5.1-erlang-alpine as builder
 
+RUN apk update && apk add --no-cache build-base python3
 RUN apk add --update nodejs npm elixir
 
 RUN npm install -g yarn typescript ts-node
