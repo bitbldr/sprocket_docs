@@ -1,3 +1,4 @@
+/// Returns the element at the given index in the list
 pub fn element_at(list: List(a), index: Int, start curr: Int) -> Result(a, Nil) {
   case list {
     [] -> Error(Nil)

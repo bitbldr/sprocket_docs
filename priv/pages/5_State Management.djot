@@ -2,53 +2,122 @@
 
 State is managed using stateful components and hooks. We previously saw how to create a simple state
 variable using the `state` hook. Here we will take a look at using the `reducer` hook to model more
-complex state and transformations. We'll also utilize the `handler` hook to help us dispatch events to
-the reducer.
+complex state transformations and side effects. We'll also utilize the `handler` hook to help us
+dispatch events to the reducer.
 
-## Reducer Functions
+## The Update Function
 
-Reducer functions are functions that take a state and message and return a new state. They are used
-to update state in response to events. Let's create a `hello_button` component as an example, we can
+The `update` function is the core of the `reducer` hook. It allows you to model complex state
+transformations and side effects in a functional way. The `update` function is called whenever a
+message is dispatched to the reducer. This function is responsible for updating the state and
+specifying any side effect commands to be executed.
+
+The `update` function has the following signature:
+
+```gleam
+fn update(model: Model, msg: Msg) -> #(Model, List(Cmd(Msg)))
+```
+
+The `update` function takes the current state and a message and returns a new state and a list of
+commands to be executed. `Model` is the state model type and `Msg` is the message type.
+
+Let's create a `greeting_button` component as an example, we can
 define a function that updates the state when the button is clicked.
 
-First we define our state struct and message types:
+First we define our state model and message types:
 
 ```gleam
 type Model {
-  Model(selection: Option(Int), options: List(HelloOption))
+  Model(selection: Option(GreetingOption), options: List(GreetingOption))
 }
 
 type Msg {
   NoOp
-  SayHello
+  NextGreeting
+  Greet(GreetingOption)
+  Reset
 }
 ```
 
-Here we're storing a list of options and the index of the selected option in the state.
+Here we're storing a list of options and the currently selected option in the state. When we
+dispatch a `NextGreeting` message, we'll randomly select a new option from the list using a
+command called `new_random_selection`.
 
-Next we define our update function:
+Let's define the `update` function:
 
 ```gleam
-fn update(model: Model, msg: Msg) -> Model {
+fn update(model: Model, msg: Msg) {
   case msg {
-    NoOp -> model
-    SayHello ->
-      Model(..model, selection: Some(int.random(0, list.length(model.options))))
+    NoOp -> #(model, [])
+    NextGreeting -> #(model, [new_random_selection(model.options)])
+    Greet(selection) -> {
+      let options = model.options |> list.filter(fn(o) { o != selection })
+
+      #(Model(selection: Some(selection), options:), [])
+    }
+    Reset -> init(greetings())
   }
 }
 ```
 
-An update function takes the current state and a message and returns a new state.
+The `update` function takes the current state and a message and returns a new state and a list of
+commands to be executed. In this case, we're handling four different messages: `NoOp`,
+`NextGreeting`, `Greet`, and `Reset`.
+
+The `NoOp` message does nothing and is just here for illustrative purposes.
+
+The `NextGreeting` message dispatches a new random selection
+
+The `Greet` message updates the state to reflect the new selection by setting the selected option to
+the new selection and removing it from the list of options.
+
+The `Reset` message resets the state to the initial state. It uses the same `init` function that
+will be used to initialize the state when the component is mounted.
+
+Let's define the `init` function:
+
+```gleam
+fn init(options: List(GreetingOption)) -> #(Model, List(Cmd(Msg))) {
+  #(Model(selection: None, options:), [])
+}
+```
+
+The `init` function initializes the state by returning the initial model and, in this case, an
+empty list of commands. However, commands can be useful here to perform any side effects required
+to bootstrap the state when the component is mounted. 
+
+Finally, let's define the `new_random_selection` command function:
+
+```gleam
+fn new_random_selection(options) -> Cmd(Msg) {
+  fn(dispatch) {
+    let selection =
+      options
+      |> list.length()
+      |> int.random()
+      |> element_at(options, _, 0)
+
+    case selection {
+      Ok(selection) -> dispatch(Greet(selection))
+      Error(_) -> Nil
+    }
+  }
+}
+```
+
+The `new_random_selection` function takes a list of options and returns a command that will dispatch
+a `Greet` message with a randomly selected option from the list. If the selection fails, it will
+simply return `Nil`.
 
 ## Introducing the Reducer Hook
 
-Let's declare a reducer hook in our component that initializes the state model and uses our update
+Let's declare a reducer hook in our component that initializes the state model and uses our `update`
 function:
 
 ```gleam
 use ctx, Model(selection: selection, options: options), dispatch <- reducer(
   ctx,
-  Model(selection: None, options: hello_options()),
+  init(greetings()),
   update,
 )
 ```
@@ -58,110 +127,15 @@ component. Notice, we also are provided with a `dispatch` function from the redu
 function is used to send messages to the reducer which will update the state and trigger a
 re-render.
 
-The second argument, `Model(selection: None, options: hello_options())`, defines an initial state for
-the reducer using the predefined set options from `hello_options` which is used to initialize the
-state of the reducer when the component is mounted.
-
-We need one more thing to complete our component. We need to define a function that will be called
-when the button is clicked. It's important that we create an `IdentifiableHandler` by using the
-`handler` hook so that we can ensure the id of the handler function is consistent across renders,
-preventing a new id being created and sent to the client on every render.
+The second argument, `init(greetings())`, initializes the state of the reducer. The `init`
+function is called when the component is mounted. In this case, we're initializing the state with a
+list of options using the `greetings` function.
 
 ```gleam
-use ctx, say_hello <- handler(
-  ctx,
-  fn(_) { dispatch(SayHello) },
-)
-```
-
-Putting it all together
-
-We now have all the pieces we need to create a more interesting button that updates whenever it is
-clicked. Let's put it all together:
-
-```gleam
-import gleam/int
-import gleam/list
-import gleam/option.{None, Option, Some}
-import sprocket/context.{Context}
-import sprocket/component.{render}
-import sprocket/hooks.{State, reducer, handler}
-import sprocket/html/elements.{button, div, span, text}
-import sprocket/html/attributes.{class, on_click}
-
-type Model {
-  Model(selection: Option(Int), options: List(HelloOption))
-}
-
-type Msg {
-  NoOp
-  SayHello
-}
-
-fn update(model: Model, msg: Msg) -> Model {
-  case msg {
-    NoOp -> model
-    SayHello ->
-      Model(..model, selection: Some(int.random(list.length(model.options))))
-  }
-}
-
-pub type HelloButtonProps {
-  HelloButtonProps
-}
-
-pub fn hello_button(ctx: Context, _props: HelloButtonProps) {
-  use ctx, Model(selection: selection, options: options), dispatch <- reducer(
-    ctx,
-    Model(selection: None, options: hello_options()),
-    update,
-  )
-
-  use ctx, say_hello <- handler(
-    ctx,
-    fn(_) { dispatch(SayHello) },
-  )
-
-  // find the selected option using the selection index and list of options
-  let hello =
-    selection
-    |> option.map(fn(i) {
-      list.at(options, i)
-      |> option.from_result()
-    })
-    |> option.flatten()
-
-  render(
-    ctx,
-    div(
-      [],
-      [
-        button(
-          [
-            class("p-2 bg-blue-500 hover:bg-blue-600 active:bg-blue-700 text-white rounded"),
-            on_click(say_hello),
-          ],
-          [text("Say Hello!")],
-        ),
-        ..case hello {
-          None -> []
-          Some(hello) -> [
-            span([class("ml-2")], [text(hello.1)]),
-            span(
-              [class("ml-2 text-gray-400 bold")],
-              [text(hello.0)],
-            ),
-          ]
-        }
-      ],
-    ),
-  )
-}
-
-type HelloOption =
+type GreetingOption =
   #(String, String)
 
-fn hello_options() -> List(HelloOption) {
+fn greetings() -> List(GreetingOption) {
   [
     #("English", "Hello"),
     #("Spanish", "Hola"),
@@ -185,14 +159,187 @@ fn hello_options() -> List(HelloOption) {
     #("Swahili", "Hujambo"),
   ]
 }
+
 ```
 
-<.hello_button_example />
+## Introducing the Handler Hook
+
+We need one more thing to complete our component. We need to define a function that will be called
+when the button is clicked. It's important that we create an `IdentifiableHandler` by using the
+`handler` hook so that we can ensure the id of the handler function is consistent across renders,
+preventing a new id being created and sent to the client on every render.
+
+Let's define both the `say_hello` and `reset` handlers:
+
+```gleam
+  use ctx, say_hello <- handler(ctx, fn(_) { dispatch(NextGreeting) })
+  use ctx, reset <- handler(ctx, fn(_) { dispatch(Reset) })
+```
+
+## Putting it all together
+
+We now have all the pieces we need to create a more interesting button that updates whenever it is
+clicked. Let's put it all together:
+
+```gleam
+import gleam/int
+import gleam/list
+import gleam/option.{type Option, None, Some}
+import sprocket/component.{render}
+import sprocket/context.{type Context}
+import sprocket/hooks.{type Cmd, handler, reducer}
+import sprocket/html/attributes.{class}
+import sprocket/html/elements.{button, div, keyed, span, text}
+import sprocket/html/events
+
+type Model {
+  Model(selection: Option(GreetingOption), options: List(GreetingOption))
+}
+
+type Msg {
+  NoOp
+  NextGreeting
+  Greet(GreetingOption)
+  Reset
+}
+
+fn init(options: List(GreetingOption)) -> #(Model, List(Cmd(Msg))) {
+  #(Model(selection: None, options:), [])
+}
+
+fn update(model: Model, msg: Msg) {
+  case msg {
+    NoOp -> #(model, [])
+    NextGreeting -> #(model, [new_random_selection(model.options)])
+    Greet(selection) -> {
+      let options = model.options |> list.filter(fn(o) { o != selection })
+
+      #(Model(selection: Some(selection), options:), [])
+    }
+    Reset -> init(greetings())
+  }
+}
+
+fn new_random_selection(options) -> Cmd(Msg) {
+  fn(dispatch) {
+    let selection =
+      options
+      |> list.length()
+      |> int.random()
+      |> element_at(options, _, 0)
+
+    case selection {
+      Ok(selection) -> dispatch(Greet(selection))
+      Error(_) -> Nil
+    }
+  }
+}
+
+pub type GreetingButtonProps {
+  GreetingButtonProps
+}
+
+pub fn greeting_button(ctx: Context, _props: GreetingButtonProps) {
+  use ctx, Model(selection:, options:), dispatch <- reducer(
+    ctx,
+    init(greetings()),
+    update,
+  )
+
+  use ctx, say_hello <- handler(ctx, fn(_) { dispatch(NextGreeting) })
+  use ctx, reset <- handler(ctx, fn(_) { dispatch(Reset) })
+
+  render(
+    ctx,
+    div([], [
+      case options {
+        [] ->
+          keyed(
+            "reset",
+            button(
+              [
+                class(
+                  "p-2 text-blue-500 hover:text-blue-600 hover:underline active:text-blue-700",
+                ),
+                events.on_click(reset),
+              ],
+              [text("Reset")],
+            ),
+          )
+        _ ->
+          keyed(
+            "say_hello",
+            button(
+              [
+                class(
+                  "p-2 bg-blue-500 hover:bg-blue-600 active:bg-blue-700 text-white rounded",
+                ),
+                events.on_click(say_hello),
+              ],
+              [text("Say Hello!")],
+            ),
+          )
+      },
+      ..case selection {
+        None -> []
+        Some(hello) -> [
+          span([class("ml-2")], [text(hello.1)]),
+          span([class("ml-2 text-gray-400 bold")], [text(hello.0)]),
+        ]
+      }
+    ]),
+  )
+}
+
+type GreetingOption =
+  #(String, String)
+
+fn greetings() -> List(GreetingOption) {
+  [
+    #("English", "Hello"),
+    #("Spanish", "Hola"),
+    #("French", "Bonjour"),
+    #("German", "Hallo"),
+    #("Italian", "Ciao"),
+    #("Portuguese", "Olá"),
+    #("Hawaiian", "Aloha"),
+    #("Chinese (Mandarin)", "你好,(Nǐ hǎo)"),
+    #("Japanese", "こんにち, (Konnichiwa)"),
+    #("Korean", "안녕하세, (Annyeonghaseyo)"),
+    #("Arabic", "مرحب, (Marhaba)"),
+    #("Hindi", "नमस्त, (Namaste)"),
+    #("Turkish", "Merhaba"),
+    #("Dutch", "Hallo"),
+    #("Swedish", "Hej"),
+    #("Norwegian", "Hei"),
+    #("Danish", "Hej"),
+    #("Greek", "Γεια σας,(Yia sas)"),
+    #("Polish", "Cześć"),
+    #("Swahili", "Hujambo"),
+  ]
+}
+
+/// Returns the element at the given index in the list
+fn element_at(list: List(a), index: Int, start curr: Int) -> Result(a, Nil) {
+  case list {
+    [] -> Error(Nil)
+    [el, ..rest] -> {
+      case curr == index {
+        True -> Ok(el)
+        False -> element_at(rest, index, curr + 1)
+      }
+    }
+  }
+}
+
+```
+
+<.greeting_button_example />
 
 We now have a functional button that says hello in a different language when it's clicked.
 
 Remember, all of these state changes are happening on the server. Events are being passed from the
-client to the server, the latest view is rendered and a minimal diff update is sent back to the
+client to the server, the latest view is rendered and a minimal diff is sent back to the
 client a which is then patched into the DOM!
 
 These are just two of the hooks that are available in Sprocket. There are many more to explore!

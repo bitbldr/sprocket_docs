@@ -4,7 +4,7 @@ import docs/components/examples/analog_clock_example.{analog_clock_example}
 import docs/components/examples/button_example.{button_example}
 import docs/components/examples/clock_example.{clock_example}
 import docs/components/examples/counter_example.{counter_example}
-import docs/components/examples/hello_button_example.{hello_button_example}
+import docs/components/examples/greeting_button_example.{greeting_button_example}
 import docs/components/examples/product_card_example.{product_card_example}
 import docs/components/examples/product_list_example.{product_list_example}
 import docs/components/examples/props_and_events_counter_example.{
@@ -101,10 +101,10 @@ pub fn render_component_html(
       |> Ok
     }
 
-    "hello_button_example" -> {
+    "greeting_button_example" -> {
       attrs
-      |> hello_button_example.props_from()
-      |> component(hello_button_example, _)
+      |> greeting_button_example.props_from()
+      |> component(greeting_button_example, _)
       |> render(html_renderer())
       |> Ok
     }
@@ -234,11 +234,11 @@ pub fn component_router(
       |> Ok
     }
 
-    "hello_button_example" -> {
+    "greeting_button_example" -> {
       mist_sprocket.component(
         request,
-        hello_button_example,
-        hello_button_example.props_from,
+        greeting_button_example,
+        greeting_button_example.props_from,
         validate_csrf,
         None,
       )
