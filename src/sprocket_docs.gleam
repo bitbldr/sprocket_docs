@@ -2,7 +2,6 @@ import docs/app_context.{AppContext}
 import docs/page_server
 import docs/router
 import docs/utils/common
-import docs/utils/csrf
 import docs/utils/logger
 import gleam/erlang/os
 import gleam/erlang/process
@@ -21,7 +20,8 @@ pub fn main() {
   let assert Ok(_) =
     router.stack(AppContext(
       secret_key_base,
-      csrf.validate(_, secret_key_base),
+      // csrf.validate(_, secret_key_base),
+      fn(_) { Ok(Nil) },
       page_server,
     ))
     |> mist.new
