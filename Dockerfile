@@ -37,5 +37,7 @@ COPY --from=builder --chown=nobody:root /app /app
 
 USER nobody
 
+EXPOSE 3000
+
 ENTRYPOINT ["/app/entrypoint.sh"]
 CMD ["run"]
