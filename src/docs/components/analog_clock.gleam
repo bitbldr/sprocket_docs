@@ -1,7 +1,9 @@
+import birl
 import gleam/erlang
 import gleam/float
 import gleam/int
 import gleam/option.{Some}
+import gleam/pair
 import sprocket/component.{render}
 import sprocket/context.{type Context}
 import sprocket/hooks.{effect, reducer}
@@ -170,5 +172,9 @@ pub fn analog_clock(ctx: Context, _props: AnalogClockProps) {
   )
 }
 
-@external(erlang, "Elixir.FFIUtils", "clock_time")
-fn clock_time(a: Int) -> #(Int, Int, Int)
+fn clock_time(unix_time: Int) -> #(Int, Int, Int) {
+  unix_time
+  |> birl.from_unix()
+  |> birl.to_erlang_datetime()
+  |> pair.second()
+}
