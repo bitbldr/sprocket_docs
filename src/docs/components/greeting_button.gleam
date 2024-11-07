@@ -6,7 +6,9 @@ import sprocket/component.{render}
 import sprocket/context.{type Context}
 import sprocket/hooks.{type Cmd, handler, reducer}
 import sprocket/html/attributes.{class}
-import sprocket/html/elements.{button, div, keyed, span, text}
+import sprocket/html/elements.{
+  button, div, fragment, keyed, span, span_text, text,
+}
 import sprocket/html/events
 
 type Model {
@@ -66,6 +68,8 @@ pub fn greeting_button(ctx: Context, _props: GreetingButtonProps) {
   use ctx, say_hello <- handler(ctx, fn(_) { dispatch(NextGreeting) })
   use ctx, reset <- handler(ctx, fn(_) { dispatch(Reset) })
 
+  let num_options_left = list.length(options)
+
   render(
     ctx,
     div([], [
@@ -85,7 +89,7 @@ pub fn greeting_button(ctx: Context, _props: GreetingButtonProps) {
           )
         _ ->
           keyed(
-            "say_hello",
+            "greet",
             button(
               [
                 class(
@@ -93,7 +97,17 @@ pub fn greeting_button(ctx: Context, _props: GreetingButtonProps) {
                 ),
                 events.on_click(say_hello),
               ],
-              [text("Say Hello!")],
+              [
+                text("Say Hello!"),
+                case num_options_left < 5 {
+                  True ->
+                    span_text(
+                      [class("rounded bg-white text-blue-500 px-1 ml-2")],
+                      int.to_string(num_options_left) <> " left",
+                    )
+                  False -> fragment([])
+                },
+              ],
             ),
           )
       },

@@ -21,6 +21,10 @@ fn update(model: Model, msg: Msg) -> #(Model, List(Cmd(Msg)))
 The `update` function takes the current state and a message and returns a new state and a list of
 commands to be executed. `Model` is the state model type and `Msg` is the message type.
 
+For simple model updates, the list of commands will typically be empty. However, commands can be a
+powerful tool for performing side effects such as making HTTP requests, updating local storage, or
+chaining operations by dispatching additional messages.
+
 Let's create a `greeting_button` component as an example, we can
 define a function that updates the state when the button is clicked.
 
@@ -249,35 +253,41 @@ pub fn greeting_button(ctx: Context, _props: GreetingButtonProps) {
   use ctx, say_hello <- handler(ctx, fn(_) { dispatch(NextGreeting) })
   use ctx, reset <- handler(ctx, fn(_) { dispatch(Reset) })
 
+  let num_options_left = list.length(options)
+
   render(
     ctx,
     div([], [
       case options {
         [] ->
-          keyed(
-            "reset",
-            button(
-              [
-                class(
-                  "p-2 text-blue-500 hover:text-blue-600 hover:underline active:text-blue-700",
-                ),
-                events.on_click(reset),
-              ],
-              [text("Reset")],
-            ),
+          button(
+            [
+              class(
+                "p-2 text-blue-500 hover:text-blue-600 hover:underline active:text-blue-700",
+              ),
+              events.on_click(reset),
+            ],
+            [text("Reset")],
           )
         _ ->
-          keyed(
-            "say_hello",
-            button(
-              [
-                class(
-                  "p-2 bg-blue-500 hover:bg-blue-600 active:bg-blue-700 text-white rounded",
-                ),
-                events.on_click(say_hello),
-              ],
-              [text("Say Hello!")],
-            ),
+          button(
+            [
+              class(
+                "p-2 bg-blue-500 hover:bg-blue-600 active:bg-blue-700 text-white rounded",
+              ),
+              events.on_click(say_hello),
+            ],
+            [
+              text("Say Hello!"),
+              case num_options_left < 5 {
+                True ->
+                  span_text(
+                    [class("rounded bg-white text-blue-500 px-1 ml-2")],
+                    int.to_string(num_options_left) <> " left",
+                  )
+                False -> fragment([])
+              },
+            ],
           )
       },
       ..case selection {
