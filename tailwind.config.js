@@ -17,6 +17,9 @@ module.exports = {
           },
         },
       },
+      fontFamily: {
+        ["sprocket-logo"]: ["boombox2", "sans-serif"],
+      },
     },
   },
   plugins: [require("@tailwindcss/typography"), require("tailwindcss-animate")],

@@ -32,15 +32,17 @@ pub fn header(ctx: Context, props) {
               span(
                 [
                   class(
-                    "inline-block animate-spin repeat-1 delay-500 ease-in-out",
+                    "inline-block animate-spin repeat-1 delay-500 ease-in-out mr-2",
                   ),
                 ],
                 [text("⚙️")],
               ),
-              span([class("italic bold")], [text("Sprocket")]),
+              span([class("font-sprocket-logo italic text-xl text-[#205a96]")], [
+                text("SPROCKET"),
+              ]),
             ]),
             div([class("text-gray-500 text-sm")], [
-              text("Real-time server UI components in Gleam ✨"),
+              text("Real-time server component framework for Gleam ✨"),
             ]),
           ]),
         ]),
