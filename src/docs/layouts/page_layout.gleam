@@ -64,7 +64,6 @@ pub fn page_layout(page_title: String, csrf: String) {
           ],
           None,
         ),
-        script([src("https://gleam.run/javascript/highlightjs-gleam.js")], None),
         script(
           [],
           Some(
