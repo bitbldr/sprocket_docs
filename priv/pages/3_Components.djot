@@ -105,11 +105,12 @@ label prop, we'll give more control to the parent component by introducing in a 
 renders the content of the button.
 
 ```gleam
-import sprocket/context.{Context, Element, dep}
 import sprocket/component.{render}
-import sprocket/html/elements.{button}
-import sprocket/html/attributes.{class, on_click}
+import sprocket/context.{type Context, type Element}
 import sprocket/hooks.{handler, state}
+import sprocket/html/attributes.{class}
+import sprocket/html/elements.{button}
+import sprocket/html/events
 
 pub type ToggleButtonProps {
   ToggleButtonProps(render_label: fn(Bool) -> Element)
@@ -122,13 +123,10 @@ pub fn toggle_button(ctx: Context, props: ToggleButtonProps) {
   use ctx, is_active, set_active <- state(ctx, False)
 
   // add a handler hook to toggle the active state
-  use ctx, toggle_active <- handler(
-    ctx,
-    fn(_) {
-      set_active(!is_active)
-      Nil
-    },
-  )
+  use ctx, toggle_active <- handler(ctx, fn(_) {
+    set_active(!is_active)
+    Nil
+  })
 
   render(
     ctx,
@@ -140,7 +138,7 @@ pub fn toggle_button(ctx: Context, props: ToggleButtonProps) {
           False ->
             "rounded-lg text-white px-3 py-2 bg-blue-500 hover:bg-blue-600 active:bg-blue-700"
         }),
-        on_click(toggle_active),
+        events.on_click(toggle_active),
       ],
       [render_label(is_active)],
     ),
