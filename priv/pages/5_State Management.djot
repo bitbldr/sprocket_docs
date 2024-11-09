@@ -32,13 +32,13 @@ First we define our state model and message types:
 
 ```gleam
 type Model {
-  Model(selection: Option(GreetingOption), options: List(GreetingOption))
+  Model(selection: Option(Greeting), options: List(Greeting))
 }
 
 type Msg {
   NoOp
   NextGreeting
-  Greet(GreetingOption)
+  Greet(Greeting)
   Reset
 }
 ```
@@ -81,7 +81,7 @@ will be used to initialize the state when the component is mounted.
 Let's define the `init` function:
 
 ```gleam
-fn init(options: List(GreetingOption)) -> #(Model, List(Cmd(Msg))) {
+fn init(options: List(Greeting)) -> #(Model, List(Cmd(Msg))) {
   #(Model(selection: None, options:), [])
 }
 ```
@@ -136,10 +136,10 @@ function is called when the component is mounted. In this case, we're initializi
 list of options using the `greetings` function.
 
 ```gleam
-type GreetingOption =
+type Greeting =
   #(String, String)
 
-fn greetings() -> List(GreetingOption) {
+fn greetings() -> List(Greeting) {
   [
     #("English", "Hello"),
     #("Spanish", "Hola"),
@@ -197,17 +197,17 @@ import sprocket/html/elements.{button, div, keyed, span, text}
 import sprocket/html/events
 
 type Model {
-  Model(selection: Option(GreetingOption), options: List(GreetingOption))
+  Model(selection: Option(Greeting), options: List(Greeting))
 }
 
 type Msg {
   NoOp
   NextGreeting
-  Greet(GreetingOption)
+  Greet(Greeting)
   Reset
 }
 
-fn init(options: List(GreetingOption)) -> #(Model, List(Cmd(Msg))) {
+fn init(options: List(Greeting)) -> #(Model, List(Cmd(Msg))) {
   #(Model(selection: None, options:), [])
 }
 
@@ -301,10 +301,10 @@ pub fn greeting_button(ctx: Context, _props: GreetingButtonProps) {
   )
 }
 
-type GreetingOption =
+type Greeting =
   #(String, String)
 
-fn greetings() -> List(GreetingOption) {
+fn greetings() -> List(Greeting) {
   [
     #("English", "Hello"),
     #("Spanish", "Hola"),

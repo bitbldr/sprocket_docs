@@ -12,17 +12,17 @@ import sprocket/html/elements.{
 import sprocket/html/events
 
 type Model {
-  Model(selection: Option(GreetingOption), options: List(GreetingOption))
+  Model(selection: Option(Greeting), options: List(Greeting))
 }
 
 type Msg {
   NoOp
   NextGreeting
-  Greet(GreetingOption)
+  Greet(Greeting)
   Reset
 }
 
-fn init(options: List(GreetingOption)) -> #(Model, List(Cmd(Msg))) {
+fn init(options: List(Greeting)) -> #(Model, List(Cmd(Msg))) {
   #(Model(selection: None, options:), [])
 }
 
@@ -122,10 +122,10 @@ pub fn greeting_button(ctx: Context, _props: GreetingButtonProps) {
   )
 }
 
-type GreetingOption =
+type Greeting =
   #(String, String)
 
-fn greetings() -> List(GreetingOption) {
+fn greetings() -> List(Greeting) {
   [
     #("English", "Hello"),
     #("Spanish", "Hola"),
