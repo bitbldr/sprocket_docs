@@ -1,5 +1,5 @@
 import docs/components/common.{example}
-import docs/components/product_list.{
+import docs/components/products.{
   ProductListProps, example_coffee_products, product_list,
 }
 import gleam/option.{type Option, None, Some}

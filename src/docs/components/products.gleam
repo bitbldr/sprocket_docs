@@ -182,34 +182,33 @@ pub type ProductListProps {
 pub fn product_list(ctx: Context, props: ProductListProps) {
   let ProductListProps(products: products) = props
 
+  // Ignore the state management for now, we'll cover that in a later section
   use ctx, Model(hidden), dispatch <- reducer(ctx, init(), update)
-
   use ctx, reset <- handler(ctx, fn(_) { dispatch(Reset) })
+
+  // Map over the products and render a product component for each, filtering out hidden products
+  let products =
+    products
+    |> list.filter_map(fn(p) {
+      case list.contains(hidden, p.id) {
+        True -> Error(Nil)
+        False ->
+          Ok(keyed(
+            int.to_string(p.id),
+            li([class("py-3 mr-4")], [
+              component(
+                product,
+                ProductProps(product: p, on_hide: fn(_) { dispatch(Hide(p.id)) }),
+              ),
+            ]),
+          ))
+      }
+    })
 
   render(
     ctx,
     div([], [
-      ul(
-        [role("list"), class("flex flex-col")],
-        products
-          |> list.filter_map(fn(p) {
-            case list.contains(hidden, p.id) {
-              True -> Error(Nil)
-              False ->
-                Ok(keyed(
-                  int.to_string(p.id),
-                  li([class("py-3 mr-4")], [
-                    component(
-                      product,
-                      ProductProps(product: p, on_hide: fn(_) {
-                        dispatch(Hide(p.id))
-                      }),
-                    ),
-                  ]),
-                ))
-            }
-          }),
-      ),
+      ul([role("list"), class("flex flex-col")], products),
       ..case list.is_empty(hidden) {
         True -> []
         False -> [
@@ -220,11 +219,7 @@ pub fn product_list(ctx: Context, props: ProductListProps) {
               ),
               events.on_click(reset),
             ],
-            [
-              text("Show Hidden ("),
-              text(int.to_string(list.length(hidden))),
-              text(")"),
-            ],
+            [text("Show Hidden (" <> int.to_string(list.length(hidden)) <> ")")],
           ),
         ]
       }

@@ -209,6 +209,13 @@ components). Let's look at an example of a stateless functional component that r
 card.
 
 ```gleam
+import gleam/float
+import gleam/option.{type Option, None, Some}
+import sprocket/context.{type Element}
+import sprocket/html/attributes.{alt, class, src}
+import sprocket/html/elements.{div, div_text, h5_text, img, li}
+import sprocket/html/events
+
 type Product {
   Product(
     id: Int,
@@ -292,6 +299,16 @@ function takes, which in this case is a `Product` record and an optional list of
 will leave as `None` for now.
 
 ```gleam
+import gleam/option.{None}
+import sprocket/component.{render}
+import sprocket/context.{type Context}
+import sprocket/html/attributes.{alt, class, role, src}
+import sprocket/html/elements.{div}
+
+pub type ProductProps {
+  ProductProps
+}
+
 pub fn product(ctx: Context, _props: ProductProps) {
   let some_product = 
     Product(
@@ -326,10 +343,20 @@ available functions in the `sprocket/html` module.
 
 Components can be composed together to create rich user interfaces. Let's take a look at an example
 of a view that uses the `toggle_button` and the `product_card` components we defined earlier to
-create a simple product component.
+create a working product component.
 
 ```gleam
-pub fn product(ctx: Context, _props: PageViewProps) {
+import gleam/option.{None, Some}
+import sprocket/component.{component, render}
+import sprocket/context.{type Context}
+import sprocket/html/attributes.{alt, class, role, src}
+import sprocket/html/elements.{div, i, text}
+
+pub type ProductProps {
+  ProductProps
+}
+
+pub fn product(ctx: Context, _props: ProductProps) {
   render(
     ctx,
     div(
@@ -393,31 +420,88 @@ diffing algorithm can keep track of them and their states across renders. Let's 
 example of a component that renders a list of products, each with their own state.
 
 ```gleam
+import gleam/int
+import gleam/list
+import sprocket/component.{component, render}
+import sprocket/context.{type Context}
+import sprocket/hooks.{handler, reducer}
+import sprocket/html/attributes.{class, role}
+import sprocket/html/elements.{
+  button, div, keyed, li, text, ul,
+}
+import sprocket/html/events
+
+type Model {
+  Model(hidden: List(Int))
+}
+
+type Msg {
+  NoOp
+  Hide(Int)
+  Reset
+}
+
+fn update(model: Model, msg: Msg) {
+  case msg {
+    NoOp -> #(model, [])
+    Hide(id) -> #(Model(hidden: [id, ..model.hidden]), [])
+    Reset -> #(Model(hidden: []), [])
+  }
+}
+
+fn init() {
+  #(Model(hidden: []), [])
+}
+
 pub type ProductListProps {
   ProductListProps(products: List(Product))
 }
 
 pub fn product_list(ctx: Context, props: ProductListProps) {
-  let ProductListProps(products) = props
+  let ProductListProps(products: products) = props
 
-  // ignore the state management for now, we'll cover that in a later section
+  // Ignore the state management for now, we'll cover that in a later section
+  use ctx, Model(hidden), dispatch <- reducer(ctx, init(), update)
+  use ctx, reset <- handler(ctx, fn(_) { dispatch(Reset) })
+
+  // Map over the products and render a product component for each, filtering out hidden products
+  let products =
+    products
+    |> list.filter_map(fn(p) {
+      case list.contains(hidden, p.id) {
+        True -> Error(Nil)
+        False ->
+          Ok(keyed(
+            int.to_string(p.id),
+            li([class("py-3 mr-4")], [
+              component(
+                product,
+                ProductProps(product: p, on_hide: fn(_) { dispatch(Hide(p.id)) }),
+              ),
+            ]),
+          ))
+      }
+    })
 
   render(
     ctx,
-    div(
-      [],
-      list.map(
-        products,
-        fn (p) {
-          keyed(p.id, 
-            component(
-              product,
-              ProductProps(product: p),
-            )
-          )
-        },
-      ),
-    ),
+    div([], [
+      ul([role("list"), class("flex flex-col")], products),
+      ..case list.is_empty(hidden) {
+        True -> []
+        False -> [
+          button(
+            [
+              class(
+                "mt-5 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800",
+              ),
+              events.on_click(reset),
+            ],
+            [text("Show Hidden (" <> int.to_string(list.length(hidden)) <> ")")],
+          ),
+        ]
+      }
+    ]),
   )
 }
 ```

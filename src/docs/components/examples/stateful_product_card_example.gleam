@@ -1,5 +1,5 @@
 import docs/components/common.{example}
-import docs/components/product_list.{type Product, Product, product_card}
+import docs/components/products.{type Product, Product, product_card}
 import docs/components/toggle_button.{ToggleButtonProps, toggle_button}
 import gleam/dict
 import gleam/float
