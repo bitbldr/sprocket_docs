@@ -23,7 +23,7 @@ links = [{ title = "Website", href = "https://sprocket.live" }]
 gleam_stdlib = "~> 0.41"
 gleam_http = "~> 3.6"
 mist = "~> 3.0.0"
-sprocket = "~> 0.3.0"
+sprocket = "~> 0.3.1"
 #sprocket = { path = "../sprocket" }
 gleam_erlang = "~> 0.24"
 gleam_json = "~> 0.6"
