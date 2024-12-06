@@ -4,7 +4,7 @@ import docs/router
 import docs/utils/common
 import docs/utils/csrf
 import docs/utils/logger
-import gleam/erlang/os
+import envoy
 import gleam/erlang/process
 import gleam/int
 import gleam/result
@@ -33,12 +33,12 @@ pub fn main() {
 }
 
 fn load_port() -> Int {
-  os.get_env("PORT")
+  envoy.get("PORT")
   |> result.then(int.parse)
   |> result.unwrap(3000)
 }
 
 fn load_secret_key_base() -> String {
-  os.get_env("SECRET_KEY_BASE")
+  envoy.get("SECRET_KEY_BASE")
   |> result.unwrap(common.random_string(64))
 }
