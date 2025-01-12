@@ -3,7 +3,7 @@ import gleam/dynamic
 import gleam/option.{Some}
 import sprocket/component.{render}
 import sprocket/context.{type Context, type Element} as _
-import sprocket/hooks.{client, handler, provider, state}
+import sprocket/hooks.{client, provider, state}
 import sprocket/html/attributes.{class, classes}
 import sprocket/html/elements.{button, div, i}
 import sprocket/html/events
@@ -60,22 +60,22 @@ pub fn dark_mode_toggle(ctx: Context, _props: DarkModeToggleProps) {
     }),
   )
 
-  use ctx, toggle_open <- handler(ctx, fn(_) { set_open(!is_open) })
-  use ctx, set_mode_auto <- handler(ctx, fn(_) {
+  let toggle_open = fn(_) { set_open(!is_open) }
+  let set_mode_auto = fn(_) {
     let _ = send_dark_mode_client("set_mode", Some("auto"))
     set_mode(Auto)
     set_open(False)
-  })
-  use ctx, set_mode_light <- handler(ctx, fn(_) {
+  }
+  let set_mode_light = fn(_) {
     let _ = send_dark_mode_client("set_mode", Some("light"))
     set_mode(Light)
     set_open(False)
-  })
-  use ctx, set_mode_dark <- handler(ctx, fn(_) {
+  }
+  let set_mode_dark = fn(_) {
     let _ = send_dark_mode_client("set_mode", Some("dark"))
     set_mode(Dark)
     set_open(False)
-  })
+  }
 
   render(
     ctx,

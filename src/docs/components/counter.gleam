@@ -6,7 +6,7 @@ import gleam/result
 import gleam/string
 import sprocket/component.{render}
 import sprocket/context.{type Context, dep}
-import sprocket/hooks.{effect, handler, reducer}
+import sprocket/hooks.{effect, reducer}
 import sprocket/html/attributes.{class}
 import sprocket/html/elements.{button, div, span, text}
 import sprocket/html/events
@@ -55,12 +55,8 @@ pub fn counter(ctx: Context, props: CounterProps) {
   )
 
   // Define event handlers
-  use ctx, increment <- handler(ctx, fn(_) {
-    dispatch(UpdateCounter(count + 1))
-  })
-  use ctx, decrement <- handler(ctx, fn(_) {
-    dispatch(UpdateCounter(count - 1))
-  })
+  let increment = fn(_) { dispatch(UpdateCounter(count + 1)) }
+  let decrement = fn(_) { dispatch(UpdateCounter(count - 1)) }
 
   render(
     ctx,

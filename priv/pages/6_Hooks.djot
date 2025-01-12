@@ -38,7 +38,7 @@ Sprocket provides a common set of native hooks that can be imported from the `sp
 module.
 
 ```gleam
-import sprocket/hooks.{state, reducer, handler, effect, memo, callback, channel, provider, client}
+import sprocket/hooks.{state, reducer, effect, memo, callback, channel, provider, client}
 ```
 
 We'll go over each of the native hooks and how to use them and also cover how to create custom
@@ -106,20 +106,6 @@ use ctx, count, dispatch <- reducer(ctx, 0, update)
 Reducer hooks allow state management to be refactored out of the component file and into a separate
 module. This can be useful for complex state management logic or message types that are shared
 across multiple components.
-
-## Handler
-
-Handler hooks are used to create event handlers, They take a function and return an
-IdentifiableCallback. The IdentifiableCallback can be passed to an event handler attribute and
-ensures that event id's do not change across renders resulting in unnecessary diff patching. The
-callback will be called when the event is triggered and provide an optional CallbackParam depending
-on the event type.
-
-```gleam
-use ctx, increment <- handler(ctx, fn(_) {
-  dispatch(Increment)
-})
-```
 
 ## Effect
 

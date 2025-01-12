@@ -98,7 +98,7 @@ But our humble button isn't very interesting yet. Let's say we want to add some 
 button. We can do that by implementing some events and state management via hooks.
 
 We'll cover events, state management and hooks more in-depth a bit later. For now, we'll just add a
-simple state hook and handler hook to our button component which will toggle the label when the
+simple state hook to our button component which will toggle the label when the
 button is clicked. We'll call our new component `toggle_button` and instead of just taking a string
 label prop, we'll give more control to the parent component by introducing in a prop called
 `render_label` which we'll define as a function that takes the current state of the toggle and
@@ -107,7 +107,7 @@ renders the content of the button.
 ```gleam
 import sprocket/component.{render}
 import sprocket/context.{type Context, type Element}
-import sprocket/hooks.{handler, state}
+import sprocket/hooks.{state}
 import sprocket/html/attributes.{class}
 import sprocket/html/elements.{button}
 import sprocket/html/events
@@ -122,11 +122,11 @@ pub fn toggle_button(ctx: Context, props: ToggleButtonProps) {
   // add a state hook to track the active state, we'll cover hooks in more detail later
   use ctx, is_active, set_active <- state(ctx, False)
 
-  // add a handler hook to toggle the active state
-  use ctx, toggle_active <- handler(ctx, fn(_) {
+  // define a handler function to toggle the active state
+  let toggle_active = fn(_) {
     set_active(!is_active)
     Nil
-  })
+  }
 
   render(
     ctx,
@@ -146,7 +146,7 @@ pub fn toggle_button(ctx: Context, props: ToggleButtonProps) {
 }
 ```
 
-We've added a `state` hook to track the active state of our button and a `handler` hook to toggle
+We've added a `state` hook to track the active state of our button and an on_click handler to toggle
 the active state when the button is clicked. We've also added a `render_label` prop to our component
 to allow us to customize the label of our toggle button depending on whether the toggle is active or
 inactive.
@@ -422,7 +422,7 @@ import gleam/int
 import gleam/list
 import sprocket/component.{component, render}
 import sprocket/context.{type Context}
-import sprocket/hooks.{handler, reducer}
+import sprocket/hooks.{reducer}
 import sprocket/html/attributes.{class, role}
 import sprocket/html/elements.{
   button, div, keyed, li, text, ul,
@@ -460,7 +460,7 @@ pub fn product_list(ctx: Context, props: ProductListProps) {
 
   // Ignore the state management for now, we'll cover that in a later section
   use ctx, Model(hidden), dispatch <- reducer(ctx, init(), update)
-  use ctx, reset <- handler(ctx, fn(_) { dispatch(Reset) })
+  let reset = fn(_) { dispatch(Reset) }
 
   // Map over the products and render a product component for each, filtering out hidden products
   let products =

@@ -4,7 +4,7 @@ import gleam/list
 import gleam/option.{type Option, None, Some}
 import sprocket/component.{component, render}
 import sprocket/context.{type Context, type Element}
-import sprocket/hooks.{handler, reducer, state}
+import sprocket/hooks.{reducer, state}
 import sprocket/html/attributes.{alt, class, role, src}
 import sprocket/html/elements.{
   button, button_text, div, div_text, h5_text, i, img, keyed, li, text, ul,
@@ -97,15 +97,15 @@ pub fn product(ctx: Context, props: ProductProps) {
 
   use ctx, in_cart, set_in_cart <- state(ctx, False)
 
-  use ctx, toggle_in_cart <- handler(ctx, fn(_) {
+  let toggle_in_cart = fn(_) {
     set_in_cart(!in_cart)
     Nil
-  })
+  }
 
-  use ctx, on_hide <- handler(ctx, fn(_) {
+  let on_hide = fn(_) {
     on_hide(product.id)
     Nil
-  })
+  }
 
   render(
     ctx,
@@ -184,7 +184,7 @@ pub fn product_list(ctx: Context, props: ProductListProps) {
 
   // Ignore the state management for now, we'll cover that in a later section
   use ctx, Model(hidden), dispatch <- reducer(ctx, init(), update)
-  use ctx, reset <- handler(ctx, fn(_) { dispatch(Reset) })
+  let reset = fn(_) { dispatch(Reset) }
 
   // Map over the products and render a product component for each, filtering out hidden products
   let products =

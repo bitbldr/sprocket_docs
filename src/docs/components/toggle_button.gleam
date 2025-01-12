@@ -1,6 +1,6 @@
 import sprocket/component.{render}
 import sprocket/context.{type Context, type Element}
-import sprocket/hooks.{handler, state}
+import sprocket/hooks.{state}
 import sprocket/html/attributes.{class}
 import sprocket/html/elements.{button}
 import sprocket/html/events
@@ -16,10 +16,10 @@ pub fn toggle_button(ctx: Context, props: ToggleButtonProps) {
   use ctx, is_active, set_active <- state(ctx, False)
 
   // add a handler hook to toggle the active state
-  use ctx, toggle_active <- handler(ctx, fn(_) {
+  let toggle_active = fn(_) {
     set_active(!is_active)
     Nil
-  })
+  }
 
   render(
     ctx,

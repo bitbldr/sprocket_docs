@@ -4,7 +4,7 @@ import gleam/list
 import gleam/option.{type Option, None, Some}
 import sprocket/component.{render}
 import sprocket/context.{type Context}
-import sprocket/hooks.{type Cmd, handler, reducer}
+import sprocket/hooks.{type Cmd, reducer}
 import sprocket/html/attributes.{class}
 import sprocket/html/elements.{
   button, div, fragment, keyed, span, span_text, text,
@@ -65,8 +65,8 @@ pub fn greeting_button(ctx: Context, _props: GreetingButtonProps) {
     update,
   )
 
-  use ctx, say_hello <- handler(ctx, fn(_) { dispatch(NextGreeting) })
-  use ctx, reset <- handler(ctx, fn(_) { dispatch(Reset) })
+  let say_hello = fn(_) { dispatch(NextGreeting) }
+  let reset = fn(_) { dispatch(Reset) }
 
   let num_options_left = list.length(options)
 

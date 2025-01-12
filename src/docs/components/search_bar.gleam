@@ -1,7 +1,7 @@
 import gleam/option.{None, Some}
 import sprocket/component.{render}
 import sprocket/context.{type Context}
-import sprocket/hooks.{handler, reducer}
+import sprocket/hooks.{reducer}
 import sprocket/html/attributes.{class, input_type, placeholder, value}
 import sprocket/html/elements.{input}
 import sprocket/html/events
@@ -36,7 +36,7 @@ pub fn search_bar(ctx: Context, props) {
   // Define a reducer to handle events and update the state
   use ctx, Model(query: query), dispatch <- reducer(ctx, init(), update)
 
-  use ctx, on_input_query <- handler(ctx, fn(e) {
+  let on_input_query = fn(e) {
     case events.decode_target_value(e) {
       Ok(value) -> {
         on_search(value)
@@ -44,7 +44,7 @@ pub fn search_bar(ctx: Context, props) {
       }
       Error(_) -> Nil
     }
-  })
+  }
 
   render(
     ctx,

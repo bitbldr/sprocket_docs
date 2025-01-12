@@ -4,7 +4,7 @@ import gleam/io
 import gleam/option.{None, Some}
 import sprocket/component.{render}
 import sprocket/context.{type Context}
-import sprocket/hooks.{handler, state}
+import sprocket/hooks.{state}
 import sprocket/html/attributes.{class, input_type, name}
 import sprocket/html/elements.{
   button, div, form, fragment, input, keyed, span, text,
@@ -18,7 +18,7 @@ pub type ExampleFormProps {
 pub fn example_form(ctx: Context, _props: ExampleFormProps) {
   use ctx, validation_error, set_validation_error <- state(ctx, None)
 
-  use ctx, handle_form_submit <- handler(ctx, fn(e) {
+  let handle_form_submit = fn(e) {
     case events.decode_form_data(e) {
       Ok(data) -> {
         io.debug(data)
@@ -26,9 +26,9 @@ pub fn example_form(ctx: Context, _props: ExampleFormProps) {
       }
       Error(_) -> logger.error("Error decoding form submit")
     }
-  })
+  }
 
-  use ctx, validate <- handler(ctx, fn(e) {
+  let validate = fn(e) {
     case events.decode_form_data(e) {
       Ok(data) -> {
         case dict.get(data, "name") {
@@ -46,7 +46,7 @@ pub fn example_form(ctx: Context, _props: ExampleFormProps) {
       }
       Error(_) -> logger.error("Error decoding form validation")
     }
-  })
+  }
 
   render(
     ctx,

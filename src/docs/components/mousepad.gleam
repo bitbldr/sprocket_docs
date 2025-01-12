@@ -2,7 +2,7 @@ import docs/utils/logger
 import gleam/int
 import sprocket/component.{render}
 import sprocket/context.{type Context}
-import sprocket/hooks.{handler, reducer}
+import sprocket/hooks.{reducer}
 import sprocket/html/attributes.{class}
 import sprocket/html/elements.{div, span, text}
 import sprocket/html/events
@@ -36,7 +36,7 @@ pub fn mousepad(ctx: Context, _props: MousepadProps) {
   // Define a reducer to handle events and update the state
   use ctx, count, dispatch <- reducer(ctx, init(), update)
 
-  use ctx, handle_mousemove <- handler(ctx, fn(e) {
+  let handle_mousemove = fn(e) {
     case events.decode_mouse_event(e) {
       Ok(events.MouseEvent(x:, y:, ..)) -> dispatch(UpdatePosition(x, y))
       Error(_) -> {
@@ -45,7 +45,7 @@ pub fn mousepad(ctx: Context, _props: MousepadProps) {
         dispatch(ResetPosition)
       }
     }
-  })
+  }
 
   render(
     ctx,

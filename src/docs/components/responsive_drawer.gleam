@@ -1,7 +1,7 @@
 import gleam/option.{Some}
 import sprocket/component.{render}
 import sprocket/context.{type Context, type Element}
-import sprocket/hooks.{handler, reducer}
+import sprocket/hooks.{reducer}
 import sprocket/html/attributes.{class, classes}
 import sprocket/html/elements.{aside, button, div, i}
 import sprocket/html/events
@@ -39,9 +39,8 @@ pub fn responsive_drawer(ctx: Context, props) {
 
   use ctx, Model(show: show), dispatch <- reducer(ctx, init(), update)
 
-  use ctx, toggle_drawer <- handler(ctx, fn(_) { dispatch(Toggle) })
-
-  use ctx, hide_drawer <- handler(ctx, fn(_) { dispatch(Hide) })
+  let toggle_drawer = fn(_) { dispatch(Toggle) }
+  let hide_drawer = fn(_) { dispatch(Hide) }
 
   let backdrop =
     div(

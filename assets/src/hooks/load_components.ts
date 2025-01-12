@@ -29,9 +29,7 @@ export const LoadComponents = {
 
       // const query = new URLSearchParams(props).toString();
 
-      connect(`/components/${name}/connect`, {
-        csrfToken,
-        targetEl: el.firstElementChild,
+      connect(`/components/${name}/connect`, el.firstElementChild, csrfToken, {
         hooks,
         initialProps: props,
       });
