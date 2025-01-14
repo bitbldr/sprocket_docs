@@ -9,14 +9,13 @@ import docs/utils/common.{mist_response}
 import docs/utils/csrf
 import docs/utils/logger
 import gleam/bit_array
-import gleam/bytes_builder.{type BytesBuilder}
+import gleam/bytes_tree.{type BytesTree}
 import gleam/erlang
 import gleam/http.{Get}
 import gleam/http/request.{type Request}
 import gleam/http/response.{type Response}
 import gleam/http/service.{type Service}
 import gleam/option.{None}
-import gleam/result
 import gleam/string
 import mist.{type Connection, type ResponseData}
 import mist_sprocket.{view}
@@ -33,7 +32,7 @@ pub fn router(app: AppContext) {
 
           Error(_) ->
             not_found()
-            |> response.map(bytes_builder.from_string)
+            |> response.map(bytes_tree.from_string)
             |> mist_response()
         }
       }
@@ -49,7 +48,7 @@ pub fn router(app: AppContext) {
 
       _, _ ->
         not_found()
-        |> response.map(bytes_builder.from_string)
+        |> response.map(bytes_tree.from_string)
         |> mist_response()
     }
   }
@@ -65,13 +64,13 @@ pub fn stack(ctx: AppContext) -> Service(Connection, ResponseData) {
 
 pub fn string_body_middleware(
   service: Service(String, String),
-) -> Service(BitArray, BytesBuilder) {
+) -> Service(BitArray, BytesTree) {
   fn(request: Request(BitArray)) {
     case bit_array.to_string(request.body) {
       Ok(body) -> service(request.set_body(request, body))
       Error(_) -> bad_request()
     }
-    |> response.map(bytes_builder.from_string)
+    |> response.map(bytes_tree.from_string)
   }
 }
 
@@ -99,23 +98,6 @@ pub fn internal_server_error() -> Response(String) {
   |> response.prepend_header("content-type", "text/plain")
 }
 
-pub fn http_service(
-  req: Request(Connection),
-  service: Service(BitArray, BytesBuilder),
-) -> Response(ResponseData) {
-  req
-  |> mist.read_body(1024 * 1024 * 10)
-  |> result.map(fn(http_req: Request(BitArray)) {
-    http_req
-    |> service()
-    |> mist_response()
-  })
-  |> result.unwrap(
-    response.new(500)
-    |> response.set_body(mist.Bytes(bytes_builder.new())),
-  )
-}
-
 pub fn rescue_crashes(
   handler: fn() -> Response(ResponseData),
 ) -> Response(ResponseData) {
@@ -125,7 +107,7 @@ pub fn rescue_crashes(
       logger.error(string.inspect(error))
 
       internal_server_error()
-      |> response.map(bytes_builder.from_string)
+      |> response.map(bytes_tree.from_string)
       |> mist_response()
     }
   }

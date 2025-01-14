@@ -2,7 +2,7 @@ import docs/app_context.{type AppContext}
 import docs/components/counter.{CounterProps, counter}
 import docs/utils/common.{mist_response}
 import docs/utils/csrf
-import gleam/bytes_builder
+import gleam/bytes_tree
 import gleam/http/request.{type Request}
 import gleam/http/response.{type Response}
 import gleam/option.{Some}
@@ -86,6 +86,6 @@ window.addEventListener('DOMContentLoaded', () => {
   response.new(200)
   |> response.set_body(body)
   |> response.prepend_header("content-type", "text/html")
-  |> response.map(bytes_builder.from_string)
+  |> response.map(bytes_tree.from_string)
   |> mist_response()
 }

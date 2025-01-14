@@ -7,7 +7,7 @@ import gleam/io
 import gleam/list
 import gleam/option.{type Option, None, Some}
 import gleam/string
-import gleam/string_builder
+import gleam/string_tree
 
 pub type Document {
   Document(content: List(Container), references: Dict(String, String))
@@ -1331,8 +1331,8 @@ fn safe_replace_char(key: String) -> String {
 
 pub fn escape_html(unsafe: String) {
   string.to_graphemes(unsafe)
-  |> list.fold(string_builder.new(), fn(sb, grapheme) {
-    string_builder.append(sb, safe_replace_char(grapheme))
+  |> list.fold(string_tree.new(), fn(sb, grapheme) {
+    string_tree.append(sb, safe_replace_char(grapheme))
   })
-  |> string_builder.to_string
+  |> string_tree.to_string
 }

@@ -1,5 +1,5 @@
 import docs/utils/common.{mist_response, priv_directory}
-import gleam/bytes_builder
+import gleam/bytes_tree
 import gleam/http/request.{type Request}
 import gleam/http/response.{type Response, Response}
 import gleam/http/service.{type Service}
@@ -29,7 +29,7 @@ pub fn middleware(
       path
       |> simplifile.read_bits
       |> result.nil_error
-      |> result.map(bytes_builder.from_bit_array)
+      |> result.map(bytes_tree.from_bit_array)
 
     let extension =
       path
