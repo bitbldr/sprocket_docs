@@ -8,8 +8,7 @@ import docs/static
 import docs/utils/common.{mist_response}
 import docs/utils/csrf
 import docs/utils/logger
-import gleam/bit_array
-import gleam/bytes_tree.{type BytesTree}
+import gleam/bytes_tree
 import gleam/erlang
 import gleam/http.{Get}
 import gleam/http/request.{type Request}
@@ -56,22 +55,9 @@ pub fn router(app: AppContext) {
 
 pub fn stack(ctx: AppContext) -> Service(Connection, ResponseData) {
   router(ctx)
-  // |> string_body_middleware
   |> log_requests.middleware
   |> static.middleware()
   |> service.prepend_response_header("made-with", "Gleam")
-}
-
-pub fn string_body_middleware(
-  service: Service(String, String),
-) -> Service(BitArray, BytesTree) {
-  fn(request: Request(BitArray)) {
-    case bit_array.to_string(request.body) {
-      Ok(body) -> service(request.set_body(request, body))
-      Error(_) -> bad_request()
-    }
-    |> response.map(bytes_tree.from_string)
-  }
 }
 
 pub fn method_not_allowed() -> Response(String) {
