@@ -1,3 +1,5 @@
+import { ClientHook } from "sprocket-js";
+
 const isDarkMode = () =>
   window.matchMedia &&
   window.matchMedia("(prefers-color-scheme: dark)").matches;
@@ -95,7 +97,7 @@ const mode = localStorage.theme || "auto";
 
 document.addEventListener("DOMContentLoaded", () => applyMode(mode));
 
-export const DarkMode = {
+export const DarkMode: ClientHook = {
   create({ el, pushEvent, handleEvent }) {
     pushEvent("set_mode", mode);
 

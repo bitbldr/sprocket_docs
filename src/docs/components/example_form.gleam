@@ -6,9 +6,7 @@ import sprocket/component.{render}
 import sprocket/context.{type Context}
 import sprocket/hooks.{state}
 import sprocket/html/attributes.{class, input_type, name}
-import sprocket/html/elements.{
-  button, div, form, fragment, input, keyed, span, text,
-}
+import sprocket/html/elements.{button, div, form, input, keyed, span, text}
 import sprocket/html/events
 
 pub type ExampleFormProps {

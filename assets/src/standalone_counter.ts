@@ -6,17 +6,23 @@ window.addEventListener("DOMContentLoaded", () => {
     ?.getAttribute("content");
 
   if (csrfToken) {
-    connect("/components/counter/connect", {
+    connect(
+      "/components/counter/connect",
+      document.getElementById("counter"),
       csrfToken,
-      targetEl: document.getElementById("counter") as Element,
-      initialProps: { initial: "100" },
-    });
+      {
+        initialProps: { initial: "100" },
+      }
+    );
 
-    connect("/components/counter/connect", {
+    connect(
+      "/components/counter/connect",
+      document.getElementById("no-first-paint-counter"),
       csrfToken,
-      targetEl: document.getElementById("no-first-paint-counter") as Element,
-      initialProps: { initial: "100" },
-    });
+      {
+        initialProps: { initial: "100" },
+      }
+    );
   } else {
     console.error("Missing CSRF token");
   }

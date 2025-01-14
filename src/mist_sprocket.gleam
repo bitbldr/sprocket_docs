@@ -148,7 +148,7 @@ fn socket_handler(
 
     mist.Binary(_) -> actor.continue(state)
     mist.Custom(msg) -> {
-      let assert Ok(_) =
+      let _ =
         mist.send_text_frame(conn, msg)
         |> result.map_error(fn(reason) {
           logger.error("failed to send websocket message: " <> msg)
