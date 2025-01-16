@@ -146,10 +146,10 @@ pub fn toggle_button(ctx: Context, props: ToggleButtonProps) {
 }
 ```
 
-We've added a `state` hook to track the active state of our button and an on_click handler to toggle
-the active state when the button is clicked. We've also added a `render_label` prop to our component
-to allow us to customize the label of our toggle button depending on whether the toggle is active or
-inactive.
+We've added a `state` hook to track the active state of our button and a `toggle_active` event
+handler to toggle the active state when the button is clicked. We've also added a `render_label`
+prop to our component to allow us to customize the label of our toggle button depending on whether
+the toggle is active or inactive.
 
 Now let's use our new component in a parent view.
 
@@ -413,9 +413,10 @@ Components can be conditionally rendered using `case` statements as seen in some
 examples, but they can also be dynamically rendered as a list of elements using any of Gleam's list
 functions such as `list.map` or `list.filter`.
 
-It's important to use the `keyed` function when rendering elements that may change so that the
-diffing algorithm can keep track of them and their states across renders. Let's take a look at an
-example of a component that renders a list of products, each with their own state.
+It's important to provide a unique identifier using the `keyed` function when rendering a homogenous
+list of element tags so that the diffing algorithm can accurately keep track of state when elements
+are added, removed or reordered. Let's take a look at an example of a component that renders a list
+of products, each with their own state.
 
 ```gleam
 import gleam/int

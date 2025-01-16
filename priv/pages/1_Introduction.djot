@@ -1,8 +1,12 @@
 # Introduction
 
-Welcome to the official documentation for Sprocket, a real-time server-rendered component framework for
-Gleam! In this guide, we'll cover the core concepts of Sprocket, but some [prerequisite knowledge of
-Gleam](https://tour.gleam.run) is recommended. Gleam is a type-safe functional language designed to
+## Welcome to the official Sprocket guide!
+
+Sprocket is a framework for building real-time server-rendered component views in Gleam. In this
+guide, we'll cover the core concepts of Sprocket, but some [prerequisite knowledge of
+Gleam](https://tour.gleam.run) is recommended.
+
+Gleam is a type-safe functional language designed to
 harness the power of the Erlang Beam virtual machine. Whether you are a Gleam enthusiast or new to
 this exciting language, this documentation will serve as your roadmap to building highly scalable,
 robust, and efficient server-side component views for your web application.
@@ -19,28 +23,29 @@ solid foundation that enables scalable and fault-tolerant applications.
 
 ## The Browser as a Terminal
 
-Sprocket embraces the idea that a large portion of web apps simply do not benefit from having a
-separate front-end single page application (SPA) and back-end server. In fact, this style of
-development can be quite costly in terms of development time and resources for little to no added
-benefit. Instead, Sprocket treats the browser as a "terminal" that simply renders view updates that
-are sent by a server. This approach simplifies the development process by allowing developers to
-focus on building the application's core features without having to worry about designing an API or
-managing state synchronization between the client and server. If an API is required, it can be
-built separately in a way that is specific to the application's needs, rather than being a
-general-purpose API that is trying to fit multiple use-cases.
+Sprocket embraces the idea that a large portion of web apps simply do not benefit from the added
+complexity of having a separate front-end single page application (SPA) and back-end server. In
+fact, this style of development can be quite costly in terms of development time and resources for
+little to no additional benefit. Instead, Sprocket treats the browser as a simple renderer that
+relays user generated events back to the server to be handled by the runtime, akin to an old
+mainframe style "terminal" but with modern graphics. This approach simplifies the development
+process by allowing developers to focus on building an application's core feature set without having
+to worry about designing an API or managing state synchronization between the client and server. If
+an API is required, it can be built separately in a way that is specific to the use case, rather
+than being a general purpose API that is trying to fit both the user and client SPA needs.
 
 While this may seem like a step back from the modern SPA architecture, consider that most web apps
 today require a constant connection to a server to function in a meaningful way. Moreover, the
 payload of a stateless API request is typically much larger than the event and diff payloads that
 are exchanged between the client and server in a Sprocket application. By embracing the "browser as
-a terminal" philosophy, Sprocket removes the overhead of an API and allows the HTTP layer to simply
-fall away leaving it up to the server to worry about rendering and updating the UI. This enables
-developers to quickly build applications that are easier to maintain with less code and fewer
-resources.
+a terminal" philosophy, Sprocket removes the complexity of state synchronization and the overhead of
+a stateless API allowing the HTTP layer to simply fall away.
 
 This is not a unique idea, but rather builds on the paradigm introduced and popularized by Phoenix
-LiveView in 2018. Sprocket brings these concepts to the Gleam ecosystem, providing a type-safe and
-component-based approach to building real-time server-rendered views.
+LiveView in 2018. Historically, there have been many other popular technologies that utilized
+server-side rendering and state management. Sprocket is a modern take on these concepts
+bringing the best of both approaches to the Gleam ecosystem, providing a type-safe, component-based
+approach to building efficient real-time server-rendered views in a functional language.
 
 ## Key Features
 
@@ -59,7 +64,7 @@ adverse conditions.
 
 *Interoperability*: Seamlessly plug-in to Erlang/Elixir's ecosystem of existing libraries with Gleam's first class FFI.
 
-*Scalable*:  The Erlang Beam VM's distributed nature enables you to scale your applications with ease.
+*Scalable*: The Erlang Beam VM's distributed nature enables you to scale your applications with ease.
 
 *Open Source*: Sprocket is completely open-source and free to use. Contributions are welcome and encouraged!
 

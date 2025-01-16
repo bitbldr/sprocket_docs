@@ -8,4 +8,7 @@ export const CodeBlock: ClientHook = {
   create({ el }) {
     hljs.highlightElement(el as HTMLElement);
   },
+  update({ el }) {
+    hljs.highlightElement(el as HTMLElement);
+  },
 };
