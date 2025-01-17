@@ -515,3 +515,23 @@ Because we are using the `keyed` function, the diffing algorithm can keep track 
 and will reconcile elements that have changed position, keeping their state in-tact. It's important
 to use the `keyed` function whenever you are dynamically rendering elements or a list of elements
 that may change.
+
+## A Note on Stateful Components
+
+Stateful components are cheap and easy to create in Sprocket and that's great when they are needed!
+But it's important to remember that each new stateful component you create adds substantial
+complexity to your application. You can think of each stateful component as an integration point
+between state, effects and markup. As you add more stateful components to your application, you'll
+need to mentally track and manage the state for them, which can become complex and difficult to
+reason about over time.
+
+When adding a new component, consider whether it truly needs to be stateful. If the state can
+reasonably reside in a parent component and be passed in via props or context, then it's probably
+better to simply use a stateless functional component instead. This will help keep your application
+simple and easier to test and maintain.
+
+Certain application views may only require a single top level stateful component to manage the state
+for the entire view, with all other components being stateless functions. Other more complex views
+or libraries may require a mix of stateful and stateless components to achieve the desired
+architecture, and that's perfectly fine. Just be mindful of the complexity you are introducing into
+your application with every new stateful component you create.
