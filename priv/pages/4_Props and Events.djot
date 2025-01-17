@@ -114,8 +114,11 @@ pub fn display(ctx: Context, props: DisplayProps) {
 
 <.props_and_events_counter_example />
 
-To recap, *state flows down* the component tree while *events bubble up*. We'll cover state
-management more in-depth in the next section, but it's useful to start thinking about how this
-data-flow will inform where state should live in your component hierarchy. And since we have the
-safety provided by the Gleam type system, we aren't afraid of refactoring our state to a different
-part of the hierarchy when our requirements or designs inevitably change!
+So *data flows down* the component tree while *events bubble up*. In this sense, Sprocket uses a
+unidirectional data-flow architecture. This is a powerful pattern that makes it easy to reason about
+your application and to understand how data is flowing through it.
+
+We'll cover state management more in-depth in the next section, but it's useful to start thinking
+about how this data-flow will inform where state should live in your component hierarchy. And since
+we have the safety provided by the Gleam type system, we aren't afraid of refactoring our state to a
+different part of the hierarchy when our requirements or designs inevitably change!
