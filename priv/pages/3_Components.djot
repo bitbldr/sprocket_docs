@@ -6,9 +6,9 @@ demonstrate how to use them to build rich user interfaces.
 
 ## Stateful Components
 
-A Stateful Component is a function that takes a context and props as arguments and returns a list of
-child elements. These components may also utilize hooks to manage events, state and effects. Let's
-take a look at an example component.
+A Stateful Component is a function that takes a context and props as arguments and renders an
+element. These components may also utilize hooks to manage events, state and effects. Let's take a
+look at an example component.
 
 We're going to create a simple component called `example_button` that takes an optional label and
 renders a button. This guide will use Tailwind CSS to style components, but you can use any classes
@@ -525,8 +525,8 @@ between state, effects and markup. As you add more stateful components to your a
 need to mentally track and manage the state for them, which can become complex and difficult to
 reason about over time.
 
-When adding a new component, consider whether it truly needs to be stateful. If the state can
-reasonably reside in a parent component and be passed in via props or context, then it's probably
+When adding a new component, consider whether it truly needs to be stateful. If the state and event
+handlers can reasonably reside in a parent component and be passed in via props, then it's probably
 better to simply use a stateless functional component instead. This will help keep your application
 simple and easier to test and maintain.
 

@@ -38,7 +38,7 @@ Sprocket provides a common set of native hooks that can be imported from the `sp
 module.
 
 ```gleam
-import sprocket/hooks.{state, reducer, effect, memo, callback, channel, provider, client}
+import sprocket/hooks.{state, reducer, effect, memo, callback, provider, client}
 ```
 
 We'll go over each of the native hooks and how to use them and also cover how to create custom

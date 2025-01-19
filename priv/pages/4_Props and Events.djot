@@ -43,8 +43,8 @@ pub type CounterProps {
 }
 
 pub fn counter(ctx: Context, _props: CounterProps) {
-  // Define a reducer to handle events and update the state use ctx, count, dispatch <- reducer(ctx,
-  0, update)
+  // Define a reducer to handle events and update the state
+  use ctx, count, dispatch <- reducer(ctx, 0, update)
 
   render(
     ctx, div(
