@@ -3,12 +3,14 @@
 
 Before we can get started, we'll need a few things:
 
-1. *Gleam*: Statically typed functional language that compiles to Erlang. Install using the [official installation guide](https://gleam.run/getting-started/).
+1. *[Gleam](https://gleam.run/getting-started/)*: Statically typed functional language that compiles to Erlang. This is the language we will use
+to create our UI components.
 
-2. *NodeJS*: JavaScript runtime built on Chrome's V8 JavaScript engine. Install using the [official installation guide](https://nodejs.org/en/download/).
+2. *[NodeJS](https://nodejs.org/en/download/)*: JavaScript runtime built on Chrome's V8 JavaScript
+engine. Required for Yarn and other tooling.
 
-3. *Yarn*: Fast, reliable, and secure dependency management. Install using the [official
-installation guide](https://yarnpkg.com/getting-started/install).
+3. *[Yarn](https://yarnpkg.com/getting-started/install)*: Fast, reliable, and secure dependency
+management. Used to install and manage JavaScript dependencies for our project.
 
 ## Setup
 
