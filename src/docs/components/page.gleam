@@ -88,7 +88,7 @@ pub fn page(ctx: Context, props: PageProps) {
           content: div(
             [
               class(
-                "prose dark:prose-invert prose-sm md:prose-base container mx-auto p-12",
+                "prose dark:prose-invert prose-sm md:prose-base container mx-auto py-6 px-4 sm:px-8 md:px-10",
               ),
               client_hljs(),
             ],

@@ -1,4 +1,5 @@
 import docs/components/dark_mode_toggle.{DarkModeToggleProps, dark_mode_toggle}
+import docs/components/logo.{LogoOpts, logo}
 import gleam/list
 import gleam/string
 import sprocket/component.{component, render}
@@ -26,34 +27,23 @@ pub fn header(ctx: Context, props) {
         ),
       ],
       [
-        a([href("/")], [
-          div([class("p-2 mx-2")], [
-            div([class("text-2xl")], [
-              span(
-                [
-                  class(
-                    "inline-block animate-spin repeat-1 delay-500 ease-in-out mr-2",
-                  ),
-                ],
-                [text("⚙️")],
-              ),
-              span([class("font-sprocket-logo italic text-xl text-[#205a96]")], [
-                text("SPROCKET"),
-              ]),
-            ]),
-            div([class("text-gray-500 text-sm")], [
-              text("Real-time server component framework for Gleam ✨"),
-            ]),
+        a([href("/"), class("flex flex-row items-center")], [
+          div([class("p-2 mx-3")], [
+            logo(LogoOpts(show_icon: True)),
+            logo.tagline(),
           ]),
         ]),
         div([class("flex-1")], []),
-        div([], [component(dark_mode_toggle, DarkModeToggleProps)]),
-        div(
-          [],
-          list.map(menu_items, fn(item) {
-            component(menu_item, MenuItemProps(item))
-          }),
-        ),
+        div([class("flex flex-row items-center")], [
+          div([class("hidden md:block")], [
+            component(dark_mode_toggle, DarkModeToggleProps),
+          ]),
+          elements.fragment(
+            list.map(menu_items, fn(item) {
+              component(menu_item, MenuItemProps(item))
+            }),
+          ),
+        ]),
       ],
     ),
   )
@@ -72,7 +62,9 @@ fn menu_item(ctx: Context, props: MenuItemProps) {
     ctx,
     a(
       [
-        class("block p-5 border-b-2 border-transparent hover:border-blue-500"),
+        class(
+          "inline-flex items-baseline px-3 hover:text-blue-500 hover:underline",
+        ),
         attributes.href(href),
         ..case is_external {
           True -> [attributes.target("_blank")]

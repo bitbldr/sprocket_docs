@@ -79,7 +79,7 @@ pub fn dark_mode_toggle(ctx: Context, _props: DarkModeToggleProps) {
 
   render(
     ctx,
-    div([dark_mode_client(), click_outside_client(), class("m-4")], [
+    div([dark_mode_client(), click_outside_client()], [
       case is_open {
         True ->
           div(

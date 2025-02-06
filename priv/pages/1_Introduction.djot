@@ -2,7 +2,7 @@
 
 ## Welcome to the official Sprocket guide!
 
-Sprocket is a framework for building real-time server-rendered component views in Gleam. In this
+Sprocket is a library for building real-time server components in Gleam. In this
 guide, we'll cover the core concepts of Sprocket, but some [prerequisite knowledge of
 Gleam](https://tour.gleam.run) is recommended.
 

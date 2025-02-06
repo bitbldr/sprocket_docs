@@ -5,6 +5,7 @@ import { CodeBlock } from "./hooks/codeblock";
 import { HighlightJS } from "./hooks/hljs";
 import { ClickOutside } from "./hooks/click_outside";
 import { LoadComponents } from "./hooks/load_components";
+import { ScrollObserver } from "./hooks/scroll_observer";
 
 const hooks = {
   CodeBlock,
@@ -13,6 +14,7 @@ const hooks = {
   ClickOutside,
   LoadComponents,
   HighlightJS,
+  ScrollObserver,
 };
 
 window.addEventListener("DOMContentLoaded", () => {
