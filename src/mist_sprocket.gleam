@@ -17,9 +17,8 @@ import mist.{
 }
 import sprocket.{
   type RuntimeEvent, type Sprocket, type StatefulComponent,
-  ClientHookEventMessage, EventMessage, JoinMessage, render,
+  ClientHookEventMessage, EventMessage, JoinMessage, render
 }
-import sprocket/component as sprocket_component
 import sprocket/context.{type Element}
 import sprocket/internal/logger
 import sprocket/renderers/html.{html_renderer}
@@ -29,13 +28,10 @@ type State {
   Running(Sprocket)
 }
 
-pub type PropList =
-  Dict(String, String)
-
 pub fn component(
   req: Request(Connection),
   component: StatefulComponent(p),
-  initialize_props: fn(Option(PropList)) -> p,
+  initialize_props: fn(Option(Dict(String, String))) -> p,
   validate_csrf: CSRFValidator,
 ) -> Response(ResponseData) {
   // if the request path ends with "connect", then start a websocket connection
@@ -50,7 +46,7 @@ pub fn component(
     }
 
     _ -> {
-      let el = sprocket_component.component(component, initialize_props(None))
+      let el = sprocket.component(component, initialize_props(None))
 
       let body = render(el, html_renderer())
 
@@ -65,9 +61,67 @@ pub fn component(
   }
 }
 
+pub fn view(
+  req: Request(Connection),
+  layout: fn(Element) -> Element,
+  el: Element,
+  validate_csrf: CSRFValidator,
+) -> Response(ResponseData) {
+  // if the request path ends with "connect", then start a websocket connection
+  case list.last(request.path_segments(req)) {
+    Ok("connect") -> {
+      mist.websocket(
+        request: req,
+        on_init: initializer(),
+        on_close: terminator(),
+        handler: view_handler(el, validate_csrf),
+      )
+    }
+    _ -> {
+      let body = render(layout(el), html_renderer())
+
+      response.new(200)
+      |> response.prepend_header("content-type", "text/html")
+      |> response.set_body(
+        body
+        |> bytes_tree.from_string
+        |> mist.Bytes,
+      )
+    }
+  }
+}
+
+fn initializer() {
+  fn(_conn: WebsocketConnection) -> #(State, Option(Selector(String))) {
+    let self = process.new_subject()
+
+    let selector =
+      process.new_selector()
+      |> process.selecting(self, function.identity)
+
+    // Create a function that will send messages to this websocket
+    let ws_send = fn(msg) {
+      process.send(self, msg)
+      |> Ok
+    }
+
+    #(Initialized(ws_send), Some(selector))
+  }
+}
+
+fn terminator() {
+  fn(state: State) {
+    use spkt <- require_running(state, or_else: fn() { Nil })
+
+    let _ = sprocket.shutdown(spkt)
+
+    Nil
+  }
+}
+
 fn component_handler(
   component: StatefulComponent(p),
-  initialize_props: fn(Option(PropList)) -> p,
+  initialize_props: fn(Option(Dict(String, String))) -> p,
   validate_csrf: CSRFValidator,
 ) {
   fn(state: State, conn: WebsocketConnection, message: WebsocketMessage(String)) {
@@ -84,7 +138,7 @@ fn component_handler(
             })
 
             let el =
-              sprocket_component.component(
+              sprocket.component(
                 component,
                 initialize_props(initial_props),
               )
@@ -160,36 +214,6 @@ fn component_handler(
 
         actor.continue(state)
       }
-    }
-  }
-}
-
-pub fn view(
-  req: Request(Connection),
-  layout: fn(Element) -> Element,
-  el: Element,
-  validate_csrf: CSRFValidator,
-) -> Response(ResponseData) {
-  // if the request path ends with "connect", then start a websocket connection
-  case list.last(request.path_segments(req)) {
-    Ok("connect") -> {
-      mist.websocket(
-        request: req,
-        on_init: initializer(),
-        on_close: terminator(),
-        handler: view_handler(el, validate_csrf),
-      )
-    }
-    _ -> {
-      let body = render(layout(el), html_renderer())
-
-      response.new(200)
-      |> response.prepend_header("content-type", "text/html")
-      |> response.set_body(
-        body
-        |> bytes_tree.from_string
-        |> mist.Bytes,
-      )
     }
   }
 }
@@ -283,28 +307,6 @@ fn view_handler(el: Element, validate_csrf: CSRFValidator) {
   }
 }
 
-fn require_initialized(
-  state: State,
-  or_else bail: fn() -> a,
-  cb cb: fn(fn(String) -> Result(Nil, Nil)) -> a,
-) {
-  case state {
-    Initialized(dispatch) -> cb(dispatch)
-    _ -> bail()
-  }
-}
-
-fn require_running(
-  state: State,
-  or_else bail: fn() -> a,
-  cb cb: fn(Sprocket) -> a,
-) {
-  case state {
-    Running(spkt) -> cb(spkt)
-    _ -> bail()
-  }
-}
-
 fn mist_text_message(
   conn: WebsocketConnection,
   state: State,
@@ -330,29 +332,24 @@ fn mist_text_message(
   }
 }
 
-fn initializer() {
-  fn(_conn: WebsocketConnection) -> #(State, Option(Selector(String))) {
-    let self = process.new_subject()
-
-    let selector =
-      process.new_selector()
-      |> process.selecting(self, function.identity)
-
-    let ws_send = fn(msg) {
-      process.send(self, msg)
-      |> Ok
-    }
-
-    #(Initialized(ws_send), Some(selector))
+fn require_initialized(
+  state: State,
+  or_else bail: fn() -> a,
+  cb cb: fn(fn(String) -> Result(Nil, Nil)) -> a,
+) {
+  case state {
+    Initialized(dispatch) -> cb(dispatch)
+    _ -> bail()
   }
 }
 
-fn terminator() {
-  fn(state: State) {
-    use spkt <- require_running(state, or_else: fn() { Nil })
-
-    let _ = sprocket.shutdown(spkt)
-
-    Nil
+fn require_running(
+  state: State,
+  or_else bail: fn() -> a,
+  cb cb: fn(Sprocket) -> a,
+) {
+  case state {
+    Running(spkt) -> cb(spkt)
+    _ -> bail()
   }
 }
