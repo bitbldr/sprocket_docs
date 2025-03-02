@@ -11,13 +11,14 @@ import gleam/list
 import gleam/option.{type Option, None, Some}
 import gleam/otp/actor
 import gleam/result
+import gleam/string
 import mist.{
   type Connection, type ResponseData, type WebsocketConnection,
   type WebsocketMessage,
 }
 import sprocket.{
-  type RuntimeEvent, type Sprocket, type StatefulComponent,
-  ClientHookEventMessage, EventMessage, JoinMessage, render
+  type RuntimeMessage, type Sprocket, type StatefulComponent, ClientMessage,
+  JoinMessage, render,
 }
 import sprocket/context.{type Element}
 import sprocket/internal/logger
@@ -128,7 +129,7 @@ fn component_handler(
     use msg <- mist_text_message(conn, state, message)
 
     case sprocket.decode_message(msg) {
-      Ok(JoinMessage(id, csrf_token, initial_props)) -> {
+      Ok(JoinMessage(_id, csrf_token, initial_props)) -> {
         case validate_csrf(csrf_token) {
           Ok(_) -> {
             use ws_send <- require_initialized(state, or_else: fn() {
@@ -138,14 +139,11 @@ fn component_handler(
             })
 
             let el =
-              sprocket.component(
-                component,
-                initialize_props(initial_props),
-              )
+              sprocket.component(component, initialize_props(initial_props))
 
-            let dispatch = fn(event: RuntimeEvent) {
-              event
-              |> sprocket.event_to_json()
+            let dispatch = fn(runtime_message: RuntimeMessage) {
+              runtime_message
+              |> sprocket.runtime_message_to_json()
               |> json.to_string()
               |> ws_send()
             }
@@ -171,7 +169,7 @@ fn component_handler(
           }
         }
       }
-      Ok(EventMessage(element_id, kind, payload)) -> {
+      Ok(ClientMessage(client_message)) -> {
         use spkt <- require_running(state, or_else: fn() {
           logger.error(
             "Sprocket must be connected first before receiving events",
@@ -180,36 +178,13 @@ fn component_handler(
           actor.continue(state)
         })
 
-        logger.debug("Event: element " <> element_id <> " " <> kind)
-
-        sprocket.process_event(spkt, element_id, kind, payload)
+        sprocket.handle_client_message(spkt, client_message)
 
         actor.continue(state)
       }
-      Ok(ClientHookEventMessage(element_id, hook, kind, payload)) -> {
-        use spkt <- require_running(state, or_else: fn() {
-          logger.error(
-            "Sprocket must be connected first before receiving hook events",
-          )
+      err -> {
+        io.debug(err)
 
-          actor.continue(state)
-        })
-
-        logger.debug(
-          "Hook Event: element " <> element_id <> " " <> hook <> " " <> kind,
-        )
-
-        sprocket.process_client_hook_event(
-          spkt,
-          element_id,
-          hook,
-          kind,
-          payload,
-        )
-
-        actor.continue(state)
-      }
-      _ -> {
         logger.error("Error decoding message: " <> msg)
 
         actor.continue(state)
@@ -232,9 +207,9 @@ fn view_handler(el: Element, validate_csrf: CSRFValidator) {
               actor.continue(state)
             })
 
-            let dispatch = fn(event: RuntimeEvent) {
+            let dispatch = fn(event: RuntimeMessage) {
               event
-              |> sprocket.event_to_json()
+              |> sprocket.runtime_message_to_json()
               |> json.to_string()
               |> ws_send()
             }
@@ -260,7 +235,7 @@ fn view_handler(el: Element, validate_csrf: CSRFValidator) {
           }
         }
       }
-      Ok(EventMessage(element_id, kind, payload)) -> {
+      Ok(ClientMessage(client_message)) -> {
         use spkt <- require_running(state, or_else: fn() {
           logger.error(
             "Sprocket must be connected first before receiving events",
@@ -269,37 +244,12 @@ fn view_handler(el: Element, validate_csrf: CSRFValidator) {
           actor.continue(state)
         })
 
-        logger.debug("Event: element " <> element_id <> " " <> kind)
-
-        sprocket.process_event(spkt, element_id, kind, payload)
+        sprocket.handle_client_message(spkt, client_message)
 
         actor.continue(state)
       }
-      Ok(ClientHookEventMessage(element_id, hook, kind, payload)) -> {
-        use spkt <- require_running(state, or_else: fn() {
-          logger.error(
-            "Sprocket must be connected first before receiving hook events",
-          )
-
-          actor.continue(state)
-        })
-
-        logger.debug(
-          "Hook Event: element " <> element_id <> " " <> hook <> " " <> kind,
-        )
-
-        sprocket.process_client_hook_event(
-          spkt,
-          element_id,
-          hook,
-          kind,
-          payload,
-        )
-
-        actor.continue(state)
-      }
-      _ -> {
-        logger.error("Error decoding message: " <> msg)
+      other -> {
+        logger.error_meta("Error decoding message '" <> msg, other)
 
         actor.continue(state)
       }

@@ -84,7 +84,7 @@ window.addEventListener("DOMContentLoaded", () => {
         ? "/connect"
         : window.location.pathname.split("/").concat("connect").join("/");
 
-    connect(connectPath, document.querySelector("#app"), csrfToken {
+    connect(connectPath, document.querySelector("#app"), csrfToken, {
       hooks
     });
   } else {

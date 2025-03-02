@@ -434,7 +434,7 @@ fn parse_codeblock_start(
       let maybe_raw_format =
         option.then(language, fn(lang) {
           case string.first(lang) {
-            Ok("=") -> Some(string.drop_left(lang, 1))
+            Ok("=") -> Some(string.drop_end(lang, 1))
             _ -> None
           }
         })
@@ -808,11 +808,11 @@ fn parse_code(in: Chars, count: Int) -> #(Inline, Chars) {
       // supposed to not include that space. This is so inline code can start
       // with a backtick.
       let content = case string.starts_with(content, " `") {
-        True -> string.trim_left(content)
+        True -> string.trim_end(content)
         False -> content
       }
       let content = case string.ends_with(content, "` ") {
-        True -> string.trim_right(content)
+        True -> string.trim_end(content)
         False -> content
       }
       #(Code(content), in)
@@ -1240,7 +1240,7 @@ fn inlines_to_html(html: String, inlines: List(Inline), refs: Refs) -> String {
       html
       |> inline_to_html(inline, refs)
       |> inlines_to_html(rest, refs)
-      |> string.trim_right
+      |> string.trim_end
     }
   }
 }

@@ -47,9 +47,7 @@ window.addEventListener('DOMContentLoaded', () => {
     ?.getAttribute('content');
 
   if (csrfToken) {
-    connect('/counter/connect', {
-      csrfToken,
-      targetEl: document.getElementById('counter') as Element,
+    connect('/components/counter/connect', document.getElementById('counter'), csrfToken, {
       initialProps: { initial: '100' },
     });
   } else {
