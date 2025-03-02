@@ -2,11 +2,12 @@ import docs/components/common.{example}
 import docs/components/products.{
   ProductListProps, example_coffee_products, product_list,
 }
+import gleam/dict.{type Dict}
 import gleam/option.{type Option, None, Some}
 import sprocket/component.{component, render}
 import sprocket/context.{type Context}
 
-pub fn props_from(attrs: Option(List(#(String, String)))) {
+pub fn props_from(attrs: Option(Dict(String, String))) {
   case attrs {
     None -> ProductListExampleProps
     Some(_attrs) -> ProductListExampleProps

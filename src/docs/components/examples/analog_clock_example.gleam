@@ -2,11 +2,12 @@ import docs/components/analog_clock.{
   type AnalogClockProps, AnalogClockProps, analog_clock,
 }
 import docs/components/common.{example}
+import gleam/dict.{type Dict}
 import gleam/option.{type Option}
 import sprocket/component.{component, render}
 import sprocket/context.{type Context}
 
-pub fn props_from(_attrs: Option(List(#(String, String)))) {
+pub fn props_from(_attrs: Option(Dict(String, String))) {
   AnalogClockProps
 }
 

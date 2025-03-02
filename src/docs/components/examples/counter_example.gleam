@@ -1,6 +1,6 @@
 import docs/components/common.{example}
 import docs/components/events_counter.{CounterProps, counter}
-import gleam/dict
+import gleam/dict.{type Dict}
 import gleam/int
 import gleam/option.{type Option, None, Some}
 import gleam/result
@@ -8,14 +8,10 @@ import gleam/string
 import sprocket/component.{component, render}
 import sprocket/context.{type Context}
 
-pub fn props_from(attrs: Option(List(#(String, String)))) {
+pub fn props_from(attrs: Option(Dict(String, String))) {
   case attrs {
     None -> CounterExampleProps(initial: 0, enable_reset: False)
     Some(attrs) -> {
-      let attrs =
-        attrs
-        |> dict.from_list()
-
       let enable_reset =
         attrs
         |> dict.get("enable_reset")

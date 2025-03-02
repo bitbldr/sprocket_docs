@@ -1,7 +1,7 @@
 import docs/components/common.{example}
 import docs/components/products.{type Product, Product, product_card}
 import docs/components/toggle_button.{ToggleButtonProps, toggle_button}
-import gleam/dict
+import gleam/dict.{type Dict}
 import gleam/float
 import gleam/int
 import gleam/option.{type Option, None, Some}
@@ -11,14 +11,10 @@ import sprocket/context.{type Context}
 import sprocket/html/attributes.{class}
 import sprocket/html/elements.{div, i, span, text}
 
-pub fn props_from(attrs: Option(List(#(String, String)))) {
+pub fn props_from(attrs: Option(Dict(String, String))) {
   case attrs {
     None -> StatefulProductCardExampleProps(Product(0, "", "", "", "", 0.0))
     Some(attrs) -> {
-      let attrs =
-        attrs
-        |> dict.from_list()
-
       let id =
         attrs
         |> dict.get("id")

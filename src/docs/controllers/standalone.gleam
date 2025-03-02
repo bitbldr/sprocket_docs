@@ -15,9 +15,9 @@ pub fn standalone(
   _req: Request(Connection),
   app_ctx: AppContext,
 ) -> Response(ResponseData) {
-  let view = component(counter, CounterProps(initial: Some(100)))
+  let el = component(counter, CounterProps(initial: Some(100)))
 
-  let standalone_counter = render(view, html_renderer())
+  let standalone_counter = render(el, html_renderer())
 
   let csrf = csrf.generate(app_ctx.secret_key_base)
 

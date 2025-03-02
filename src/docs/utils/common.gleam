@@ -17,6 +17,17 @@ pub fn maybe(condition: Bool, element: a) -> Option(a) {
   }
 }
 
+pub fn require(
+  optional optional: Option(a),
+  or_else bail: fn() -> b,
+  do f: fn(a) -> b,
+) -> b {
+  case optional {
+    Some(value) -> f(value)
+    None -> bail()
+  }
+}
+
 pub fn mist_response(response: Response(BytesTree)) -> Response(ResponseData) {
   response.new(response.status)
   |> response.set_body(mist.Bytes(response.body))

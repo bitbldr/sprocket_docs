@@ -1,6 +1,6 @@
 import docs/components/clock.{type ClockProps, ClockProps, clock}
 import docs/components/common.{example}
-import gleam/dict
+import gleam/dict.{type Dict}
 import gleam/erlang
 import gleam/option.{type Option, None, Some}
 import gleam/result
@@ -8,14 +8,10 @@ import gleam/string
 import sprocket/component.{component, render}
 import sprocket/context.{type Context}
 
-pub fn props_from(attrs: Option(List(#(String, String)))) {
+pub fn props_from(attrs: Option(Dict(String, String))) {
   case attrs {
     None -> ClockProps(label: None, time_unit: None)
     Some(attrs) -> {
-      let attrs =
-        attrs
-        |> dict.from_list()
-
       let time_unit =
         attrs
         |> dict.get("time_unit")

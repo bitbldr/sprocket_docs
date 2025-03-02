@@ -16,17 +16,18 @@ import docs/components/examples/stateful_product_card_example.{
 import docs/components/examples/toggle_button_with_render_label.{
   toggle_button_with_render_label,
 }
+import gleam/dict.{type Dict}
 import gleam/http/request.{type Request}
-import gleam/option.{type Option, None}
+import gleam/option.{type Option}
 import mist.{type Connection}
 import mist_sprocket
-import sprocket.{type CSRFValidator, render}
+import sprocket.{render}
 import sprocket/component.{component}
 import sprocket/renderers/html.{html_renderer}
 
 pub fn render_component_html(
   name: String,
-  attrs: Option(List(#(String, String))),
+  attrs: Option(Dict(String, String)),
 ) -> Result(String, Nil) {
   case name {
     "codeblock" -> {
@@ -131,7 +132,7 @@ pub fn render_component_html(
 
 pub fn component_router(
   request: Request(Connection),
-  validate_csrf: CSRFValidator,
+  validate_csrf: fn(String) -> Result(Nil, Nil),
   name: String,
 ) {
   case name {
@@ -141,7 +142,6 @@ pub fn component_router(
         codeblock,
         codeblock.props_from,
         validate_csrf,
-        None,
       )
       |> Ok
     }
@@ -152,7 +152,6 @@ pub fn component_router(
         counter,
         counter.props_from,
         validate_csrf,
-        None,
       )
       |> Ok
     }
@@ -163,7 +162,6 @@ pub fn component_router(
         counter_example,
         counter_example.props_from,
         validate_csrf,
-        None,
       )
       |> Ok
     }
@@ -174,7 +172,6 @@ pub fn component_router(
         button_example,
         button_example.props_from,
         validate_csrf,
-        None,
       )
       |> Ok
     }
@@ -185,7 +182,6 @@ pub fn component_router(
         toggle_button_with_render_label,
         toggle_button_with_render_label.props_from,
         validate_csrf,
-        None,
       )
       |> Ok
     }
@@ -196,7 +192,6 @@ pub fn component_router(
         product_card_example,
         product_card_example.props_from,
         validate_csrf,
-        None,
       )
       |> Ok
     }
@@ -207,7 +202,6 @@ pub fn component_router(
         stateful_product_card_example,
         stateful_product_card_example.props_from,
         validate_csrf,
-        None,
       )
       |> Ok
     }
@@ -218,7 +212,6 @@ pub fn component_router(
         product_list_example,
         product_list_example.props_from,
         validate_csrf,
-        None,
       )
       |> Ok
     }
@@ -229,7 +222,6 @@ pub fn component_router(
         props_and_events_counter_example,
         props_and_events_counter_example.props_from,
         validate_csrf,
-        None,
       )
       |> Ok
     }
@@ -240,7 +232,6 @@ pub fn component_router(
         greeting_button_example,
         greeting_button_example.props_from,
         validate_csrf,
-        None,
       )
       |> Ok
     }
@@ -251,7 +242,6 @@ pub fn component_router(
         clock_example,
         clock_example.props_from,
         validate_csrf,
-        None,
       )
       |> Ok
     }
@@ -262,7 +252,6 @@ pub fn component_router(
         analog_clock_example,
         analog_clock_example.props_from,
         validate_csrf,
-        None,
       )
       |> Ok
     }

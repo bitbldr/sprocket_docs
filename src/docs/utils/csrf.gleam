@@ -1,6 +1,9 @@
 import gleam/bit_array
 import gleam/crypto.{Sha256}
 
+pub type CSRFValidator =
+  fn(String) -> Result(Nil, Nil)
+
 pub fn generate(secret_key_base: String) {
   crypto.strong_random_bytes(26)
   |> crypto.sign_message(bit_array.from_string(secret_key_base), Sha256)

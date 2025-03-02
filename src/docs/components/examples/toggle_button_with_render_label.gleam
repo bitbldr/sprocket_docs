@@ -1,12 +1,13 @@
 import docs/components/common.{example}
 import docs/components/toggle_button.{ToggleButtonProps, toggle_button}
+import gleam/dict.{type Dict}
 import gleam/option.{type Option, None, Some}
 import sprocket/component.{component, render}
 import sprocket/context.{type Context}
 import sprocket/html/attributes.{class}
 import sprocket/html/elements.{i, span, text}
 
-pub fn props_from(attrs: Option(List(#(String, String)))) {
+pub fn props_from(attrs: Option(Dict(String, String))) {
   case attrs {
     None -> ToggleButtonWithRenderLabelProps
     Some(_attrs) -> ToggleButtonWithRenderLabelProps

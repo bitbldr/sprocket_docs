@@ -3973,10 +3973,8 @@ sprintf-js@~1.0.2:
   resolved "https://registry.yarnpkg.com/sprintf-js/-/sprintf-js-1.0.3.tgz#04e6926f662895354f3dd015203633b857297e2c"
   integrity sha512-D9cPgkvLlV3t3IzL0D0YLvGA9Ahk4PcvVwUbN0dSGr1aP0Nrt4AEnTUbuGvquEC0mA64Gqt1fzirlRs5ibXx8g==
 
-sprocket-js@^0.4.1:
+sprocket-js@../sprocket:
   version "0.4.1"
-  resolved "https://registry.yarnpkg.com/sprocket-js/-/sprocket-js-0.4.1.tgz#43ea16ebd6789ad0f1f549da433aab11fa3ac8c2"
-  integrity sha512-6eSVevCXO0vdeE5AcbF4DpLMkWVRQe0VPNcUEH+rwv2ydqndNcM7hquFer0rxFdmwkvaB+Fwv218aktvdcHpNw==
   dependencies:
     reconnecting-websocket "^4.4.0"
     snabbdom "^3.5.1"

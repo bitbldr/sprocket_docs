@@ -1,4 +1,4 @@
-import gleam/dict
+import gleam/dict.{type Dict}
 import gleam/int
 import gleam/io
 import gleam/option.{type Option, None, Some}
@@ -91,14 +91,10 @@ pub fn counter(ctx: Context, props: CounterProps) {
   )
 }
 
-pub fn props_from(attrs: Option(List(#(String, String)))) {
+pub fn props_from(attrs: Option(Dict(String, String))) {
   case attrs {
     None -> CounterProps(initial: None)
     Some(attrs) -> {
-      let attrs =
-        attrs
-        |> dict.from_list()
-
       let initial =
         attrs
         |> dict.get("initial")

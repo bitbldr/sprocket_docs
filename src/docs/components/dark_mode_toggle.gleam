@@ -62,17 +62,17 @@ pub fn dark_mode_toggle(ctx: Context, _props: DarkModeToggleProps) {
 
   let toggle_open = fn(_) { set_open(!is_open) }
   let set_mode_auto = fn(_) {
-    let _ = send_dark_mode_client("set_mode", Some("auto"))
+    let _ = send_dark_mode_client("set_mode", Some(dynamic.from("auto")))
     set_mode(Auto)
     set_open(False)
   }
   let set_mode_light = fn(_) {
-    let _ = send_dark_mode_client("set_mode", Some("light"))
+    let _ = send_dark_mode_client("set_mode", Some(dynamic.from("light")))
     set_mode(Light)
     set_open(False)
   }
   let set_mode_dark = fn(_) {
-    let _ = send_dark_mode_client("set_mode", Some("dark"))
+    let _ = send_dark_mode_client("set_mode", Some(dynamic.from("dark")))
     set_mode(Dark)
     set_open(False)
   }

@@ -18,6 +18,7 @@ import gleam/option.{None}
 import gleam/string
 import mist.{type Connection, type ResponseData}
 import mist_sprocket.{view}
+import sprocket/component.{component}
 
 pub fn router(app: AppContext) {
   fn(request: Request(Connection)) -> Response(ResponseData) {
@@ -35,15 +36,16 @@ pub fn router(app: AppContext) {
             |> mist_response()
         }
       }
-      Get, _ ->
+      Get, _ -> {
+        let el = component(page, PageProps(app, path: request.path))
+
         view(
           request,
           page_layout("Sprocket Docs", csrf.generate(app.secret_key_base)),
-          page,
-          fn(_) { PageProps(app, path: request.path) },
+          el,
           app.validate_csrf,
-          None,
         )
+      }
 
       _, _ ->
         not_found()

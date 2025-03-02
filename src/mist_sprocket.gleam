@@ -1,9 +1,12 @@
+import docs/utils/csrf.{type CSRFValidator}
 import gleam/bytes_tree
+import gleam/dict.{type Dict}
 import gleam/erlang/process.{type Selector}
 import gleam/function
 import gleam/http/request.{type Request}
 import gleam/http/response.{type Response}
 import gleam/io
+import gleam/json
 import gleam/list
 import gleam/option.{type Option, None, Some}
 import gleam/otp/actor
@@ -13,38 +16,41 @@ import mist.{
   type WebsocketMessage,
 }
 import sprocket.{
-  type CSRFValidator, type PropList, type Sprocket, type SprocketOpts, Empty,
-  Joined, render,
+  type RuntimeEvent, type Sprocket, type StatefulComponent,
+  ClientHookEventMessage, EventMessage, JoinMessage, render,
 }
 import sprocket/component as sprocket_component
-import sprocket/context.{type Element, type FunctionalComponent}
+import sprocket/context.{type Element}
 import sprocket/internal/logger
 import sprocket/renderers/html.{html_renderer}
 
-type State(p) {
-  State(spkt: Sprocket(p))
+type State {
+  Initialized(ws_send: fn(String) -> Result(Nil, Nil))
+  Running(Sprocket)
 }
+
+pub type PropList =
+  Dict(String, String)
 
 pub fn component(
   req: Request(Connection),
-  view: FunctionalComponent(p),
-  initial_props: fn(Option(PropList)) -> p,
-  csrf_validator: CSRFValidator,
-  opts: Option(SprocketOpts),
+  component: StatefulComponent(p),
+  initialize_props: fn(Option(PropList)) -> p,
+  validate_csrf: CSRFValidator,
 ) -> Response(ResponseData) {
   // if the request path ends with "connect", then start a websocket connection
   case list.last(request.path_segments(req)) {
     Ok("connect") -> {
       mist.websocket(
         request: req,
-        on_init: socket_initializer(view, initial_props, csrf_validator, opts),
-        on_close: socket_close,
-        handler: socket_handler,
+        on_init: initializer(),
+        on_close: terminator(),
+        handler: component_handler(component, initialize_props, validate_csrf),
       )
     }
 
     _ -> {
-      let el = sprocket_component.component(view, initial_props(None))
+      let el = sprocket_component.component(component, initialize_props(None))
 
       let body = render(el, html_renderer())
 
@@ -59,27 +65,122 @@ pub fn component(
   }
 }
 
+fn component_handler(
+  component: StatefulComponent(p),
+  initialize_props: fn(Option(PropList)) -> p,
+  validate_csrf: CSRFValidator,
+) {
+  fn(state: State, conn: WebsocketConnection, message: WebsocketMessage(String)) {
+    use msg <- mist_text_message(conn, state, message)
+
+    case sprocket.decode_message(msg) {
+      Ok(JoinMessage(id, csrf_token, initial_props)) -> {
+        case validate_csrf(csrf_token) {
+          Ok(_) -> {
+            use ws_send <- require_initialized(state, or_else: fn() {
+              logger.error("Sprocket must be initialized first before joining")
+
+              actor.continue(state)
+            })
+
+            let el =
+              sprocket_component.component(
+                component,
+                initialize_props(initial_props),
+              )
+
+            let dispatch = fn(event: RuntimeEvent) {
+              event
+              |> sprocket.event_to_json()
+              |> json.to_string()
+              |> ws_send()
+            }
+
+            let spkt =
+              sprocket.start(el, dispatch)
+              |> result.map_error(sprocket.humanize_error)
+
+            case spkt {
+              Ok(spkt) -> actor.continue(Running(spkt))
+              Error(err) -> {
+                logger.error("Failed to start sprocket: " <> err)
+
+                actor.continue(state)
+              }
+            }
+          }
+
+          Error(_) -> {
+            logger.error("Invalid CSRF token")
+
+            actor.continue(state)
+          }
+        }
+      }
+      Ok(EventMessage(element_id, kind, payload)) -> {
+        use spkt <- require_running(state, or_else: fn() {
+          logger.error(
+            "Sprocket must be connected first before receiving events",
+          )
+
+          actor.continue(state)
+        })
+
+        logger.debug("Event: element " <> element_id <> " " <> kind)
+
+        sprocket.process_event(spkt, element_id, kind, payload)
+
+        actor.continue(state)
+      }
+      Ok(ClientHookEventMessage(element_id, hook, kind, payload)) -> {
+        use spkt <- require_running(state, or_else: fn() {
+          logger.error(
+            "Sprocket must be connected first before receiving hook events",
+          )
+
+          actor.continue(state)
+        })
+
+        logger.debug(
+          "Hook Event: element " <> element_id <> " " <> hook <> " " <> kind,
+        )
+
+        sprocket.process_client_hook_event(
+          spkt,
+          element_id,
+          hook,
+          kind,
+          payload,
+        )
+
+        actor.continue(state)
+      }
+      _ -> {
+        logger.error("Error decoding message: " <> msg)
+
+        actor.continue(state)
+      }
+    }
+  }
+}
+
 pub fn view(
   req: Request(Connection),
   layout: fn(Element) -> Element,
-  view: FunctionalComponent(p),
-  initial_props: fn(Option(PropList)) -> p,
-  csrf_validator: CSRFValidator,
-  opts: Option(SprocketOpts),
+  el: Element,
+  validate_csrf: CSRFValidator,
 ) -> Response(ResponseData) {
   // if the request path ends with "connect", then start a websocket connection
   case list.last(request.path_segments(req)) {
     Ok("connect") -> {
       mist.websocket(
         request: req,
-        on_init: socket_initializer(view, initial_props, csrf_validator, opts),
-        on_close: socket_close,
-        handler: socket_handler,
+        on_init: initializer(),
+        on_close: terminator(),
+        handler: view_handler(el, validate_csrf),
       )
     }
     _ -> {
-      let el = sprocket_component.component(view, initial_props(None))
-
       let body = render(layout(el), html_renderer())
 
       response.new(200)
@@ -93,65 +194,131 @@ pub fn view(
   }
 }
 
-fn socket_initializer(view, initial_props, csrf_validator, opts) {
-  fn(_conn: WebsocketConnection) -> #(State(a), Option(Selector(String))) {
-    let self = process.new_subject()
+fn view_handler(el: Element, validate_csrf: CSRFValidator) {
+  fn(state: State, conn: WebsocketConnection, message: WebsocketMessage(String)) {
+    use msg <- mist_text_message(conn, state, message)
 
-    let selector =
-      process.new_selector()
-      |> process.selecting(self, function.identity)
+    case sprocket.decode_message(msg) {
+      Ok(JoinMessage(_id, csrf_token, _initial_props)) -> {
+        case validate_csrf(csrf_token) {
+          Ok(_) -> {
+            use ws_send <- require_initialized(state, or_else: fn() {
+              logger.error("Sprocket must be initialized first before joining")
 
-    #(
-      State(sprocket.new(
-        view,
-        initial_props,
-        fn(msg) {
-          process.send(self, msg)
-          |> Ok
-        },
-        csrf_validator,
-        opts,
-      )),
-      Some(selector),
-    )
+              actor.continue(state)
+            })
+
+            let dispatch = fn(event: RuntimeEvent) {
+              event
+              |> sprocket.event_to_json()
+              |> json.to_string()
+              |> ws_send()
+            }
+
+            let spkt =
+              sprocket.start(el, dispatch)
+              |> result.map_error(sprocket.humanize_error)
+
+            case spkt {
+              Ok(spkt) -> actor.continue(Running(spkt))
+              Error(err) -> {
+                logger.error("Failed to start sprocket: " <> err)
+
+                actor.continue(state)
+              }
+            }
+          }
+
+          Error(_) -> {
+            logger.error("Invalid CSRF token")
+
+            actor.continue(state)
+          }
+        }
+      }
+      Ok(EventMessage(element_id, kind, payload)) -> {
+        use spkt <- require_running(state, or_else: fn() {
+          logger.error(
+            "Sprocket must be connected first before receiving events",
+          )
+
+          actor.continue(state)
+        })
+
+        logger.debug("Event: element " <> element_id <> " " <> kind)
+
+        sprocket.process_event(spkt, element_id, kind, payload)
+
+        actor.continue(state)
+      }
+      Ok(ClientHookEventMessage(element_id, hook, kind, payload)) -> {
+        use spkt <- require_running(state, or_else: fn() {
+          logger.error(
+            "Sprocket must be connected first before receiving hook events",
+          )
+
+          actor.continue(state)
+        })
+
+        logger.debug(
+          "Hook Event: element " <> element_id <> " " <> hook <> " " <> kind,
+        )
+
+        sprocket.process_client_hook_event(
+          spkt,
+          element_id,
+          hook,
+          kind,
+          payload,
+        )
+
+        actor.continue(state)
+      }
+      _ -> {
+        logger.error("Error decoding message: " <> msg)
+
+        actor.continue(state)
+      }
+    }
   }
 }
 
-fn socket_handler(
-  state: State(a),
+fn require_initialized(
+  state: State,
+  or_else bail: fn() -> a,
+  cb cb: fn(fn(String) -> Result(Nil, Nil)) -> a,
+) {
+  case state {
+    Initialized(dispatch) -> cb(dispatch)
+    _ -> bail()
+  }
+}
+
+fn require_running(
+  state: State,
+  or_else bail: fn() -> a,
+  cb cb: fn(Sprocket) -> a,
+) {
+  case state {
+    Running(spkt) -> cb(spkt)
+    _ -> bail()
+  }
+}
+
+fn mist_text_message(
   conn: WebsocketConnection,
+  state: State,
   message: WebsocketMessage(String),
+  cb,
 ) {
   case message {
-    mist.Text(msg) -> {
-      let State(spkt) = state
-
-      case sprocket.handle_ws(spkt, msg) {
-        Ok(response) -> {
-          case response {
-            Joined(spkt) -> {
-              actor.continue(State(spkt))
-            }
-            Empty -> {
-              actor.continue(state)
-            }
-          }
-        }
-        Error(err) -> {
-          logger.error("failed to handle websocket message: " <> msg)
-          io.debug(err)
-
-          actor.continue(state)
-        }
-      }
-    }
-
+    mist.Text(msg) -> cb(msg)
     mist.Binary(_) -> actor.continue(state)
     mist.Custom(msg) -> {
       let _ =
         mist.send_text_frame(conn, msg)
         |> result.map_error(fn(reason) {
-          logger.error("failed to send websocket message: " <> msg)
+          logger.error("Failed to send websocket message: " <> msg)
           io.debug(reason)
 
           Nil
@@ -163,8 +330,29 @@ fn socket_handler(
   }
 }
 
-fn socket_close(state: State(a)) {
-  let _ = sprocket.cleanup(state.spkt)
+fn initializer() {
+  fn(_conn: WebsocketConnection) -> #(State, Option(Selector(String))) {
+    let self = process.new_subject()
 
-  Nil
+    let selector =
+      process.new_selector()
+      |> process.selecting(self, function.identity)
+
+    let ws_send = fn(msg) {
+      process.send(self, msg)
+      |> Ok
+    }
+
+    #(Initialized(ws_send), Some(selector))
+  }
+}
+
+fn terminator() {
+  fn(state: State) {
+    use spkt <- require_running(state, or_else: fn() { Nil })
+
+    let _ = sprocket.shutdown(spkt)
+
+    Nil
+  }
 }

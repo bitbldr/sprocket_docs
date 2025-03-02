@@ -1,6 +1,6 @@
 import docs/components/common.{example}
 import docs/components/products.{type Product, Product, product_card}
-import gleam/dict
+import gleam/dict.{type Dict}
 import gleam/float
 import gleam/int
 import gleam/option.{type Option, None, Some}
@@ -8,14 +8,10 @@ import gleam/result
 import sprocket/component.{render}
 import sprocket/context.{type Context}
 
-pub fn props_from(attrs: Option(List(#(String, String)))) {
+pub fn props_from(attrs: Option(Dict(String, String))) {
   case attrs {
     None -> ProductCardExampleProps(Product(0, "", "", "", "", 0.0))
     Some(attrs) -> {
-      let attrs =
-        attrs
-        |> dict.from_list()
-
       let id =
         attrs
         |> dict.get("id")
