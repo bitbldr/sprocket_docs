@@ -1,28 +1,28 @@
 import docs/utils/csrf.{type CSRFValidator}
 import gleam/bytes_tree
 import gleam/dict.{type Dict}
+import gleam/dynamic/decode
 import gleam/erlang/process.{type Selector}
 import gleam/function
 import gleam/http/request.{type Request}
 import gleam/http/response.{type Response}
-import gleam/io
 import gleam/json
 import gleam/list
 import gleam/option.{type Option, None, Some}
 import gleam/otp/actor
 import gleam/result
-import gleam/string
 import mist.{
   type Connection, type ResponseData, type WebsocketConnection,
   type WebsocketMessage,
 }
-import sprocket.{
-  type RuntimeMessage, type Sprocket, type StatefulComponent, ClientMessage,
-  JoinMessage, render,
-}
+import sprocket.{type Sprocket, type StatefulComponent, render}
 import sprocket/context.{type Element}
 import sprocket/internal/logger
 import sprocket/renderers/html.{html_renderer}
+import sprocket/runtime.{
+  type ClientMessage, type RuntimeMessage, client_event_decoder,
+  inbound_client_hook_event_decoder,
+}
 
 type State {
   Initialized(ws_send: fn(String) -> Result(Nil, Nil))
@@ -120,6 +120,15 @@ fn terminator() {
   }
 }
 
+pub type Message {
+  JoinMessage(
+    id: Option(String),
+    csrf_token: String,
+    initial_props: Option(Dict(String, String)),
+  )
+  Message(msg: ClientMessage)
+}
+
 fn component_handler(
   component: StatefulComponent(p),
   initialize_props: fn(Option(Dict(String, String))) -> p,
@@ -128,7 +137,7 @@ fn component_handler(
   fn(state: State, conn: WebsocketConnection, message: WebsocketMessage(String)) {
     use msg <- mist_text_message(conn, state, message)
 
-    case sprocket.decode_message(msg) {
+    case decode_message(msg) {
       Ok(JoinMessage(_id, csrf_token, initial_props)) -> {
         case validate_csrf(csrf_token) {
           Ok(_) -> {
@@ -169,7 +178,7 @@ fn component_handler(
           }
         }
       }
-      Ok(ClientMessage(client_message)) -> {
+      Ok(Message(client_message)) -> {
         use spkt <- require_running(state, or_else: fn() {
           logger.error(
             "Sprocket must be connected first before receiving events",
@@ -183,9 +192,7 @@ fn component_handler(
         actor.continue(state)
       }
       err -> {
-        io.debug(err)
-
-        logger.error("Error decoding message: " <> msg)
+        logger.error_meta("Error decoding message: " <> msg, err)
 
         actor.continue(state)
       }
@@ -197,7 +204,7 @@ fn view_handler(el: Element, validate_csrf: CSRFValidator) {
   fn(state: State, conn: WebsocketConnection, message: WebsocketMessage(String)) {
     use msg <- mist_text_message(conn, state, message)
 
-    case sprocket.decode_message(msg) {
+    case decode_message(msg) {
       Ok(JoinMessage(_id, csrf_token, _initial_props)) -> {
         case validate_csrf(csrf_token) {
           Ok(_) -> {
@@ -235,7 +242,7 @@ fn view_handler(el: Element, validate_csrf: CSRFValidator) {
           }
         }
       }
-      Ok(ClientMessage(client_message)) -> {
+      Ok(Message(client_message)) -> {
         use spkt <- require_running(state, or_else: fn() {
           logger.error(
             "Sprocket must be connected first before receiving events",
@@ -270,8 +277,7 @@ fn mist_text_message(
       let _ =
         mist.send_text_frame(conn, msg)
         |> result.map_error(fn(reason) {
-          logger.error("Failed to send websocket message: " <> msg)
-          io.debug(reason)
+          logger.error_meta("Failed to send websocket message: " <> msg, reason)
 
           Nil
         })
@@ -301,5 +307,51 @@ fn require_running(
   case state {
     Running(spkt) -> cb(spkt)
     _ -> bail()
+  }
+}
+
+pub fn decode_message(msg: String) {
+  let decoder = {
+    use tag <- decode.field("type", decode.string)
+
+    case tag {
+      "join" -> join_message_decoder()
+      _ -> message_decoder()
+    }
+  }
+
+  json.parse(msg, decoder)
+}
+
+fn join_message_decoder() {
+  use id <- decode.optional_field("id", None, decode.optional(decode.string))
+  use csrf_token <- decode.field("csrf", decode.string)
+  use initial_props <- decode.optional_field(
+    "initialProps",
+    None,
+    decode.optional(decode.dict(decode.string, decode.string)),
+  )
+
+  decode.success(JoinMessage(id, csrf_token, initial_props))
+}
+
+fn message_decoder() {
+  let runtime_inbound_client_hook_message_decoder = {
+    use msg <- decode.then(inbound_client_hook_event_decoder())
+
+    decode.success(Message(msg))
+  }
+
+  let runtime_client_message_decoder = {
+    use msg <- decode.then(client_event_decoder())
+
+    decode.success(Message(msg))
+  }
+
+  use tag <- decode.field("type", decode.string)
+
+  case tag {
+    "hook:event" -> runtime_inbound_client_hook_message_decoder
+    _ -> runtime_client_message_decoder
   }
 }
