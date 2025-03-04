@@ -312,10 +312,10 @@ fn require_running(
 
 pub fn decode_message(msg: String) {
   let decoder = {
-    use tag <- decode.field("type", decode.string)
+    use message_type <- decode.then(decode.at([0], decode.string))
 
-    case tag {
-      "join" -> join_message_decoder()
+    case message_type {
+      "join" -> decode.at([1], join_message_decoder())
       _ -> message_decoder()
     }
   }
