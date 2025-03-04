@@ -15,14 +15,14 @@ import mist.{
   type Connection, type ResponseData, type WebsocketConnection,
   type WebsocketMessage,
 }
-import sprocket.{type Sprocket, type StatefulComponent, render}
+import sprocket.{
+  type Sprocket, type StatefulComponent, client_message_decoder, render,
+  runtime_message_to_json,
+}
 import sprocket/context.{type Element}
 import sprocket/internal/logger
 import sprocket/renderers/html.{html_renderer}
-import sprocket/runtime.{
-  type ClientMessage, type RuntimeMessage, client_event_decoder,
-  inbound_client_hook_event_decoder,
-}
+import sprocket/runtime.{type ClientMessage, type RuntimeMessage}
 
 type State {
   Initialized(ws_send: fn(String) -> Result(Nil, Nil))
@@ -152,7 +152,7 @@ fn component_handler(
 
             let dispatch = fn(runtime_message: RuntimeMessage) {
               runtime_message
-              |> sprocket.runtime_message_to_json()
+              |> runtime_message_to_json()
               |> json.to_string()
               |> ws_send()
             }
@@ -216,7 +216,7 @@ fn view_handler(el: Element, validate_csrf: CSRFValidator) {
 
             let dispatch = fn(event: RuntimeMessage) {
               event
-              |> sprocket.runtime_message_to_json()
+              |> runtime_message_to_json()
               |> json.to_string()
               |> ws_send()
             }
@@ -336,22 +336,7 @@ fn join_message_decoder() {
 }
 
 fn message_decoder() {
-  let runtime_inbound_client_hook_message_decoder = {
-    use msg <- decode.then(inbound_client_hook_event_decoder())
+  use msg <- decode.then(client_message_decoder())
 
-    decode.success(Message(msg))
-  }
-
-  let runtime_client_message_decoder = {
-    use msg <- decode.then(client_event_decoder())
-
-    decode.success(Message(msg))
-  }
-
-  use tag <- decode.field("type", decode.string)
-
-  case tag {
-    "hook:event" -> runtime_inbound_client_hook_message_decoder
-    _ -> runtime_client_message_decoder
-  }
+  decode.success(Message(msg))
 }
