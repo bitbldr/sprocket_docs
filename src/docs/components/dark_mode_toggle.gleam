@@ -3,7 +3,7 @@ import gleam/dynamic
 import gleam/option.{Some}
 import sprocket/component.{render}
 import sprocket/context.{type Context, type Element} as _
-import sprocket/hooks.{client, provider, state}
+import sprocket/hooks.{client, consumer, state}
 import sprocket/html/attributes.{class, classes}
 import sprocket/html/elements.{button, div, i}
 import sprocket/html/events
@@ -15,7 +15,7 @@ pub type DarkModeToggleProps {
 pub fn dark_mode_toggle(ctx: Context, _props: DarkModeToggleProps) {
   use ctx, is_open, set_open <- state(ctx, False)
 
-  use ctx, theme <- provider(ctx, "theme")
+  use ctx, theme <- consumer(theme.provider_key, ctx)
 
   let Theme(mode: mode, set_mode: set_mode) =
     theme

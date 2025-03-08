@@ -13,8 +13,8 @@ import docs/utils/ordered_map.{KeyedItem}
 import gleam/list
 import gleam/option.{None}
 import sprocket/component.{component, render}
-import sprocket/context.{type Context, provider}
-import sprocket/hooks.{client, memo, reducer} as _
+import sprocket/context.{type Context}
+import sprocket/hooks.{client, memo, reducer, provider} as _
 import sprocket/html/attributes.{class, id}
 import sprocket/html/elements.{div, ignore, raw}
 
@@ -50,6 +50,8 @@ pub fn page(ctx: Context, props: PageProps) {
 
   use ctx, Model(mode), dispatch <- reducer(ctx, init(), update)
 
+  use ctx <- provider(ctx, theme.provider_key, Theme(mode: mode, set_mode: fn(mode) { dispatch(SetMode(mode)) }))
+
   use ctx, pages <- memo(
     ctx,
     fn() {
@@ -68,10 +70,7 @@ pub fn page(ctx: Context, props: PageProps) {
     ctx,
     div([id("app")], [
       div([], [
-        provider(
-          "theme",
-          Theme(mode: mode, set_mode: fn(mode) { dispatch(SetMode(mode)) }),
-          div([], [
+        div([], [
             component(
               header,
               HeaderProps(menu_items: [
@@ -79,7 +78,6 @@ pub fn page(ctx: Context, props: PageProps) {
               ]),
             ),
           ]),
-        ),
       ]),
       component(
         responsive_drawer,
