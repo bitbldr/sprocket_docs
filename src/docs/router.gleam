@@ -17,7 +17,7 @@ import gleam/http/service.{type Service}
 import gleam/option.{None}
 import gleam/string
 import mist.{type Connection, type ResponseData}
-import mist_sprocket.{view}
+import sprocket_mist.{view}
 import sprocket/component.{component}
 
 pub fn router(app: AppContext) {

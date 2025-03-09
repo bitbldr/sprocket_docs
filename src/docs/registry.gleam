@@ -20,7 +20,7 @@ import gleam/dict.{type Dict}
 import gleam/http/request.{type Request}
 import gleam/option.{type Option}
 import mist.{type Connection}
-import mist_sprocket
+import sprocket_mist
 import sprocket.{render}
 import sprocket/component.{component}
 import sprocket/renderers/html.{html_renderer}
@@ -137,7 +137,7 @@ pub fn component_router(
 ) {
   case name {
     "codeblock" -> {
-      mist_sprocket.component(
+      sprocket_mist.component(
         request,
         codeblock,
         codeblock.props_from,
@@ -147,7 +147,7 @@ pub fn component_router(
     }
 
     "counter" -> {
-      mist_sprocket.component(
+      sprocket_mist.component(
         request,
         counter,
         counter.props_from,
@@ -157,7 +157,7 @@ pub fn component_router(
     }
 
     "counter_example" -> {
-      mist_sprocket.component(
+      sprocket_mist.component(
         request,
         counter_example,
         counter_example.props_from,
@@ -167,7 +167,7 @@ pub fn component_router(
     }
 
     "button_example" -> {
-      mist_sprocket.component(
+      sprocket_mist.component(
         request,
         button_example,
         button_example.props_from,
@@ -177,7 +177,7 @@ pub fn component_router(
     }
 
     "toggle_button_with_render_label" -> {
-      mist_sprocket.component(
+      sprocket_mist.component(
         request,
         toggle_button_with_render_label,
         toggle_button_with_render_label.props_from,
@@ -187,7 +187,7 @@ pub fn component_router(
     }
 
     "product_card_example" -> {
-      mist_sprocket.component(
+      sprocket_mist.component(
         request,
         product_card_example,
         product_card_example.props_from,
@@ -197,7 +197,7 @@ pub fn component_router(
     }
 
     "stateful_product_card_example" -> {
-      mist_sprocket.component(
+      sprocket_mist.component(
         request,
         stateful_product_card_example,
         stateful_product_card_example.props_from,
@@ -207,7 +207,7 @@ pub fn component_router(
     }
 
     "product_list_example" -> {
-      mist_sprocket.component(
+      sprocket_mist.component(
         request,
         product_list_example,
         product_list_example.props_from,
@@ -217,7 +217,7 @@ pub fn component_router(
     }
 
     "props_and_events_counter_example" -> {
-      mist_sprocket.component(
+      sprocket_mist.component(
         request,
         props_and_events_counter_example,
         props_and_events_counter_example.props_from,
@@ -227,7 +227,7 @@ pub fn component_router(
     }
 
     "greeting_button_example" -> {
-      mist_sprocket.component(
+      sprocket_mist.component(
         request,
         greeting_button_example,
         greeting_button_example.props_from,
@@ -237,7 +237,7 @@ pub fn component_router(
     }
 
     "clock_example" -> {
-      mist_sprocket.component(
+      sprocket_mist.component(
         request,
         clock_example,
         clock_example.props_from,
@@ -247,7 +247,7 @@ pub fn component_router(
     }
 
     "analog_clock_example" -> {
-      mist_sprocket.component(
+      sprocket_mist.component(
         request,
         analog_clock_example,
         analog_clock_example.props_from,

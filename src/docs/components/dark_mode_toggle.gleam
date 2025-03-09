@@ -15,7 +15,7 @@ pub type DarkModeToggleProps {
 pub fn dark_mode_toggle(ctx: Context, _props: DarkModeToggleProps) {
   use ctx, is_open, set_open <- state(ctx, False)
 
-  use ctx, theme <- consumer(theme.provider_key, ctx)
+  use ctx, theme <- consumer(ctx, theme.provider_key)
 
   let Theme(mode: mode, set_mode: set_mode) =
     theme
