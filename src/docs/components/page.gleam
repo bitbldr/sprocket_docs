@@ -50,10 +50,6 @@ pub fn page(ctx: Context, props: PageProps) {
 
   use ctx, Model(mode), dispatch <- reducer(ctx, init(), update)
 
-  use ctx <- provider(ctx, theme.provider_key, Theme(mode: mode, set_mode: fn(mode) {
-    dispatch(SetMode(mode))
-  }))
-
   use ctx, pages <- memo(
     ctx,
     fn() {
@@ -71,16 +67,17 @@ pub fn page(ctx: Context, props: PageProps) {
   render(
     ctx,
     div([id("app")], [
-      div([], [
+      theme.provider(
+        Theme(mode: mode, set_mode: fn(mode) { dispatch(SetMode(mode)) }),
         div([], [
-            component(
-              header,
-              HeaderProps(menu_items: [
-                MenuItem("Github", "https://github.com/bitbldr/sprocket"),
-              ]),
-            ),
-          ]),
-      ]),
+          component(
+            header,
+            HeaderProps(menu_items: [
+              MenuItem("Github", "https://github.com/bitbldr/sprocket"),
+            ]),
+          ),
+        ]),
+      ),
       component(
         responsive_drawer,
         ResponsiveDrawerProps(
