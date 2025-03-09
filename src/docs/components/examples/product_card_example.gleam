@@ -1,56 +1,60 @@
 import docs/components/common.{example}
 import docs/components/products.{type Product, Product, product_card}
-import gleam/dict.{type Dict}
+import gleam/dynamic.{type Dynamic}
+import gleam/dynamic/decode
 import gleam/float
 import gleam/int
 import gleam/option.{type Option, None, Some}
 import gleam/result
 import sprocket/component.{type Context, render}
 
-pub fn props_from(attrs: Option(Dict(String, String))) {
+pub fn props_from(attrs: Option(Dynamic)) -> ProductCardExampleProps {
+  let default = ProductCardExampleProps(Product(0, "", "", "", "", 0.0))
+
   case attrs {
-    None -> ProductCardExampleProps(Product(0, "", "", "", "", 0.0))
+    None -> default
     Some(attrs) -> {
-      let id =
-        attrs
-        |> dict.get("id")
-        |> result.try(int.parse)
-        |> result.unwrap(0)
+      decode.run(attrs, {
+        use id <- decode.optional_field(
+          "id",
+          0,
+          decode.string
+            |> decode.map(int.parse)
+            |> decode.map(result.unwrap(_, 0)),
+        )
 
-      let name =
-        attrs
-        |> dict.get("name")
-        |> result.unwrap("")
+        use name <- decode.optional_field("name", "", decode.string)
 
-      let description =
-        attrs
-        |> dict.get("description")
-        |> result.unwrap("")
+        use description <- decode.optional_field(
+          "description",
+          "",
+          decode.string,
+        )
 
-      let img_url =
-        attrs
-        |> dict.get("img_url")
-        |> result.unwrap("")
+        use img_url <- decode.optional_field("img_url", "", decode.string)
 
-      let qty =
-        attrs
-        |> dict.get("qty")
-        |> result.unwrap("")
+        use qty <- decode.optional_field("qty", "", decode.string)
 
-      let price =
-        attrs
-        |> dict.get("price")
-        |> result.try(float.parse)
-        |> result.unwrap(0.0)
+        use price <- decode.optional_field(
+          "price",
+          0.0,
+          decode.string
+            |> decode.map(float.parse)
+            |> decode.map(result.unwrap(_, 0.0)),
+        )
 
-      ProductCardExampleProps(Product(
-        id,
-        name,
-        description,
-        img_url,
-        qty,
-        price,
-      ))
+        decode.success(
+          ProductCardExampleProps(Product(
+            id: id,
+            name: name,
+            description: description,
+            img_url: img_url,
+            qty: qty,
+            price: price,
+          )),
+        )
+      })
+      |> result.unwrap(default)
     }
   }
 }

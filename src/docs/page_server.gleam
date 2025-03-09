@@ -4,6 +4,7 @@ import docs/registry.{render_component_html}
 import docs/utils/common.{priv_directory}
 import docs/utils/ordered_map.{type OrderedMap}
 import gleam/dict
+import gleam/dynamic
 import gleam/erlang/process.{type Subject}
 import gleam/function
 import gleam/int
@@ -127,7 +128,10 @@ fn load_pages() -> OrderedMap(String, Page) {
       Ok(content) -> {
         let html =
           djot.to_html(content, fn(name, props) {
-            render_component_html(name, Some(dict.from_list(props)))
+            render_component_html(
+              name,
+              Some(dynamic.from(dict.from_list(props))),
+            )
           })
 
         let uri = urlify(basename)

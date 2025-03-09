@@ -28,6 +28,13 @@ pub fn require(
   }
 }
 
+pub fn try_option_recover(or default_value: b, do func: fn() -> Option(b)) -> b {
+  case func() {
+    Some(value) -> value
+    None -> default_value
+  }
+}
+
 pub fn mist_response(response: Response(BytesTree)) -> Response(ResponseData) {
   response.new(response.status)
   |> response.set_body(mist.Bytes(response.body))

@@ -1,17 +1,10 @@
 import docs/components/common.{example}
 import docs/components/toggle_button.{ToggleButtonProps, toggle_button}
-import gleam/dict.{type Dict}
+import gleam/dynamic.{type Dynamic}
 import gleam/option.{type Option, None, Some}
 import sprocket/component.{type Context, component, render}
 import sprocket/html/attributes.{class}
 import sprocket/html/elements.{i, span, text}
-
-pub fn props_from(attrs: Option(Dict(String, String))) {
-  case attrs {
-    None -> ToggleButtonWithRenderLabelProps
-    Some(_attrs) -> ToggleButtonWithRenderLabelProps
-  }
-}
 
 pub type ToggleButtonWithRenderLabelProps {
   ToggleButtonWithRenderLabelProps
@@ -43,4 +36,11 @@ pub fn toggle_button_with_render_label(
       ),
     ]),
   )
+}
+
+pub fn props_from(attrs: Option(Dynamic)) -> ToggleButtonWithRenderLabelProps {
+  case attrs {
+    None -> ToggleButtonWithRenderLabelProps
+    Some(_attrs) -> ToggleButtonWithRenderLabelProps
+  }
 }

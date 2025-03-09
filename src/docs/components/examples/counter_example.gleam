@@ -1,34 +1,49 @@
 import docs/components/common.{example}
 import docs/components/events_counter.{CounterProps, counter}
-import gleam/dict.{type Dict}
+import gleam/dynamic.{type Dynamic}
+import gleam/dynamic/decode
 import gleam/int
 import gleam/option.{type Option, None, Some}
 import gleam/result
 import gleam/string
 import sprocket/component.{type Context, component, render}
 
-pub fn props_from(attrs: Option(Dict(String, String))) {
+pub fn props_from(attrs: Option(Dynamic)) -> CounterExampleProps {
+  let default = CounterExampleProps(initial: 0, enable_reset: False)
+
   case attrs {
-    None -> CounterExampleProps(initial: 0, enable_reset: False)
+    None -> default
     Some(attrs) -> {
-      let enable_reset =
-        attrs
-        |> dict.get("enable_reset")
-        |> result.map(fn(enable_reset) {
-          case string.lowercase(enable_reset) {
-            "true" -> True
-            _ -> False
-          }
-        })
-        |> result.unwrap(False)
+      echo attrs
+      decode.run(attrs, {
+        use initial <- decode.optional_field(
+          "initial",
+          0,
+          decode.string
+            |> decode.map(int.parse)
+            |> decode.map(result.unwrap(_, 0)),
+        )
 
-      let initial =
-        attrs
-        |> dict.get("initial")
-        |> result.try(int.parse)
-        |> result.unwrap(0)
+        use enable_reset <- decode.optional_field(
+          "enable_reset",
+          False,
+          decode.string
+            |> decode.map(fn(enable_reset) {
+              echo enable_reset
+              case string.lowercase(enable_reset) {
+                "true" -> True
+                _ -> False
+              }
+            }),
+        )
 
-      CounterExampleProps(initial: initial, enable_reset: enable_reset)
+        decode.success(CounterExampleProps(
+          initial: initial,
+          enable_reset: enable_reset,
+        ))
+      })
+      |> result.unwrap(default)
+      |> echo
     }
   }
 }

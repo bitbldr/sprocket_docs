@@ -1,4 +1,5 @@
-import gleam/dict.{type Dict}
+import gleam/dynamic.{type Dynamic}
+import gleam/dynamic/decode
 import gleam/int
 import gleam/list
 import gleam/option.{type Option, None, Some}
@@ -8,25 +9,6 @@ import sprocket/component.{type Context, render}
 import sprocket/hooks.{client}
 import sprocket/html/attributes.{class}
 import sprocket/html/elements.{code_text, div, ignore, pre}
-
-pub fn props_from(attrs: Option(Dict(String, String))) {
-  case attrs {
-    None -> CodeBlockProps("", "")
-    Some(attrs) -> {
-      let language =
-        attrs
-        |> dict.get("language")
-        |> result.unwrap("")
-
-      let body =
-        attrs
-        |> dict.get("inner_html")
-        |> result.unwrap("")
-
-      CodeBlockProps(language, body)
-    }
-  }
-}
 
 pub type CodeBlockProps {
   CodeBlockProps(language: String, body: String)
@@ -89,5 +71,22 @@ fn count_leading_spaces(line: String, count: Int) {
   case string.pop_grapheme(line) {
     Ok(#(" ", rest)) -> count_leading_spaces(rest, count + 1)
     _ -> count
+  }
+}
+
+pub fn props_from(attrs: Option(Dynamic)) -> CodeBlockProps {
+  let default = CodeBlockProps("", "")
+
+  case attrs {
+    None -> default
+    Some(attrs) -> {
+      decode.run(attrs, {
+        use language <- decode.optional_field("language", "", decode.string)
+        use body <- decode.optional_field("inner_html", "", decode.string)
+
+        decode.success(CodeBlockProps(language, body))
+      })
+      |> result.unwrap(default)
+    }
   }
 }

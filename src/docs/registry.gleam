@@ -16,18 +16,18 @@ import docs/components/examples/stateful_product_card_example.{
 import docs/components/examples/toggle_button_with_render_label.{
   toggle_button_with_render_label,
 }
-import gleam/dict.{type Dict}
+import gleam/dynamic.{type Dynamic}
 import gleam/http/request.{type Request}
 import gleam/option.{type Option}
 import mist.{type Connection}
-import sprocket_mist
 import sprocket.{render}
 import sprocket/component.{component}
 import sprocket/renderers/html.{html_renderer}
+import sprocket_mist
 
 pub fn render_component_html(
   name: String,
-  attrs: Option(Dict(String, String)),
+  attrs: Option(Dynamic),
 ) -> Result(String, Nil) {
   case name {
     "codeblock" -> {

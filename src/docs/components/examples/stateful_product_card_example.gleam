@@ -1,7 +1,8 @@
 import docs/components/common.{example}
 import docs/components/products.{type Product, Product, product_card}
 import docs/components/toggle_button.{ToggleButtonProps, toggle_button}
-import gleam/dict.{type Dict}
+import gleam/dynamic.{type Dynamic}
+import gleam/dynamic/decode
 import gleam/float
 import gleam/int
 import gleam/option.{type Option, None, Some}
@@ -9,54 +10,6 @@ import gleam/result
 import sprocket/component.{type Context, component, render}
 import sprocket/html/attributes.{class}
 import sprocket/html/elements.{div, i, span, text}
-
-pub fn props_from(attrs: Option(Dict(String, String))) {
-  case attrs {
-    None -> StatefulProductCardExampleProps(Product(0, "", "", "", "", 0.0))
-    Some(attrs) -> {
-      let id =
-        attrs
-        |> dict.get("id")
-        |> result.try(int.parse)
-        |> result.unwrap(0)
-
-      let name =
-        attrs
-        |> dict.get("name")
-        |> result.unwrap("")
-
-      let description =
-        attrs
-        |> dict.get("description")
-        |> result.unwrap("")
-
-      let img_url =
-        attrs
-        |> dict.get("img_url")
-        |> result.unwrap("")
-
-      let qty =
-        attrs
-        |> dict.get("qty")
-        |> result.unwrap("")
-
-      let price =
-        attrs
-        |> dict.get("price")
-        |> result.try(float.parse)
-        |> result.unwrap(0.0)
-
-      StatefulProductCardExampleProps(Product(
-        id,
-        name,
-        description,
-        img_url,
-        qty,
-        price,
-      ))
-    }
-  }
-}
 
 pub type StatefulProductCardExampleProps {
   StatefulProductCardExampleProps(product: Product)
@@ -97,4 +50,55 @@ pub fn stateful_product_card_example(
       ]),
     ]),
   )
+}
+
+pub fn props_from(attrs: Option(Dynamic)) -> StatefulProductCardExampleProps {
+  let default = StatefulProductCardExampleProps(Product(0, "", "", "", "", 0.0))
+
+  case attrs {
+    None -> default
+    Some(attrs) -> {
+      decode.run(attrs, {
+        use id <- decode.optional_field(
+          "id",
+          0,
+          decode.string
+            |> decode.map(int.parse)
+            |> decode.map(result.unwrap(_, 0)),
+        )
+
+        use name <- decode.optional_field("name", "", decode.string)
+
+        use description <- decode.optional_field(
+          "description",
+          "",
+          decode.string,
+        )
+
+        use img_url <- decode.optional_field("img_url", "", decode.string)
+
+        use qty <- decode.optional_field("qty", "", decode.string)
+
+        use price <- decode.optional_field(
+          "price",
+          0.0,
+          decode.string
+            |> decode.map(float.parse)
+            |> decode.map(result.unwrap(_, 0.0)),
+        )
+
+        decode.success(
+          StatefulProductCardExampleProps(Product(
+            id: id,
+            name: name,
+            description: description,
+            img_url: img_url,
+            qty: qty,
+            price: price,
+          )),
+        )
+      })
+      |> result.unwrap(default)
+    }
+  }
 }

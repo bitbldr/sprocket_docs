@@ -1,4 +1,5 @@
-import gleam/dict.{type Dict}
+import gleam/dynamic.{type Dynamic}
+import gleam/dynamic/decode
 import gleam/int
 import gleam/io
 import gleam/option.{type Option, None, Some}
@@ -90,17 +91,24 @@ pub fn counter(ctx: Context, props: CounterProps) {
   )
 }
 
-pub fn props_from(attrs: Option(Dict(String, String))) {
-  case attrs {
-    None -> CounterProps(initial: None)
-    Some(attrs) -> {
-      let initial =
-        attrs
-        |> dict.get("initial")
-        |> result.try(int.parse)
-        |> option.from_result
+pub fn props_from(attrs: Option(Dynamic)) -> CounterProps {
+  let default = CounterProps(initial: None)
 
-      CounterProps(initial: initial)
+  case attrs {
+    None -> default
+    Some(attrs) -> {
+      decode.run(attrs, {
+        use initial <- decode.optional_field(
+          "initial",
+          None,
+          decode.string
+            |> decode.map(int.parse)
+            |> decode.map(option.from_result),
+        )
+
+        decode.success(CounterProps(initial: initial))
+      })
+      |> result.unwrap(default)
     }
   }
 }
