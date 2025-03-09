@@ -4,8 +4,7 @@ import docs/utils/common.{maybe}
 import docs/utils/ordered_map.{type OrderedMap, KeyedItem}
 import gleam/int
 import gleam/option.{type Option, None, Some}
-import sprocket/component.{component, render}
-import sprocket/context.{type Context}
+import sprocket/component.{type Context, component, render}
 import sprocket/hooks.{reducer}
 import sprocket/html/attributes.{class, classes}
 import sprocket/html/elements.{a, div, fragment, keyed, text}

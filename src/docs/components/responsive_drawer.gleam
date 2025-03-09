@@ -3,8 +3,7 @@ import docs/components/logo.{LogoOpts, logo}
 import docs/utils/common
 import gleam/io
 import gleam/option.{None, Some}
-import sprocket/component.{component, render}
-import sprocket/context.{type Context, type Element}
+import sprocket/component.{type Context, type Element, component, render}
 import sprocket/hooks.{client, reducer}
 import sprocket/html/attributes.{class, classes}
 import sprocket/html/elements.{aside, button, div, fragment, i, keyed, text}

@@ -2,8 +2,7 @@ import docs/components/common.{example}
 import docs/components/example_button.{ExampleButtonProps, example_button}
 import gleam/dict.{type Dict}
 import gleam/option.{type Option, None, Some}
-import sprocket/component.{component, render}
-import sprocket/context.{type Context}
+import sprocket/component.{type Context, component, render}
 
 pub fn props_from(attrs: Option(Dict(String, String))) {
   case attrs {

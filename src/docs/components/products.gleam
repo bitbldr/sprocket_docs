@@ -2,8 +2,7 @@ import gleam/float
 import gleam/int
 import gleam/list
 import gleam/option.{type Option, None, Some}
-import sprocket/component.{component, render}
-import sprocket/context.{type Context, type Element}
+import sprocket/component.{type Context, type Element, component, render}
 import sprocket/hooks.{reducer, state}
 import sprocket/html/attributes.{alt, class, role, src}
 import sprocket/html/elements.{

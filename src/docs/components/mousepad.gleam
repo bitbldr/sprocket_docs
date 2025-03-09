@@ -1,7 +1,6 @@
 import docs/utils/logger
 import gleam/int
-import sprocket/component.{render}
-import sprocket/context.{type Context}
+import sprocket/component.{type Context, render}
 import sprocket/hooks.{reducer}
 import sprocket/html/attributes.{class}
 import sprocket/html/elements.{div, span, text}

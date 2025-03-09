@@ -1,4 +1,4 @@
-import sprocket/context.{type Element}
+import sprocket/component.{type Element}
 
 pub type DarkMode {
   Auto
@@ -13,5 +13,5 @@ pub type Theme {
 pub const provider_key = "theme"
 
 pub fn provider(theme: Theme, element: Element) -> Element {
-  context.provider(provider_key, theme, element)
+  component.provider(provider_key, theme, element)
 }

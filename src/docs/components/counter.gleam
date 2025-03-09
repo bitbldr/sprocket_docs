@@ -4,9 +4,8 @@ import gleam/io
 import gleam/option.{type Option, None, Some}
 import gleam/result
 import gleam/string
-import sprocket/component.{render}
-import sprocket/context.{type Context, dep}
-import sprocket/hooks.{effect, reducer}
+import sprocket/component.{type Context, render}
+import sprocket/hooks.{dep, effect, reducer}
 import sprocket/html/attributes.{class}
 import sprocket/html/elements.{button, div, span, text}
 import sprocket/html/events

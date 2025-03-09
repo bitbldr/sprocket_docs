@@ -1,5 +1,5 @@
 import gleam/option.{None, Some}
-import sprocket/context.{type Element}
+import sprocket/component.{type Element}
 import sprocket/html/attributes.{
   charset, class, content, crossorigin, href, id, integrity, lang, media, name,
   referrerpolicy, rel, src,

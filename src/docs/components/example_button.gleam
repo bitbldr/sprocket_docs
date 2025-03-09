@@ -1,7 +1,6 @@
 import gleam/dict.{type Dict}
 import gleam/option.{type Option, None, Some}
-import sprocket/component.{render}
-import sprocket/context.{type Context}
+import sprocket/component.{type Context, render}
 import sprocket/html/attributes.{class}
 import sprocket/html/elements.{button, text}
 

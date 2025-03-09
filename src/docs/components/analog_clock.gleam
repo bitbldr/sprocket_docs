@@ -4,8 +4,7 @@ import gleam/float
 import gleam/int
 import gleam/option.{Some}
 import gleam/pair
-import sprocket/component.{render}
-import sprocket/context.{type Context}
+import sprocket/component.{type Context, render}
 import sprocket/hooks.{effect, reducer}
 import sprocket/html/attributes.{xmlns, xmlns_xlink}
 import sprocket/html/svg/attributes.{

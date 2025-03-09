@@ -1,5 +1,5 @@
 import gleam/option.{Some}
-import sprocket/context.{type Element}
+import sprocket/component.{type Element}
 import sprocket/html/attributes.{class, classes}
 import sprocket/html/elements.{div}
 

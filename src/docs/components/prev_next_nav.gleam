@@ -3,8 +3,7 @@ import docs/utils/common.{maybe}
 import docs/utils/ordered_map.{type OrderedMap}
 import gleam/option.{Some}
 import gleam/result
-import sprocket/component.{component, render}
-import sprocket/context.{type Context}
+import sprocket/component.{type Context, component, render}
 import sprocket/html/attributes.{class, classes}
 import sprocket/html/elements.{a, div, fragment, hr, i, text}
 

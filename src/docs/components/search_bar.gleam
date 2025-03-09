@@ -1,6 +1,5 @@
 import gleam/option.{None, Some}
-import sprocket/component.{render}
-import sprocket/context.{type Context}
+import sprocket/component.{type Context, render}
 import sprocket/hooks.{reducer}
 import sprocket/html/attributes.{class, input_type, placeholder, value}
 import sprocket/html/elements.{input}

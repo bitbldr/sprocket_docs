@@ -4,8 +4,7 @@ import docs/components/analog_clock.{
 import docs/components/common.{example}
 import gleam/dict.{type Dict}
 import gleam/option.{type Option}
-import sprocket/component.{component, render}
-import sprocket/context.{type Context}
+import sprocket/component.{type Context, component, render}
 
 pub fn props_from(_attrs: Option(Dict(String, String))) {
   AnalogClockProps

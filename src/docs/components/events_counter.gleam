@@ -1,7 +1,6 @@
 import gleam/int
 import gleam/option.{type Option, None, Some}
-import sprocket/component.{component, render}
-import sprocket/context.{type Context}
+import sprocket/component.{type Context, component, render}
 import sprocket/hooks.{client, reducer}
 import sprocket/html/attributes.{class, classes}
 import sprocket/html/elements.{button_text, div, span, text}

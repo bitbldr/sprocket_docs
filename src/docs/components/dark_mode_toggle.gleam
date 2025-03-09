@@ -2,8 +2,7 @@ import docs/theme.{type DarkMode, Auto, Dark, Light, Theme}
 import gleam/io
 import gleam/dynamic
 import gleam/option.{Some}
-import sprocket/component.{render}
-import sprocket/context.{type Context, type Element} as _
+import sprocket/component.{type Context, type Element, render}
 import sprocket/hooks.{client, provider, state}
 import sprocket/html/attributes.{class, classes}
 import sprocket/html/elements.{button, div, i}

@@ -4,8 +4,7 @@ import docs/components/products.{
 }
 import gleam/dict.{type Dict}
 import gleam/option.{type Option, None, Some}
-import sprocket/component.{component, render}
-import sprocket/context.{type Context}
+import sprocket/component.{type Context, component, render}
 
 pub fn props_from(attrs: Option(Dict(String, String))) {
   case attrs {

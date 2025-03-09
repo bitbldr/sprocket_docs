@@ -1,5 +1,4 @@
-import sprocket/component.{render}
-import sprocket/context.{type Context, type Element}
+import sprocket/component.{type Context, type Element, render}
 import sprocket/hooks.{state}
 import sprocket/html/attributes.{class}
 import sprocket/html/elements.{button}

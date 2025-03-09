@@ -5,8 +5,7 @@ import gleam/float
 import gleam/int
 import gleam/option.{type Option, None, Some}
 import gleam/result
-import sprocket/component.{render}
-import sprocket/context.{type Context}
+import sprocket/component.{type Context, render}
 
 pub fn props_from(attrs: Option(Dict(String, String))) {
   case attrs {
