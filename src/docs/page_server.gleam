@@ -159,5 +159,5 @@ pub fn get_page(actor: PageServer, name: String) -> Result(Page, Nil) {
 }
 
 pub fn list_page_routes(actor: PageServer) -> List(PageRoute) {
-  actor.call(actor, ListPageRoutes(_), call_timeout)
+  actor.call(actor, ListPageRoutes, call_timeout)
 }

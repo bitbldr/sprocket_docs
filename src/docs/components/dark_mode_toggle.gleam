@@ -1,6 +1,6 @@
 import docs/theme.{type DarkMode, Auto, Dark, Light, Theme}
-import gleam/io
 import gleam/dynamic
+import gleam/io
 import gleam/option.{Some}
 import sprocket/component.{type Context, type Element, render}
 import sprocket/hooks.{client, provider, state}

@@ -13,7 +13,7 @@ import docs/utils/ordered_map.{KeyedItem}
 import gleam/list
 import gleam/option.{None}
 import sprocket/component.{type Context, component, render}
-import sprocket/hooks.{client, memo, reducer, provider} as _
+import sprocket/hooks.{client, memo, provider, reducer} as _
 import sprocket/html/attributes.{class, id}
 import sprocket/html/elements.{div, ignore, raw}
 
