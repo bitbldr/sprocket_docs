@@ -14,7 +14,6 @@ pub fn props_from(attrs: Option(Dynamic)) -> CounterExampleProps {
   case attrs {
     None -> default
     Some(attrs) -> {
-      echo attrs
       decode.run(attrs, {
         use initial <- decode.optional_field(
           "initial",
@@ -29,7 +28,6 @@ pub fn props_from(attrs: Option(Dynamic)) -> CounterExampleProps {
           False,
           decode.string
             |> decode.map(fn(enable_reset) {
-              echo enable_reset
               case string.lowercase(enable_reset) {
                 "true" -> True
                 _ -> False
@@ -43,7 +41,6 @@ pub fn props_from(attrs: Option(Dynamic)) -> CounterExampleProps {
         ))
       })
       |> result.unwrap(default)
-      |> echo
     }
   }
 }
