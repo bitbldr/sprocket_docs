@@ -1,4 +1,4 @@
-ARG GLEAM_VERSION=1.7.0
+ARG GLEAM_VERSION=1.9.0
 
 FROM ghcr.io/gleam-lang/gleam:v${GLEAM_VERSION}-erlang-alpine AS builder
 
