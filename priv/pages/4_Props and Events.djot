@@ -18,7 +18,7 @@ also re-rendered because its `count` prop has changed.
 ```gleam
 import gleam/int import gleam/option.{None, Option, Some}
 import sprocket/hooks.{dep, reducer}
-import sprocket/component.{type Context, component, render}
+import sprocket.{type Context, component, render}
 import sprocket/html/elements.{button_text, div, span, text}
 import sprocket/html/attributes.{class, classes}
 

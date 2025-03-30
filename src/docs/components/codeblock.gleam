@@ -5,7 +5,7 @@ import gleam/list
 import gleam/option.{type Option, None, Some}
 import gleam/result
 import gleam/string
-import sprocket/component.{type Context, render}
+import sprocket.{type Context, render}
 import sprocket/hooks.{client}
 import sprocket/html/attributes.{class}
 import sprocket/html/elements.{code_text, div, ignore, pre}

@@ -5,8 +5,8 @@ import gleam/io
 import gleam/option.{type Option, None, Some}
 import gleam/result
 import gleam/string
-import sprocket/component.{type Context, render}
-import sprocket/hooks.{dep, effect, reducer}
+import sprocket.{type Context, render}
+import sprocket/hooks.{type Dispatcher, dep, effect, reducer}
 import sprocket/html/attributes.{class}
 import sprocket/html/elements.{button, div, span, text}
 import sprocket/html/events
@@ -19,13 +19,13 @@ type Msg {
 }
 
 fn init(initial: Int) {
-  #(initial, [])
+  fn(_dispatch) { initial }
 }
 
-fn update(_model: Model, msg: Msg) {
+fn update(_model: Model, msg: Msg, _dispatch: Dispatcher(Msg)) -> Model {
   case msg {
     UpdateCounter(count) -> {
-      #(count, [])
+      count
     }
   }
 }

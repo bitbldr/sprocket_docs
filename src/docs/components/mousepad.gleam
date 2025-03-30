@@ -1,7 +1,7 @@
 import docs/utils/logger
 import gleam/int
-import sprocket/component.{type Context, render}
-import sprocket/hooks.{reducer}
+import sprocket.{type Context, render}
+import sprocket/hooks.{type Dispatcher, reducer}
 import sprocket/html/attributes.{class}
 import sprocket/html/elements.{div, span, text}
 import sprocket/html/events
@@ -15,15 +15,15 @@ type Msg {
 }
 
 fn init() {
-  #(#(0, 0), [])
+  fn(_dispatch) { #(0, 0) }
 }
 
-fn update(_model: Model, msg: Msg) {
+fn update(_model: Model, msg: Msg, _dispatch: Dispatcher(Msg)) -> Model {
   case msg {
     UpdatePosition(x, y) -> {
-      #(#(x, y), [])
+      #(x, y)
     }
-    ResetPosition -> #(#(0, 0), [])
+    ResetPosition -> #(0, 0)
   }
 }
 

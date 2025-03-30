@@ -174,7 +174,7 @@ clicked. Let's put it all together:
 import gleam/int
 import gleam/list
 import gleam/option.{type Option, None, Some}
-import sprocket/component.{type Context, render}
+import sprocket.{type Context, render}
 import sprocket/hooks.{type Cmd, reducer}
 import sprocket/html/attributes.{class}
 import sprocket/html/elements.{button, div, keyed, span, text}

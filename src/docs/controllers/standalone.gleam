@@ -7,8 +7,8 @@ import gleam/http/request.{type Request}
 import gleam/http/response.{type Response}
 import gleam/option.{Some}
 import mist.{type Connection, type ResponseData}
-import sprocket.{render}
-import sprocket/component.{component}
+import sprocket.{component}
+import sprocket/render.{render}
 import sprocket/renderers/html.{html_renderer}
 
 pub fn standalone(

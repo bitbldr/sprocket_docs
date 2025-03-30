@@ -11,7 +11,7 @@ update the time every second.
 import gleam/io
 import gleam/erlang
 import gleam/option.{type Option, None, Some}
-import sprocket/component.{type Context, render}
+import sprocket.{type Context, render}
 import sprocket/hooks.{dep, effect, reducer}
 import sprocket/html/elements.{fragment, span, text}
 import sprocket/internal/utils/timer.{interval}

@@ -16,7 +16,7 @@ or style framework you prefer.
 
 ```gleam
 import gleam/option.{None, Option, Some}
-import sprocket/component.{type Context, render}
+import sprocket.{type Context, render}
 import sprocket/html/elements.{button, text}
 import sprocket/html/attributes.{class}
 
@@ -104,8 +104,7 @@ label prop, we'll give more control to the parent component by introducing in a 
 renders the content of the button.
 
 ```gleam
-import sprocket/component.{render}
-import sprocket/component.{type Context, type Element}
+import sprocket.{type Context, type Element, render}
 import sprocket/hooks.{state}
 import sprocket/html/attributes.{class}
 import sprocket/html/elements.{button}
@@ -208,7 +207,7 @@ card.
 ```gleam
 import gleam/float
 import gleam/option.{type Option, None, Some}
-import sprocket/component.{type Element}
+import sprocket.{type Element}
 import sprocket/html/attributes.{alt, class, src}
 import sprocket/html/elements.{div, div_text, h5_text, img, li}
 import sprocket/html/events
@@ -297,8 +296,7 @@ will leave as `None` for now.
 
 ```gleam
 import gleam/option.{None}
-import sprocket/component.{render}
-import sprocket/component.{type Context}
+import sprocket.{type Context, render}
 import sprocket/html/attributes.{alt, class, role, src}
 import sprocket/html/elements.{div}
 
@@ -344,7 +342,7 @@ create a working product component.
 
 ```gleam
 import gleam/option.{None, Some}
-import sprocket/component.{type Context, component, render}
+import sprocket.{type Context, component, render}
 import sprocket/html/attributes.{alt, class, role, src}
 import sprocket/html/elements.{div, i, text}
 
@@ -419,7 +417,7 @@ of products, each with their own state.
 ```gleam
 import gleam/int
 import gleam/list
-import sprocket/component.{type Context, component, render}
+import sprocket.{type Context, component, render}
 import sprocket/hooks.{reducer}
 import sprocket/html/attributes.{class, role}
 import sprocket/html/elements.{

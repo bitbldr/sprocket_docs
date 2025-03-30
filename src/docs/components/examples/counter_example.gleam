@@ -6,7 +6,7 @@ import gleam/int
 import gleam/option.{type Option, None, Some}
 import gleam/result
 import gleam/string
-import sprocket/component.{type Context, component, render}
+import sprocket.{type Context, component, render}
 
 pub fn props_from(attrs: Option(Dynamic)) -> CounterExampleProps {
   let default = CounterExampleProps(initial: 0, enable_reset: False)

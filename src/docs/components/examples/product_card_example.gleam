@@ -6,7 +6,7 @@ import gleam/float
 import gleam/int
 import gleam/option.{type Option, None, Some}
 import gleam/result
-import sprocket/component.{type Context, render}
+import sprocket.{type Context, render}
 
 pub fn props_from(attrs: Option(Dynamic)) -> ProductCardExampleProps {
   let default = ProductCardExampleProps(Product(0, "", "", "", "", 0.0))

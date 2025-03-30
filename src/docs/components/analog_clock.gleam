@@ -4,8 +4,8 @@ import gleam/float
 import gleam/int
 import gleam/option.{Some}
 import gleam/pair
-import sprocket/component.{type Context, render}
-import sprocket/hooks.{effect, reducer}
+import sprocket.{type Context, render}
+import sprocket/hooks.{type Dispatcher, effect, reducer}
 import sprocket/html/attributes.{xmlns, xmlns_xlink}
 import sprocket/html/svg/attributes.{
   class, cx, cy, d, fill, height, id, r, stroke_miterlimit, stroke_width,
@@ -22,16 +22,18 @@ type Msg {
   UpdateTime(Int)
 }
 
-fn update(model: Model, msg: Msg) {
+fn update(model: Model, msg: Msg, _dispatch: Dispatcher(Msg)) -> Model {
   case msg {
     UpdateTime(time) -> {
-      #(Model(..model, time: time), [])
+      Model(..model, time: time)
     }
   }
 }
 
 fn init() {
-  #(Model(time: erlang.system_time(erlang.Second), timezone: "UTC"), [])
+  fn(_dispatch) {
+    Model(time: erlang.system_time(erlang.Second), timezone: "UTC")
+  }
 }
 
 pub type AnalogClockProps {

@@ -12,8 +12,8 @@ import docs/theme.{type DarkMode, type Theme, Auto, Theme}
 import docs/utils/ordered_map.{KeyedItem}
 import gleam/list
 import gleam/option.{None}
-import sprocket/component.{type Context, component, render}
-import sprocket/hooks.{client, memo, provider, reducer} as _
+import sprocket.{type Context, component, render}
+import sprocket/hooks.{type Dispatcher, client, memo, reducer} as _
 import sprocket/html/attributes.{class, id}
 import sprocket/html/elements.{div, ignore, raw}
 
@@ -25,14 +25,14 @@ type Msg {
   SetMode(mode: DarkMode)
 }
 
-fn update(_model: Model, msg: Msg) {
+fn update(_model: Model, msg: Msg, _dispatch: Dispatcher(Msg)) -> Model {
   case msg {
-    SetMode(mode) -> #(Model(mode: mode), [])
+    SetMode(mode) -> Model(mode: mode)
   }
 }
 
 fn init() {
-  #(Model(Auto), [])
+  fn(_dispatch) { Model(Auto) }
 }
 
 pub type PageProps {

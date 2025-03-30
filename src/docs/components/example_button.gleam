@@ -2,7 +2,7 @@ import gleam/dynamic.{type Dynamic}
 import gleam/dynamic/decode
 import gleam/option.{type Option, None, Some}
 import gleam/result
-import sprocket/component.{type Context, render}
+import sprocket.{type Context, render}
 import sprocket/html/attributes.{class}
 import sprocket/html/elements.{button, text}
 

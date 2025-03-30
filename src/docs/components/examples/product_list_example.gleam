@@ -4,7 +4,7 @@ import docs/components/products.{
 }
 import gleam/dynamic.{type Dynamic}
 import gleam/option.{type Option, None, Some}
-import sprocket/component.{type Context, component, render}
+import sprocket.{type Context, component, render}
 
 pub type ProductListExampleProps {
   ProductListExampleProps

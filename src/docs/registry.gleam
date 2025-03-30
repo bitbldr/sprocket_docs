@@ -20,8 +20,8 @@ import gleam/dynamic.{type Dynamic}
 import gleam/http/request.{type Request}
 import gleam/option.{type Option}
 import mist.{type Connection}
-import sprocket.{render}
-import sprocket/component.{component}
+import sprocket.{component}
+import sprocket/render.{render}
 import sprocket/renderers/html.{html_renderer}
 import sprocket_mist
 

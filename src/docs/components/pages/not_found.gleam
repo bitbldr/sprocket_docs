@@ -1,4 +1,4 @@
-import sprocket/component.{type Context, render}
+import sprocket.{type Context, render}
 import sprocket/html/attributes.{class}
 import sprocket/html/elements.{div, h1, text}
 

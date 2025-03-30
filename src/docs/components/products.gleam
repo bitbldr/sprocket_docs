@@ -2,8 +2,8 @@ import gleam/float
 import gleam/int
 import gleam/list
 import gleam/option.{type Option, None, Some}
-import sprocket/component.{type Context, type Element, component, render}
-import sprocket/hooks.{reducer, state}
+import sprocket.{type Context, type Element, component, render}
+import sprocket/hooks.{type Dispatcher, reducer, state}
 import sprocket/html/attributes.{alt, class, role, src}
 import sprocket/html/elements.{
   button, button_text, div, div_text, h5_text, i, img, keyed, li, text, ul,
@@ -162,16 +162,16 @@ type Msg {
   Reset
 }
 
-fn update(model: Model, msg: Msg) {
+fn update(model: Model, msg: Msg, _dispatch: Dispatcher(Msg)) -> Model {
   case msg {
-    NoOp -> #(model, [])
-    Hide(id) -> #(Model(hidden: [id, ..model.hidden]), [])
-    Reset -> #(Model(hidden: []), [])
+    NoOp -> model
+    Hide(id) -> Model(hidden: [id, ..model.hidden])
+    Reset -> Model(hidden: [])
   }
 }
 
-fn init() {
-  #(Model(hidden: []), [])
+fn init() -> fn(Dispatcher(Msg)) -> Model {
+  fn(_dispatch) { Model(hidden: []) }
 }
 
 pub type ProductListProps {

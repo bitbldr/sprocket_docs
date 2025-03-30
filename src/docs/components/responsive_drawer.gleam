@@ -3,8 +3,8 @@ import docs/components/logo.{LogoOpts, logo}
 import docs/utils/common
 import gleam/io
 import gleam/option.{None, Some}
-import sprocket/component.{type Context, type Element, component, render}
-import sprocket/hooks.{client, reducer}
+import sprocket.{type Context, type Element, component, render}
+import sprocket/hooks.{type Dispatcher, client, reducer}
 import sprocket/html/attributes.{class, classes}
 import sprocket/html/elements.{aside, button, div, fragment, i, keyed, text}
 import sprocket/html/events
@@ -21,18 +21,18 @@ type Msg {
   ShowLogo(Bool)
 }
 
-fn update(model: Model, msg: Msg) {
+fn update(model: Model, msg: Msg, _dispatch: Dispatcher(Msg)) -> Model {
   case msg {
-    NoOp -> #(model, [])
-    Show -> #(Model(..model, show: True), [])
-    Hide -> #(Model(..model, show: False), [])
-    Toggle -> #(Model(..model, show: !model.show), [])
-    ShowLogo(show) -> #(Model(..model, show_logo: show), [])
+    NoOp -> model
+    Show -> Model(..model, show: True)
+    Hide -> Model(..model, show: False)
+    Toggle -> Model(..model, show: !model.show)
+    ShowLogo(show) -> Model(..model, show_logo: show)
   }
 }
 
-fn init() {
-  #(Model(show: False, show_logo: False), [])
+fn init() -> fn(Dispatcher(Msg)) -> Model {
+  fn(_dispatch) { Model(show: False, show_logo: False) }
 }
 
 pub type ResponsiveDrawerProps {

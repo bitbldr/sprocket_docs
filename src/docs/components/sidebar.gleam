@@ -4,8 +4,8 @@ import docs/utils/common.{maybe}
 import docs/utils/ordered_map.{type OrderedMap, KeyedItem}
 import gleam/int
 import gleam/option.{type Option, None, Some}
-import sprocket/component.{type Context, component, render}
-import sprocket/hooks.{reducer}
+import sprocket.{type Context, component, render}
+import sprocket/hooks.{type Dispatcher, reducer}
 import sprocket/html/attributes.{class, classes}
 import sprocket/html/elements.{a, div, fragment, keyed, text}
 
@@ -18,15 +18,15 @@ type Msg {
   SetSearchFilter(Option(String))
 }
 
-fn update(model: Model, msg: Msg) {
+fn update(model: Model, msg: Msg, _dispatch: Dispatcher(Msg)) -> Model {
   case msg {
-    NoOp -> #(model, [])
-    SetSearchFilter(search_filter) -> #(Model(search_filter: search_filter), [])
+    NoOp -> model
+    SetSearchFilter(search_filter) -> Model(search_filter: search_filter)
   }
 }
 
 fn init() {
-  #(Model(search_filter: None), [])
+  fn(_dispatch) { Model(search_filter: None) }
 }
 
 pub type SidebarProps {

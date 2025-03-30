@@ -7,7 +7,7 @@ import gleam/float
 import gleam/int
 import gleam/option.{type Option, None, Some}
 import gleam/result
-import sprocket/component.{type Context, component, render}
+import sprocket.{type Context, component, render}
 import sprocket/html/attributes.{class}
 import sprocket/html/elements.{div, i, span, text}
 

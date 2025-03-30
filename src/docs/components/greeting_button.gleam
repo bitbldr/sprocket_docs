@@ -2,8 +2,8 @@ import docs/utils/list.{element_at} as _
 import gleam/int
 import gleam/list
 import gleam/option.{type Option, None, Some}
-import sprocket/component.{type Context, render}
-import sprocket/hooks.{type Cmd, reducer}
+import sprocket.{type Context, render}
+import sprocket/hooks.{type Dispatcher, reducer}
 import sprocket/html/attributes.{class}
 import sprocket/html/elements.{
   button, div, fragment, keyed, span, span_text, text,
@@ -21,35 +21,37 @@ type Msg {
   Reset
 }
 
-fn init(options: List(Greeting)) -> #(Model, List(Cmd(Msg))) {
-  #(Model(selection: None, options:), [])
+fn init(options: List(Greeting)) -> fn(Dispatcher(Msg)) -> Model {
+  fn(_dispatcher) { Model(selection: None, options:) }
 }
 
-fn update(model: Model, msg: Msg) {
+fn update(model: Model, msg: Msg, dispatch: Dispatcher(Msg)) -> Model {
   case msg {
-    NoOp -> #(model, [])
-    NextGreeting -> #(model, [new_random_selection(model.options)])
+    NoOp -> model
+    NextGreeting -> {
+      new_random_selection(dispatch, model.options)
+
+      model
+    }
     Greet(selection) -> {
       let options = model.options |> list.filter(fn(o) { o != selection })
 
-      #(Model(selection: Some(selection), options:), [])
+      Model(selection: Some(selection), options:)
     }
-    Reset -> init(greetings())
+    Reset -> init(greetings())(dispatch)
   }
 }
 
-fn new_random_selection(options) -> Cmd(Msg) {
-  fn(dispatch) {
-    let selection =
-      options
-      |> list.length()
-      |> int.random()
-      |> element_at(options, _, 0)
+fn new_random_selection(dispatch, options) {
+  let selection =
+    options
+    |> list.length()
+    |> int.random()
+    |> element_at(options, _, 0)
 
-    case selection {
-      Ok(selection) -> dispatch(Greet(selection))
-      Error(_) -> Nil
-    }
+  case selection {
+    Ok(selection) -> dispatch(Greet(selection))
+    Error(_) -> Nil
   }
 }
 

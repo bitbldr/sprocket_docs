@@ -2,7 +2,7 @@ import docs/utils/logger
 import gleam/dict
 import gleam/io
 import gleam/option.{None, Some}
-import sprocket/component.{type Context, render}
+import sprocket.{type Context, render}
 import sprocket/hooks.{state}
 import sprocket/html/attributes.{class, input_type, name}
 import sprocket/html/elements.{button, div, form, input, keyed, span, text}

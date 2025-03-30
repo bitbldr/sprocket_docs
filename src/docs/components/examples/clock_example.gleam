@@ -6,7 +6,7 @@ import gleam/erlang
 import gleam/option.{type Option, None, Some}
 import gleam/result
 import gleam/string
-import sprocket/component.{type Context, component, render}
+import sprocket.{type Context, component, render}
 
 pub fn clock_example(ctx: Context, props: ClockProps) {
   render(ctx, example([component(clock, props)]))

@@ -4,7 +4,7 @@ import gleam/dynamic.{type Dynamic}
 import gleam/dynamic/decode
 import gleam/option.{type Option, None, Some}
 import gleam/result
-import sprocket/component.{type Context, component, render}
+import sprocket.{type Context, component, render}
 
 pub type ButtonExampleProps {
   ButtonExampleProps(label: Option(String))

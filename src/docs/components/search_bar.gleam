@@ -1,6 +1,5 @@
-import gleam/option.{None, Some}
-import sprocket/component.{type Context, render}
-import sprocket/hooks.{reducer}
+import sprocket.{type Context, render}
+import sprocket/hooks.{type Dispatcher, reducer}
 import sprocket/html/attributes.{class, input_type, placeholder, value}
 import sprocket/html/elements.{input}
 import sprocket/html/events
@@ -14,15 +13,15 @@ type Msg {
   SetQuery(query: String)
 }
 
-fn update(model: Model, msg: Msg) {
+fn update(model: Model, msg: Msg, _dispatch: Dispatcher(Msg)) -> Model {
   case msg {
-    NoOp -> #(model, [])
-    SetQuery(query) -> #(Model(query: query), [])
+    NoOp -> model
+    SetQuery(query) -> Model(query: query)
   }
 }
 
 fn init() {
-  #(Model(query: ""), [])
+  fn(_dispatch) { Model(query: "") }
 }
 
 pub type SearchBarProps {

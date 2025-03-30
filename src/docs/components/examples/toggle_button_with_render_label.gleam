@@ -2,7 +2,7 @@ import docs/components/common.{example}
 import docs/components/toggle_button.{ToggleButtonProps, toggle_button}
 import gleam/dynamic.{type Dynamic}
 import gleam/option.{type Option, None, Some}
-import sprocket/component.{type Context, component, render}
+import sprocket.{type Context, component, render}
 import sprocket/html/attributes.{class}
 import sprocket/html/elements.{i, span, text}
 

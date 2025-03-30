@@ -1,8 +1,8 @@
 import gleam/erlang
 import gleam/io
 import gleam/option.{type Option, None, Some}
-import sprocket/component.{type Context, render}
-import sprocket/hooks.{dep, effect, reducer}
+import sprocket.{type Context, render}
+import sprocket/hooks.{type Dispatcher, dep, effect, reducer}
 import sprocket/html/elements.{fragment, span, text}
 import sprocket/internal/utils/timer.{interval}
 
@@ -17,16 +17,16 @@ type Msg {
   UpdateTime(ErlangTimestamp)
 }
 
-fn update(model: Model, msg: Msg) {
+fn update(model: Model, msg: Msg, _dispatch: Dispatcher(Msg)) -> Model {
   case msg {
     UpdateTime(time) -> {
-      #(Model(..model, time: time), [])
+      Model(..model, time: time)
     }
   }
 }
 
 fn init() {
-  #(Model(time: erlang.erlang_timestamp(), timezone: "UTC"), [])
+  fn(_dispatch) { Model(time: erlang.erlang_timestamp(), timezone: "UTC") }
 }
 
 pub type ClockProps {

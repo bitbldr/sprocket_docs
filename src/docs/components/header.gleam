@@ -2,7 +2,7 @@ import docs/components/dark_mode_toggle.{DarkModeToggleProps, dark_mode_toggle}
 import docs/components/logo.{LogoOpts, logo}
 import gleam/list
 import gleam/string
-import sprocket/component.{type Context, component, render}
+import sprocket.{type Context, component, render}
 import sprocket/html/attributes.{class, href}
 import sprocket/html/elements.{a, div, i, span, text}
 

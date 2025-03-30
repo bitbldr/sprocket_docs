@@ -2,7 +2,7 @@ import docs/components/common.{example}
 import docs/components/greeting_button.{GreetingButtonProps, greeting_button}
 import gleam/dynamic.{type Dynamic}
 import gleam/option.{type Option, None, Some}
-import sprocket/component.{type Context, component, render}
+import sprocket.{type Context, component, render}
 
 pub type GreetingButtonExampleProps {
   GreetingButtonExampleProps
