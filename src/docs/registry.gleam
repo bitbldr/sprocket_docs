@@ -21,7 +21,7 @@ import gleam/http/request.{type Request}
 import gleam/option.{type Option}
 import mist.{type Connection}
 import sprocket.{component}
-import sprocket/render.{render}
+import sprocket/render.{render_element}
 import sprocket/renderers/html.{html_renderer}
 import sprocket_mist
 
@@ -34,7 +34,7 @@ pub fn render_component_html(
       attrs
       |> codeblock.props_from()
       |> component(codeblock, _)
-      |> render(html_renderer())
+      |> render_element(html_renderer())
       |> Ok
     }
 
@@ -42,7 +42,7 @@ pub fn render_component_html(
       attrs
       |> counter.props_from()
       |> component(counter, _)
-      |> render(html_renderer())
+      |> render_element(html_renderer())
       |> Ok
     }
 
@@ -50,7 +50,7 @@ pub fn render_component_html(
       attrs
       |> counter_example.props_from()
       |> component(counter_example, _)
-      |> render(html_renderer())
+      |> render_element(html_renderer())
       |> Ok
     }
 
@@ -58,7 +58,7 @@ pub fn render_component_html(
       attrs
       |> button_example.props_from()
       |> component(button_example, _)
-      |> render(html_renderer())
+      |> render_element(html_renderer())
       |> Ok
     }
 
@@ -66,7 +66,7 @@ pub fn render_component_html(
       attrs
       |> toggle_button_with_render_label.props_from()
       |> component(toggle_button_with_render_label, _)
-      |> render(html_renderer())
+      |> render_element(html_renderer())
       |> Ok
     }
 
@@ -74,7 +74,7 @@ pub fn render_component_html(
       attrs
       |> product_card_example.props_from()
       |> component(product_card_example, _)
-      |> render(html_renderer())
+      |> render_element(html_renderer())
       |> Ok
     }
 
@@ -82,7 +82,7 @@ pub fn render_component_html(
       attrs
       |> stateful_product_card_example.props_from()
       |> component(stateful_product_card_example, _)
-      |> render(html_renderer())
+      |> render_element(html_renderer())
       |> Ok
     }
 
@@ -90,7 +90,7 @@ pub fn render_component_html(
       attrs
       |> product_list_example.props_from()
       |> component(product_list_example, _)
-      |> render(html_renderer())
+      |> render_element(html_renderer())
       |> Ok
     }
 
@@ -98,7 +98,7 @@ pub fn render_component_html(
       attrs
       |> props_and_events_counter_example.props_from()
       |> component(props_and_events_counter_example, _)
-      |> render(html_renderer())
+      |> render_element(html_renderer())
       |> Ok
     }
 
@@ -106,7 +106,7 @@ pub fn render_component_html(
       attrs
       |> greeting_button_example.props_from()
       |> component(greeting_button_example, _)
-      |> render(html_renderer())
+      |> render_element(html_renderer())
       |> Ok
     }
 
@@ -114,7 +114,7 @@ pub fn render_component_html(
       attrs
       |> clock_example.props_from()
       |> component(clock_example, _)
-      |> render(html_renderer())
+      |> render_element(html_renderer())
       |> Ok
     }
 
@@ -122,7 +122,7 @@ pub fn render_component_html(
       attrs
       |> analog_clock_example.props_from()
       |> component(analog_clock_example, _)
-      |> render(html_renderer())
+      |> render_element(html_renderer())
       |> Ok
     }
 

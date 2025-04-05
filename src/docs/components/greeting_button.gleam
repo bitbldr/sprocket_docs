@@ -1,4 +1,5 @@
 import docs/utils/list.{element_at} as _
+import gleam/dynamic.{type Dynamic}
 import gleam/int
 import gleam/list
 import gleam/option.{type Option, None, Some}
@@ -8,7 +9,7 @@ import sprocket/html/attributes.{class}
 import sprocket/html/elements.{
   button, div, fragment, keyed, span, span_text, text,
 }
-import sprocket/html/events
+import sprocket/html/events.{event_dispatcher}
 
 type Model {
   Model(selection: Option(Greeting), options: List(Greeting))
@@ -16,9 +17,10 @@ type Model {
 
 type Msg {
   NoOp
-  NextGreeting
   Greet(Greeting)
   Reset
+  UserClickedGreetingButton(Dynamic)
+  UserClickedResetButton(Dynamic)
 }
 
 fn init(options: List(Greeting)) -> fn(Dispatcher(Msg)) -> Model {
@@ -28,21 +30,26 @@ fn init(options: List(Greeting)) -> fn(Dispatcher(Msg)) -> Model {
 fn update(model: Model, msg: Msg, dispatch: Dispatcher(Msg)) -> Model {
   case msg {
     NoOp -> model
-    NextGreeting -> {
-      new_random_selection(dispatch, model.options)
-
-      model
-    }
     Greet(selection) -> {
       let options = model.options |> list.filter(fn(o) { o != selection })
 
       Model(selection: Some(selection), options:)
     }
     Reset -> init(greetings())(dispatch)
+    UserClickedGreetingButton(_event) -> {
+      new_random_selection(model.options, fn(s) { dispatch(Greet(s)) })
+
+      model
+    }
+    UserClickedResetButton(_event) -> {
+      dispatch(Reset)
+
+      model
+    }
   }
 }
 
-fn new_random_selection(dispatch, options) {
+fn new_random_selection(options, set_selection) {
   let selection =
     options
     |> list.length()
@@ -50,7 +57,7 @@ fn new_random_selection(dispatch, options) {
     |> element_at(options, _, 0)
 
   case selection {
-    Ok(selection) -> dispatch(Greet(selection))
+    Ok(selection) -> set_selection(selection)
     Error(_) -> Nil
   }
 }
@@ -66,8 +73,9 @@ pub fn greeting_button(ctx: Context, _props: GreetingButtonProps) {
     update,
   )
 
-  let say_hello = fn(_) { dispatch(NextGreeting) }
-  let reset = fn(_) { dispatch(Reset) }
+  // helper function that allows us to directly dispatch a message from an event
+  // handler without needing to create a separate function for each event.
+  use dispatch_event <- event_dispatcher(dispatch)
 
   let num_options_left = list.length(options)
 
@@ -83,7 +91,7 @@ pub fn greeting_button(ctx: Context, _props: GreetingButtonProps) {
                 class(
                   "p-2 text-blue-500 hover:text-blue-600 hover:underline active:text-blue-700",
                 ),
-                events.on_click(reset),
+                events.on_click(dispatch_event(UserClickedResetButton)),
               ],
               [text("Reset")],
             ),
@@ -96,7 +104,7 @@ pub fn greeting_button(ctx: Context, _props: GreetingButtonProps) {
                 class(
                   "p-2 bg-blue-500 hover:bg-blue-600 active:bg-blue-700 text-white rounded",
                 ),
-                events.on_click(say_hello),
+                events.on_click(dispatch_event(UserClickedGreetingButton)),
               ],
               [
                 text("Say Hello!"),
