@@ -14,7 +14,6 @@ import gleam/http.{Get}
 import gleam/http/request.{type Request}
 import gleam/http/response.{type Response}
 import gleam/http/service.{type Service}
-import gleam/option.{None}
 import gleam/string
 import mist.{type Connection, type ResponseData}
 import sprocket.{component}

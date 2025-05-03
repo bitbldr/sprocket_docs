@@ -1,6 +1,6 @@
 import docs/theme.{type DarkMode, Auto, Dark, Light, Theme}
 import gleam/dynamic
-import gleam/io
+import gleam/dynamic/decode
 import gleam/option.{Some}
 import sprocket.{type Context, type Element, render}
 import sprocket/hooks.{client, provider, state}
@@ -44,15 +44,15 @@ pub fn dark_mode_toggle(ctx: Context, _props: DarkModeToggleProps) {
     Some(fn(msg, payload, _send) {
       case msg {
         "set_mode" -> {
-          case option.map(payload, dynamic.string) {
-            Some(Ok(theme)) -> {
+          case decode.run(payload, decode.string) {
+            Ok(theme) -> {
               case theme {
                 "light" -> set_mode(Light)
                 "dark" -> set_mode(Dark)
                 _ -> Nil
               }
             }
-            _ -> Nil
+            Error(_) -> Nil
           }
         }
         _ -> Nil
@@ -82,55 +82,44 @@ pub fn dark_mode_toggle(ctx: Context, _props: DarkModeToggleProps) {
     div([dark_mode_client(), click_outside_client()], [
       case is_open {
         True ->
-          div(
-            [
-              classes([
-                Some("flex-row"),
-                case is_open {
-                  True -> Some("flex flex-row")
-                  False -> Some("hidden")
-                },
-              ]),
-            ],
-            [
-              button(
-                [
-                  events.on_click(set_mode_auto),
-                  classes([
-                    Some(
-                      "p-2 rounded-l border border-gray-200 hover:bg-gray-100 active:bg-gray-200 dark:border-gray-700 dark:hover:bg-gray-700 dark:active:bg-gray-600",
-                    ),
-                    Some(selector_class(Auto, mode)),
-                  ]),
-                ],
-                [icon(Auto)],
-              ),
-              button(
-                [
-                  events.on_click(set_mode_light),
-                  classes([
-                    Some(
-                      "p-2 border-t border-b border-gray-200 hover:bg-gray-100 active:bg-gray-200 dark:border-gray-700 dark:hover:bg-gray-700 dark:active:bg-gray-600",
-                    ),
-                    Some(selector_class(Light, mode)),
-                  ]),
-                ],
-                [icon(Light)],
-              ),
-              button(
-                [
-                  events.on_click(set_mode_dark),
-                  classes([
-                    Some(
-                      "p-2 rounded-r border border-gray-200 hover:bg-gray-100 active:bg-gray-200 dark:border-gray-700 dark:hover:bg-gray-700 dark:active:bg-gray-600",
-                    ),
-                    Some(selector_class(Dark, mode)),
-                  ]),
-                ],
-                [icon(Dark)],
-              ),
-            ],
-          )
+          div([class("flex flex-row")], [
+            button(
+              [
+                events.on_click(set_mode_auto),
+                classes([
+                  Some(
+                    "p-2 rounded-l border border-gray-200 hover:bg-gray-100 active:bg-gray-200 dark:border-gray-700 dark:hover:bg-gray-700 dark:active:bg-gray-600",
+                  ),
+                  Some(selector_class(Auto, mode)),
+                ]),
+              ],
+              [icon(Auto)],
+            ),
+            button(
+              [
+                events.on_click(set_mode_light),
+                classes([
+                  Some(
+                    "p-2 border-t border-b border-gray-200 hover:bg-gray-100 active:bg-gray-200 dark:border-gray-700 dark:hover:bg-gray-700 dark:active:bg-gray-600",
+                  ),
+                  Some(selector_class(Light, mode)),
+                ]),
+              ],
+              [icon(Light)],
+            ),
+            button(
+              [
+                events.on_click(set_mode_dark),
+                classes([
+                  Some(
+                    "p-2 rounded-r border border-gray-200 hover:bg-gray-100 active:bg-gray-200 dark:border-gray-700 dark:hover:bg-gray-700 dark:active:bg-gray-600",
+                  ),
+                  Some(selector_class(Dark, mode)),
+                ]),
+              ],
+              [icon(Dark)],
+            ),
+          ])
         False ->
           button(
             [

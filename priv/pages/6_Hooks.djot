@@ -79,19 +79,27 @@ type Msg {
   Reset
 }
 
-fn update(_model: Model, msg: Msg) -> #(Model, List(Cmd(Msg))) {
+fn init(initial: Int) {
+  fn(_dispatch) { initial }
+}
+
+fn update(count: Model, msg: Msg, dispatch: Dispatcher(Msg)) -> Model {
   case msg {
     Increment -> {
-      #(model + 1, [])
+      count + 1
     }
 
     Decrement -> {
-      #(model - 1, [])
+      count - 1
     }
 
-    SetCount(count) -> #(count, [])
+    SetCount(count) -> count
 
-    Reset -> #(0, [])
+    Reset -> {
+      dispatch(SetCount(0))
+
+      count
+    }
   }
 }
 ```
@@ -100,7 +108,7 @@ The current model along with a dispatch function are provided. The model is init
 provided and can be updated by calling the dispatch function with a message.
 
 ```gleam
-use ctx, count, dispatch <- reducer(ctx, 0, update)
+use ctx, count, dispatch <- reducer(ctx, init(0), update)
 ```
 
 Reducer hooks allow state management to be refactored out of the component file and into a separate
@@ -246,7 +254,7 @@ connect(livePath, {
 });
 ```
 
-<.counter_example initial="0" enable_reset="true" />
+<.hooks_counter_example initial="0" enable_reset="true" />
 
 ## Custom Hooks
 

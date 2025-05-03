@@ -16,7 +16,6 @@ type Model {
 }
 
 type Msg {
-  NoOp
   Greet(Greeting)
   Reset
   UserClickedGreetingButton(Dynamic)
@@ -24,12 +23,11 @@ type Msg {
 }
 
 fn init(options: List(Greeting)) -> fn(Dispatcher(Msg)) -> Model {
-  fn(_dispatcher) { Model(selection: None, options:) }
+  fn(_dispatch) { Model(selection: None, options:) }
 }
 
 fn update(model: Model, msg: Msg, dispatch: Dispatcher(Msg)) -> Model {
   case msg {
-    NoOp -> model
     Greet(selection) -> {
       let options = model.options |> list.filter(fn(o) { o != selection })
 

@@ -8,32 +8,35 @@ Let's take a look at an example of a clock component that uses an effect hook to
 update the time every second.
 
 ```gleam
-import gleam/io
 import gleam/erlang
+import gleam/io
 import gleam/option.{type Option, None, Some}
 import sprocket.{type Context, render}
-import sprocket/hooks.{dep, effect, reducer}
+import sprocket/hooks.{type Dispatcher, dep, effect, reducer}
 import sprocket/html/elements.{fragment, span, text}
 import sprocket/internal/utils/timer.{interval}
 
+type ErlangTimestamp =
+  #(Int, Int, Int)
+
 type Model {
-  Model(time: Int, timezone: String)
+  Model(time: ErlangTimestamp, timezone: String)
 }
 
 type Msg {
-  UpdateTime(Int)
+  UpdateTime(ErlangTimestamp)
 }
 
-fn update(model: Model, msg: Msg) -> Model {
+fn init() {
+  fn(_dispatch) { Model(time: erlang.erlang_timestamp(), timezone: "UTC") }
+}
+
+fn update(model: Model, msg: Msg, _dispatch: Dispatcher(Msg)) -> Model {
   case msg {
     UpdateTime(time) -> {
       Model(..model, time: time)
     }
   }
-}
-
-fn initial() -> Model {
-  Model(time: erlang.system_time(erlang.Second), timezone: "UTC")
 }
 
 pub type ClockProps {
@@ -44,7 +47,7 @@ pub fn clock(ctx: Context, props: ClockProps) {
   let ClockProps(label, time_unit) = props
 
   // Define a reducer to handle events and update the state
-  use ctx, Model(time: time, ..), dispatch <- reducer(ctx, initial(), update)
+  use ctx, Model(time: time, ..), dispatch <- reducer(ctx, init(), update)
 
   // Example effect with an empty list of dependencies, runs once on mount
   use ctx <- effect(
@@ -60,7 +63,7 @@ pub fn clock(ctx: Context, props: ClockProps) {
     time_unit
     |> option.unwrap(erlang.Second)
 
-  // Example effect that has a cleanup function and runs whenever `time` or `time_unit` changes
+  // Example effect that has a cleanup function and runs whenever `time_unit` changes
   use ctx <- effect(
     ctx,
     fn() {
@@ -68,16 +71,11 @@ pub fn clock(ctx: Context, props: ClockProps) {
         erlang.Millisecond -> 1
         _ -> 1000
       }
-
-      let update_time = fn() {
-        dispatch(UpdateTime(erlang.system_time(time_unit)))
-      }
-
+      let update_time = fn() { dispatch(UpdateTime(erlang.erlang_timestamp())) }
       let cancel = interval(interval_duration, update_time)
-
       Some(fn() { cancel() })
     },
-    [dep(time), dep(time_unit)],
+    [dep(time_unit)],
   )
 
   let current_time = format_utc_timestamp(time, time_unit)
@@ -90,7 +88,10 @@ pub fn clock(ctx: Context, props: ClockProps) {
 }
 
 @external(erlang, "print_time", "format_utc_timestamp")
-pub fn format_utc_timestamp(time: ErlangTimestamp, unit: erlang.TimeUnit) -> String
+pub fn format_utc_timestamp(
+  time: ErlangTimestamp,
+  unit: erlang.TimeUnit,
+) -> String
 ```
 
 We can also use a bit of erlang code here to handle formatting the timestamp, which demonstrates

@@ -5,11 +5,9 @@ import docs/components/examples/button_example.{button_example}
 import docs/components/examples/clock_example.{clock_example}
 import docs/components/examples/counter_example.{counter_example}
 import docs/components/examples/greeting_button_example.{greeting_button_example}
+import docs/components/examples/hooks_counter_example
 import docs/components/examples/product_card_example.{product_card_example}
 import docs/components/examples/product_list_example.{product_list_example}
-import docs/components/examples/props_and_events_counter_example.{
-  props_and_events_counter_example,
-}
 import docs/components/examples/stateful_product_card_example.{
   stateful_product_card_example,
 }
@@ -94,10 +92,10 @@ pub fn render_component_html(
       |> Ok
     }
 
-    "props_and_events_counter_example" -> {
+    "hooks_counter_example" -> {
       attrs
-      |> props_and_events_counter_example.props_from()
-      |> component(props_and_events_counter_example, _)
+      |> hooks_counter_example.props_from()
+      |> component(hooks_counter_example.hooks_counter_example, _)
       |> render_element(html_renderer())
       |> Ok
     }
@@ -216,11 +214,11 @@ pub fn component_router(
       |> Ok
     }
 
-    "props_and_events_counter_example" -> {
+    "hooks_counter_example" -> {
       sprocket_mist.component(
         request,
-        props_and_events_counter_example,
-        props_and_events_counter_example.props_from,
+        hooks_counter_example.hooks_counter_example,
+        hooks_counter_example.props_from,
         validate_csrf,
       )
       |> Ok

@@ -1,98 +1,137 @@
 import gleam/dynamic.{type Dynamic}
 import gleam/dynamic/decode
 import gleam/int
-import gleam/io
 import gleam/option.{type Option, None, Some}
 import gleam/result
-import gleam/string
-import sprocket.{type Context, render}
-import sprocket/hooks.{type Dispatcher, dep, effect, reducer}
-import sprocket/html/attributes.{class}
-import sprocket/html/elements.{button, div, span, text}
+import sprocket.{type Context, component, render}
+import sprocket/hooks.{type Dispatcher, reducer}
+import sprocket/html/attributes.{class, classes}
+import sprocket/html/elements.{button_text, div, span, text}
 import sprocket/html/events
 
 type Model =
   Int
 
 type Msg {
-  UpdateCounter(Int)
+  Increment
+  Decrement
+  SetCount(Int)
+  Reset
 }
 
 fn init(initial: Int) {
   fn(_dispatch) { initial }
 }
 
-fn update(_model: Model, msg: Msg, _dispatch: Dispatcher(Msg)) -> Model {
+fn update(count: Model, msg: Msg, dispatch: Dispatcher(Msg)) -> Model {
   case msg {
-    UpdateCounter(count) -> {
+    Increment -> {
+      count + 1
+    }
+
+    Decrement -> {
+      count - 1
+    }
+
+    SetCount(count) -> count
+
+    Reset -> {
+      dispatch(SetCount(0))
+
       count
     }
   }
 }
 
 pub type CounterProps {
-  CounterProps(initial: Option(Int))
+  CounterProps(initial: Int, enable_reset: Bool)
 }
 
 pub fn counter(ctx: Context, props: CounterProps) {
-  let CounterProps(initial) = props
+  let CounterProps(initial: initial, enable_reset: enable_reset) = props
 
   // Define a reducer to handle events and update the state
-  use ctx, count, dispatch <- reducer(
-    ctx,
-    init(option.unwrap(initial, 0)),
-    update,
-  )
-
-  // Example effect that runs every time count changes
-  use ctx <- effect(
-    ctx,
-    fn() {
-      io.println(string.append("Count: ", int.to_string(count)))
-      None
-    },
-    [dep(count)],
-  )
-
-  // Define event handlers
-  let increment = fn(_) { dispatch(UpdateCounter(count + 1)) }
-  let decrement = fn(_) { dispatch(UpdateCounter(count - 1)) }
+  use ctx, count, dispatch <- reducer(ctx, init(initial), update)
 
   render(
     ctx,
     div([class("flex flex-row m-4")], [
-      button(
-        [
-          class(
-            "p-1 px-2 border dark:border-gray-500 rounded-l bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 active:bg-gray-300 dark:active:bg-gray-600",
-          ),
-          events.on_click(decrement),
-        ],
-        [text("-")],
+      component(
+        button,
+        StyledButtonProps(class: "rounded-l", label: "-", on_click: fn() {
+          dispatch(Decrement)
+        }),
       ),
-      span(
-        [
-          class(
-            "p-1 px-2 w-10 border-t border-b dark:border-gray-500 align-center text-center",
-          ),
-        ],
-        [text(int.to_string(count))],
+      component(
+        display,
+        DisplayProps(count: count, reset: fn() {
+          case enable_reset {
+            True -> dispatch(Reset)
+            False -> Nil
+          }
+        }),
       ),
-      button(
-        [
-          class(
-            "p-1 px-2 border dark:border-gray-500 rounded-r bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 active:bg-gray-300 dark:active:bg-gray-600",
-          ),
-          events.on_click(increment),
-        ],
-        [text("+")],
+      component(
+        button,
+        StyledButtonProps(class: "rounded-r", label: "+", on_click: fn() {
+          dispatch(Increment)
+        }),
       ),
     ]),
   )
 }
 
+pub type ButtonProps {
+  ButtonProps(label: String, on_click: fn() -> Nil)
+  StyledButtonProps(class: String, label: String, on_click: fn() -> Nil)
+}
+
+pub fn button(ctx: Context, props: ButtonProps) {
+  let #(class, label, on_click) = case props {
+    ButtonProps(label, on_click) -> #(None, label, on_click)
+    StyledButtonProps(class, label, on_click) -> #(Some(class), label, on_click)
+  }
+
+  render(
+    ctx,
+    button_text(
+      [
+        events.on_click(fn(_) { on_click() }),
+        classes([
+          class,
+          Some(
+            "p-1 px-2 border dark:border-gray-500 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 active:bg-gray-300 dark:active:bg-gray-600",
+          ),
+        ]),
+      ],
+      label,
+    ),
+  )
+}
+
+pub type DisplayProps {
+  DisplayProps(count: Int, reset: fn() -> Nil)
+}
+
+pub fn display(ctx: Context, props: DisplayProps) {
+  let DisplayProps(count: count, reset: reset) = props
+
+  render(
+    ctx,
+    span(
+      [
+        events.on_dblclick(fn(_) { reset() }),
+        class(
+          "p-1 px-2 w-10 bg-white dark:bg-gray-900 border-t border-b dark:border-gray-500 align-center text-center select-none",
+        ),
+      ],
+      [text(int.to_string(count))],
+    ),
+  )
+}
+
 pub fn props_from(attrs: Option(Dynamic)) -> CounterProps {
-  let default = CounterProps(initial: None)
+  let default = CounterProps(initial: 0, enable_reset: False)
 
   case attrs {
     None -> default
@@ -100,13 +139,19 @@ pub fn props_from(attrs: Option(Dynamic)) -> CounterProps {
       decode.run(attrs, {
         use initial <- decode.optional_field(
           "initial",
-          None,
+          default.initial,
           decode.string
             |> decode.map(int.parse)
-            |> decode.map(option.from_result),
+            |> decode.map(result.unwrap(_, default.initial)),
         )
 
-        decode.success(CounterProps(initial: initial))
+        use enable_reset <- decode.optional_field(
+          "enable_reset",
+          False,
+          decode.bool,
+        )
+
+        decode.success(CounterProps(initial, enable_reset))
       })
       |> result.unwrap(default)
     }

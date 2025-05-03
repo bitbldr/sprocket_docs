@@ -17,16 +17,16 @@ type Msg {
   UpdateTime(ErlangTimestamp)
 }
 
+fn init() {
+  fn(_dispatch) { Model(time: erlang.erlang_timestamp(), timezone: "UTC") }
+}
+
 fn update(model: Model, msg: Msg, _dispatch: Dispatcher(Msg)) -> Model {
   case msg {
     UpdateTime(time) -> {
       Model(..model, time: time)
     }
   }
-}
-
-fn init() {
-  fn(_dispatch) { Model(time: erlang.erlang_timestamp(), timezone: "UTC") }
 }
 
 pub type ClockProps {

@@ -4,28 +4,34 @@ State is managed using stateful components and hooks. We previously saw how to c
 variable using the `state` hook. Here we will take a look at using the `reducer` hook to model more
 complex state transformations and side effects.
 
-## The Update Function
+## Introducing the Reducer Hook
 
-The `update` function is the core of the `reducer` hook. It allows you to model complex state
-transformations and side effects in a functional way. The `update` function is called whenever a
-message is dispatched to the reducer. This function is responsible for updating the state and
-specifying any side effect commands to be executed.
+The `reducer` hook allows you to model complex state transformations and side effects in a
+functional way. At the core of the `reducer` hook is the `update` function which takes the current
+state and a message and returns a new state. 
 
 The `update` function has the following signature:
 
 ```gleam
-fn update(model: Model, msg: Msg) -> #(Model, List(Cmd(Msg)))
+fn update(model: Model, msg: Msg, dispatch: Dispatcher(Msg)) -> Model
 ```
 
-The `update` function takes the current state and a message and returns a new state and a list of
-commands to be executed. `Model` is the state model type and `Msg` is the message type.
+The `update` function takes the current model, a message, a dispatcher and returns a new
+model.
 
-For simple model updates, the list of commands will typically be empty. However, commands can be a
-powerful tool for performing side effects such as making HTTP requests, updating local storage, or
-chaining operations by dispatching additional messages.
+The `dispatch` function can be used to chain operations by dispatching additional messages to the
+reducer or be used by tasks to asynchronously dispatch messages such as fetching data from an API
+then updating the state or performing some other side effects.
 
-Let's create a `greeting_button` component as an example, we can
-define a function that updates the state when the button is clicked.
+Make sure that whatever tasks you perform in the `update` function do not block the current
+execution. Any blocking operations should be performed in a separate task process and the result
+dispatched back to the reducer.
+
+## Greeting Button Example
+
+Let's create a `greeting_button` component as an example. This component will display a button that
+when clicked will say hello in a different language. The button will work its way through a list of
+greetings and when it reaches the end, it will reset to the beginning.
 
 First we define our state model and message types:
 
@@ -35,84 +41,78 @@ type Model {
 }
 
 type Msg {
-  NoOp
-  NextGreeting
   Greet(Greeting)
   Reset
+  UserClickedGreetingButton(Dynamic)
+  UserClickedResetButton(Dynamic)
 }
 ```
 
-Here we're storing a list of options and the currently selected option in the state. When we
-dispatch a `NextGreeting` message, we'll randomly select a new option from the list using a
-command called `new_random_selection`.
-
-Let's define the `update` function:
-
-```gleam
-fn update(model: Model, msg: Msg) {
-  case msg {
-    NoOp -> #(model, [])
-    NextGreeting -> #(model, [new_random_selection(model.options)])
-    Greet(selection) -> {
-      let options = model.options |> list.filter(fn(o) { o != selection })
-
-      #(Model(selection: Some(selection), options:), [])
-    }
-    Reset -> init(greetings())
-  }
-}
-```
-
-The `update` function takes the current state and a message and returns a new state and a list of
-commands to be executed. In this case, we're handling four different messages: `NoOp`,
-`NextGreeting`, `Greet`, and `Reset`.
-
-The `NoOp` message does nothing and is just here for illustrative purposes.
-
-The `NextGreeting` message dispatches a new random selection
-
-The `Greet` message updates the state to reflect the new selection by setting the selected option to
-the new selection and removing it from the list of options.
-
-The `Reset` message resets the state to the initial state. It uses the same `init` function that
-will be used to initialize the state when the component is mounted.
+Here we're storing a list of options and the currently selected option in the state. When a
+`UserClickedGreetingButton` message is dispatched, we will randomly select a greeting from the list
+of options and update the state with by dispatching a `Greet` message with the selected option.
 
 Let's define the `init` function:
 
 ```gleam
-fn init(options: List(Greeting)) -> #(Model, List(Cmd(Msg))) {
-  #(Model(selection: None, options:), [])
+fn init(options: List(Greeting)) -> fn(Dispatcher(Msg)) -> Model {
+  fn(_dispatch) { Model(selection: None, options:) }
 }
 ```
 
-The `init` function initializes the state by returning the initial model and, in this case, an
-empty list of commands. However, commands can be useful here to perform any side effects required
-to bootstrap the state when the component is mounted. 
+The `init` function returns an initializer function that takes a dispatcher and returns the initial
+state. In this case, we're initializing the state with a list of options provided. However, this
+function could also be used to bootstrap the state by fetching data from an API or performing some
+other side effects then dispatching a message to update the state. This function will be given to
+the `reducer` hook when it is created.
 
-Finally, let's define the `new_random_selection` command function:
+Finally, let's define the `update` function:
 
 ```gleam
-fn new_random_selection(options) -> Cmd(Msg) {
-  fn(dispatch) {
-    let selection =
-      options
-      |> list.length()
-      |> int.random()
-      |> element_at(options, _, 0)
+fn update(model: Model, msg: Msg, dispatch: Dispatcher(Msg)) -> Model {
+  case msg {
+    Greet(selection) -> {
+      let options = model.options |> list.filter(fn(o) { o != selection })
 
-    case selection {
-      Ok(selection) -> dispatch(Greet(selection))
-      Error(_) -> Nil
+      Model(selection: Some(selection), options:)
+    }
+    Reset -> init(greetings())(dispatch)
+    UserClickedGreetingButton(_event) -> {
+      new_random_selection(model.options, fn(s) { dispatch(Greet(s)) })
+
+      model
+    }
+    UserClickedResetButton(_event) -> {
+      dispatch(Reset)
+
+      model
     }
   }
 }
 ```
 
-The `new_random_selection` function takes a list of options and returns a command that will dispatch
-a `Greet` message with a randomly selected option from the list. If the selection fails, it will
-simply return `Nil`.
+The `update` function takes the current model, a message, a dispatcher and returns a new model which
+represents the updated state. There are four message types that our update function must handle which
+are defined in the `Msg` type:
 
-## Introducing the Reducer Hook
+1. `Greet(Greeting)`: This message updates the state to reflect the new selection by setting the
+    selected option to the new selection and removing it from the list of options.
+
+2. `Reset`: This message resets the state to the initial state. In this case, it uses the same
+    `init` function that will be used to initialize the state when the reducer is created.
+
+3. `UserClickedGreetingButton(Dynamic)`: This message is dispatched when the greeting button is
+    clicked. It calls the `new_random_selection` function to select a new greeting from the list of
+    options and dispatches a `Greet` message with the selected option. This is a special type of
+    message that is used to represent events from the client. The `Dynamic` type is used here to
+    represent the event object that is passed to the event handler. This message can be used in
+    conjunction with the `event_dispatcher` helper to handle client event messages.
+
+4. `UserClickedResetButton(Dynamic)`: This message is dispatched when the reset button is clicked.
+    It dispatches a `Reset` message to reset the state to the initial state. It is also a special
+    type of event message that can be used in conjunction with the `event_dispatcher` helper.
+
+## The Reducer Hook in Action
 
 Let's declare a reducer hook in our component that initializes the state model and uses our `update`
 function:
@@ -130,9 +130,9 @@ component. Notice, we also are provided with a `dispatch` function from the redu
 function is used to send messages to the reducer which will update the state and trigger a
 re-render.
 
-The second argument, `init(greetings())`, initializes the state of the reducer. The `init`
+The second argument `init(greetings())` creates an initializer fucntion for the reducer. This
 function is called when the component is mounted. In this case, we're initializing the state with a
-list of options using the `greetings` function.
+list of greetings provided by the `greetings` function.
 
 ```gleam
 type Greeting =
@@ -171,55 +171,65 @@ We now have all the pieces we need to create a more interesting button that upda
 clicked. Let's put it all together:
 
 ```gleam
+import docs/utils/list.{element_at} as _
+import gleam/dynamic.{type Dynamic}
 import gleam/int
 import gleam/list
 import gleam/option.{type Option, None, Some}
 import sprocket.{type Context, render}
-import sprocket/hooks.{type Cmd, reducer}
+import sprocket/hooks.{type Dispatcher, reducer}
 import sprocket/html/attributes.{class}
-import sprocket/html/elements.{button, div, keyed, span, text}
-import sprocket/html/events
+import sprocket/html/elements.{
+  button, div, fragment, keyed, span, span_text, text,
+}
+import sprocket/html/events.{event_dispatcher}
 
 type Model {
   Model(selection: Option(Greeting), options: List(Greeting))
 }
 
 type Msg {
-  NoOp
-  NextGreeting
   Greet(Greeting)
   Reset
+  UserClickedGreetingButton(Dynamic)
+  UserClickedResetButton(Dynamic)
 }
 
-fn init(options: List(Greeting)) -> #(Model, List(Cmd(Msg))) {
-  #(Model(selection: None, options:), [])
+fn init(options: List(Greeting)) -> fn(Dispatcher(Msg)) -> Model {
+  fn(_dispatch) { Model(selection: None, options:) }
 }
 
-fn update(model: Model, msg: Msg) {
+fn update(model: Model, msg: Msg, dispatch: Dispatcher(Msg)) -> Model {
   case msg {
-    NoOp -> #(model, [])
-    NextGreeting -> #(model, [new_random_selection(model.options)])
     Greet(selection) -> {
       let options = model.options |> list.filter(fn(o) { o != selection })
 
-      #(Model(selection: Some(selection), options:), [])
+      Model(selection: Some(selection), options:)
     }
-    Reset -> init(greetings())
+    Reset -> init(greetings())(dispatch)
+    UserClickedGreetingButton(_event) -> {
+      new_random_selection(model.options, fn(s) { dispatch(Greet(s)) })
+
+      model
+    }
+    UserClickedResetButton(_event) -> {
+      dispatch(Reset)
+
+      model
+    }
   }
 }
 
-fn new_random_selection(options) -> Cmd(Msg) {
-  fn(dispatch) {
-    let selection =
-      options
-      |> list.length()
-      |> int.random()
-      |> element_at(options, _, 0)
+fn new_random_selection(options, set_selection) {
+  let selection =
+    options
+    |> list.length()
+    |> int.random()
+    |> element_at(options, _, 0)
 
-    case selection {
-      Ok(selection) -> dispatch(Greet(selection))
-      Error(_) -> Nil
-    }
+  case selection {
+    Ok(selection) -> set_selection(selection)
+    Error(_) -> Nil
   }
 }
 
@@ -234,8 +244,9 @@ pub fn greeting_button(ctx: Context, _props: GreetingButtonProps) {
     update,
   )
 
-  let say_hello = fn(_) { dispatch(NextGreeting) }
-  let reset = fn(_) { dispatch(Reset) }
+  // helper function that allows us to directly dispatch a message from an event
+  // handler without needing to create a separate function for each event.
+  use dispatch_event <- event_dispatcher(dispatch)
 
   let num_options_left = list.length(options)
 
@@ -244,34 +255,40 @@ pub fn greeting_button(ctx: Context, _props: GreetingButtonProps) {
     div([], [
       case options {
         [] ->
-          button(
-            [
-              class(
-                "p-2 text-blue-500 hover:text-blue-600 hover:underline active:text-blue-700",
-              ),
-              events.on_click(reset),
-            ],
-            [text("Reset")],
+          keyed(
+            "reset",
+            button(
+              [
+                class(
+                  "p-2 text-blue-500 hover:text-blue-600 hover:underline active:text-blue-700",
+                ),
+                events.on_click(dispatch_event(UserClickedResetButton)),
+              ],
+              [text("Reset")],
+            ),
           )
         _ ->
-          button(
-            [
-              class(
-                "p-2 bg-blue-500 hover:bg-blue-600 active:bg-blue-700 text-white rounded",
-              ),
-              events.on_click(say_hello),
-            ],
-            [
-              text("Say Hello!"),
-              case num_options_left < 5 {
-                True ->
-                  span_text(
-                    [class("rounded bg-white text-blue-500 px-1 ml-2")],
-                    int.to_string(num_options_left) <> " left",
-                  )
-                False -> fragment([])
-              },
-            ],
+          keyed(
+            "greet",
+            button(
+              [
+                class(
+                  "p-2 bg-blue-500 hover:bg-blue-600 active:bg-blue-700 text-white rounded",
+                ),
+                events.on_click(dispatch_event(UserClickedGreetingButton)),
+              ],
+              [
+                text("Say Hello!"),
+                case num_options_left < 5 {
+                  True ->
+                    span_text(
+                      [class("rounded bg-white text-blue-500 px-1 ml-2")],
+                      int.to_string(num_options_left) <> " left",
+                    )
+                  False -> fragment([])
+                },
+              ],
+            ),
           )
       },
       ..case selection {

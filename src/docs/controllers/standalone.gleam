@@ -5,7 +5,6 @@ import docs/utils/csrf
 import gleam/bytes_tree
 import gleam/http/request.{type Request}
 import gleam/http/response.{type Response}
-import gleam/option.{Some}
 import mist.{type Connection, type ResponseData}
 import sprocket.{component}
 import sprocket/render.{render_element}
@@ -15,7 +14,7 @@ pub fn standalone(
   _req: Request(Connection),
   app_ctx: AppContext,
 ) -> Response(ResponseData) {
-  let el = component(counter, CounterProps(initial: Some(100)))
+  let el = component(counter, CounterProps(initial: 100, enable_reset: False))
 
   let standalone_counter = render_element(el, html_renderer())
 

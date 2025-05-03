@@ -1,5 +1,5 @@
 import docs/components/common.{example}
-import docs/components/events_counter.{CounterProps, counter}
+import docs/components/counter.{CounterProps, counter}
 import gleam/dynamic.{type Dynamic}
 import gleam/dynamic/decode
 import gleam/int

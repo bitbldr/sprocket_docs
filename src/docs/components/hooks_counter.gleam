@@ -10,20 +10,33 @@ type Model =
   Int
 
 type Msg {
-  UpdateCounter(Int)
-  ResetCounter
+  Increment
+  Decrement
+  SetCount(Int)
+  Reset
 }
 
 fn init(initial: Int) {
   fn(_dispatch) { initial }
 }
 
-fn update(_model: Model, msg: Msg, _dispatch: Dispatcher(Msg)) -> Model {
+fn update(count: Model, msg: Msg, dispatch: Dispatcher(Msg)) -> Model {
   case msg {
-    UpdateCounter(count) -> {
+    Increment -> {
+      count + 1
+    }
+
+    Decrement -> {
+      count - 1
+    }
+
+    SetCount(count) -> count
+
+    Reset -> {
+      dispatch(SetCount(0))
+
       count
     }
-    ResetCounter -> 0
   }
 }
 
@@ -43,7 +56,7 @@ pub fn counter(ctx: Context, props: CounterProps) {
       component(
         button,
         StyledButtonProps(class: "rounded-l", label: "-", on_click: fn() {
-          dispatch(UpdateCounter(count - 1))
+          dispatch(Decrement)
         }),
       ),
       component(
@@ -52,7 +65,7 @@ pub fn counter(ctx: Context, props: CounterProps) {
           count: count,
           on_reset: Some(fn() {
             case enable_reset {
-              True -> dispatch(ResetCounter)
+              True -> dispatch(Reset)
               False -> Nil
             }
           }),
@@ -61,7 +74,7 @@ pub fn counter(ctx: Context, props: CounterProps) {
       component(
         button,
         StyledButtonProps(class: "rounded-r", label: "+", on_click: fn() {
-          dispatch(UpdateCounter(count + 1))
+          dispatch(Increment)
         }),
       ),
     ]),

@@ -418,7 +418,7 @@ of products, each with their own state.
 import gleam/int
 import gleam/list
 import sprocket.{type Context, component, render}
-import sprocket/hooks.{reducer}
+import sprocket/hooks.{type Dispatcher, reducer}
 import sprocket/html/attributes.{class, role}
 import sprocket/html/elements.{
   button, div, keyed, li, text, ul,
@@ -435,7 +435,7 @@ type Msg {
   Reset
 }
 
-fn update(model: Model, msg: Msg) {
+fn update(model: Model, msg: Msg, _dispatch: Dispatcher(Msg)) {
   case msg {
     NoOp -> #(model, [])
     Hide(id) -> #(Model(hidden: [id, ..model.hidden]), [])

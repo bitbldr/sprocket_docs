@@ -1,12 +1,10 @@
 import docs/components/dark_mode_toggle.{DarkModeToggleProps, dark_mode_toggle}
 import docs/components/logo.{LogoOpts, logo}
-import docs/utils/common
-import gleam/io
-import gleam/option.{None, Some}
+import gleam/option.{Some}
 import sprocket.{type Context, type Element, component, render}
 import sprocket/hooks.{type Dispatcher, client, reducer}
 import sprocket/html/attributes.{class, classes}
-import sprocket/html/elements.{aside, button, div, fragment, i, keyed, text}
+import sprocket/html/elements.{aside, button, div, fragment, i, keyed}
 import sprocket/html/events
 
 type Model {
