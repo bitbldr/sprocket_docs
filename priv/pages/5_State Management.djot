@@ -8,16 +8,11 @@ complex state transformations and side effects.
 
 The `reducer` hook allows you to model complex state transformations and side effects in a
 functional way. At the core of the reducer hook is the `update` function which takes the current
-state and a message and returns a new state. 
-
-The `update` function has the following signature:
+model, a message, a dispatcher and returns a new model.
 
 ```gleam
 fn update(model: Model, msg: Msg, dispatch: Dispatcher(Msg)) -> Model
 ```
-
-The `update` function takes the current model, a message, a dispatcher and returns a new
-model.
 
 The `dispatch` function can be used to chain operations by dispatching additional messages to the
 reducer or be used by tasks to asynchronously dispatch messages such as fetching data from an API
