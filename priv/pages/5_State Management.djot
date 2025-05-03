@@ -7,7 +7,7 @@ complex state transformations and side effects.
 ## Introducing the Reducer Hook
 
 The `reducer` hook allows you to model complex state transformations and side effects in a
-functional way. At the core of the `reducer` hook is the `update` function which takes the current
+functional way. At the core of the reducer hook is the `update` function which takes the current
 state and a message and returns a new state. 
 
 The `update` function has the following signature:
