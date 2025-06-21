@@ -21,25 +21,25 @@ construct applications without compromising on type guarantees. Embracing the st
 Erlang Beam virtual machine's concurrency and fault-tolerance capabilities, Sprocket is built on a
 solid foundation that enables scalable and fault-tolerant applications.
 
-## The Browser as a Terminal
+## Why Server Components?
 
 Sprocket embraces the idea that a large portion of web apps simply do not benefit from the added
 complexity of having a separate front-end single page application (SPA) and back-end server. In
 fact, this style of development can be quite costly in terms of development time and resources for
 little to no additional benefit. Instead, Sprocket treats the browser as a simple renderer that
-relays user generated events back to the server to be handled by the runtime, akin to an old
-mainframe style "terminal" but with modern graphics. This approach simplifies the development
-process by allowing developers to focus on building an application's core feature set without having
-to worry about designing an API or managing state synchronization between the client and server. If
-an API is required, it can be built separately in a way that is specific to the use case, rather
-than being a general purpose API that is trying to fit both the user and client SPA needs.
+relays user generated events back to the server to be handled by the runtime. This approach
+simplifies the development process by allowing developers to focus on building an application's core
+feature set without having to worry about designing an API or managing state synchronization between
+the client and server. If an API is required, it can be built separately in a way that is specific
+to the use case, rather than being a general purpose API that is trying to fit both the user and
+client SPA needs.
 
 While this may seem like a step back from the modern SPA architecture, consider that most web apps
 today require a constant connection to a server to function in a meaningful way. Moreover, the
 payload of a stateless API request is typically much larger than the event and diff payloads that
-are exchanged between the client and server in a Sprocket application. By embracing the "browser as
-a terminal" philosophy, Sprocket removes the complexity of state synchronization and the overhead of
-a stateless API allowing the HTTP layer to simply fall away.
+are exchanged between the client and server in a Sprocket application. This approach removes the
+complexity of state synchronization and the overhead of a stateless API allowing the HTTP layer to
+simply fall away.
 
 This is not a unique idea, but rather builds on the paradigm introduced and popularized by Phoenix
 LiveView in 2018. Historically, there have been many other popular technologies that utilized
