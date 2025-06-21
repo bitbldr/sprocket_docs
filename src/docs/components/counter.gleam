@@ -4,44 +4,10 @@ import gleam/int
 import gleam/option.{type Option, None, Some}
 import gleam/result
 import sprocket.{type Context, component, render}
-import sprocket/hooks.{type Dispatcher, reducer}
+import sprocket/hooks.{state}
 import sprocket/html/attributes.{class, classes}
 import sprocket/html/elements.{button_text, div, span, text}
 import sprocket/html/events
-
-type Model =
-  Int
-
-type Msg {
-  Increment
-  Decrement
-  SetCount(Int)
-  Reset
-}
-
-fn init(initial: Int) {
-  fn(_dispatch) { initial }
-}
-
-fn update(count: Model, msg: Msg, dispatch: Dispatcher(Msg)) -> Model {
-  case msg {
-    Increment -> {
-      count + 1
-    }
-
-    Decrement -> {
-      count - 1
-    }
-
-    SetCount(count) -> count
-
-    Reset -> {
-      dispatch(SetCount(0))
-
-      count
-    }
-  }
-}
 
 pub type CounterProps {
   CounterProps(initial: Int, enable_reset: Bool)
@@ -51,7 +17,7 @@ pub fn counter(ctx: Context, props: CounterProps) {
   let CounterProps(initial: initial, enable_reset: enable_reset) = props
 
   // Define a reducer to handle events and update the state
-  use ctx, count, dispatch <- reducer(ctx, init(initial), update)
+  use ctx, count, set_count <- state(ctx, initial)
 
   render(
     ctx,
@@ -59,14 +25,14 @@ pub fn counter(ctx: Context, props: CounterProps) {
       component(
         button,
         StyledButtonProps(class: "rounded-l", label: "-", on_click: fn() {
-          dispatch(Decrement)
+          set_count(count - 1)
         }),
       ),
       component(
         display,
         DisplayProps(count: count, reset: fn() {
           case enable_reset {
-            True -> dispatch(Reset)
+            True -> set_count(initial)
             False -> Nil
           }
         }),
@@ -74,7 +40,7 @@ pub fn counter(ctx: Context, props: CounterProps) {
       component(
         button,
         StyledButtonProps(class: "rounded-r", label: "+", on_click: fn() {
-          dispatch(Increment)
+          set_count(count + 1)
         }),
       ),
     ]),

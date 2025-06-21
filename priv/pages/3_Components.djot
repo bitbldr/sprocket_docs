@@ -418,34 +418,10 @@ of products, each with their own state.
 import gleam/int
 import gleam/list
 import sprocket.{type Context, component, render}
-import sprocket/hooks.{type Dispatcher, reducer}
+import sprocket/hooks.{state}
 import sprocket/html/attributes.{class, role}
-import sprocket/html/elements.{
-  button, div, keyed, li, text, ul,
-}
+import sprocket/html/elements.{button, div, keyed, li, text, ul}
 import sprocket/html/events
-
-type Model {
-  Model(hidden: List(Int))
-}
-
-type Msg {
-  NoOp
-  Hide(Int)
-  Reset
-}
-
-fn update(model: Model, msg: Msg, _dispatch: Dispatcher(Msg)) {
-  case msg {
-    NoOp -> #(model, [])
-    Hide(id) -> #(Model(hidden: [id, ..model.hidden]), [])
-    Reset -> #(Model(hidden: []), [])
-  }
-}
-
-fn init() {
-  #(Model(hidden: []), [])
-}
 
 pub type ProductListProps {
   ProductListProps(products: List(Product))
@@ -454,9 +430,11 @@ pub type ProductListProps {
 pub fn product_list(ctx: Context, props: ProductListProps) {
   let ProductListProps(products: products) = props
 
-  // Ignore the state management for now, we'll cover that in a later section
-  use ctx, Model(hidden), dispatch <- reducer(ctx, init(), update)
-  let reset = fn(_) { dispatch(Reset) }
+  // Create a state variable to keep track of hidden products
+  use ctx, hidden, set_hidden <- state(ctx, [])
+
+  let hide = fn(id) { set_hidden([id, ..hidden]) }
+  let reset = fn(_) { set_hidden([]) }
 
   // Map over the products and render a product component for each, filtering out hidden products
   let products =
@@ -470,7 +448,7 @@ pub fn product_list(ctx: Context, props: ProductListProps) {
             li([class("py-3 mr-4")], [
               component(
                 product,
-                ProductProps(product: p, on_hide: fn(_) { dispatch(Hide(p.id)) }),
+                ProductProps(product: p, on_hide: fn(_) { hide(p.id) }),
               ),
             ]),
           ))
@@ -504,7 +482,8 @@ pub fn product_list(ctx: Context, props: ProductListProps) {
 
 As you can see, we've defined a component that takes a list of products as props, and then renders a
 list of product cards. Each product card has it's own state (a boolean indicating whether an item is
-in the cart or not), and we can filter products from the list by clicking "Not Interested".
+in the cart or not), and the product list also has state (a list of hidden product ids) so we can
+filter products from the list by clicking "Not Interested".
 
 Because we are using the `keyed` function, the diffing algorithm can keep track of each product card
 and will reconcile elements that have changed position, keeping their state in-tact. It's important

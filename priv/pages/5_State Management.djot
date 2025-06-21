@@ -166,7 +166,6 @@ We now have all the pieces we need to create a more interesting button that upda
 clicked. Let's put it all together:
 
 ```gleam
-import docs/utils/list.{element_at} as _
 import gleam/dynamic.{type Dynamic}
 import gleam/int
 import gleam/list
