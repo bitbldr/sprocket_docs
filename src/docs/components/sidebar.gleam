@@ -57,6 +57,9 @@ pub fn sidebar(ctx: Context, props) {
       ..case search_filter {
         Some(query) -> [
           div([], [
+            div([class("text-center italic my-4")], [
+              text("Search is not available"),
+            ]),
             div([class("font-bold italic my-1")], [text("No results for: ")]),
             div([], [text(query)]),
           ]),
